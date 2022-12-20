@@ -190,32 +190,23 @@ Uncheck all the options
 
 Click [Finish]
 
-
 Open VsCode, Open a powershell terminal
 
 ```PowerShell
 PS C:\Users\LOCAL_USER\GCP\gcp-tools> gcloud init
 Welcome! This command will take you through the configuration of gcloud.
  
-
 Your current configuration has been set to: [default]
-
- 
-
+  
 You can skip diagnostics next time by using the following flag:
   gcloud init --skip-diagnostics
-
- 
-
+  
 Network diagnostic detects and fixes local network connection issues.
 Checking network connection...done.
 Reachability Check passed.
 Network diagnostic passed (1/1 checks passed).
-
  
-
-You must log in to continue. Would you like to log in (Y/n)?  Y
-
+You must log in to continue. Would you like to log in (Y/n)?  Y  
 ```
 A browser will open. You may need to copy the URL provided by the gcloud init command if your last browser session was with another account/profile. Paste the link and authenticate with accounts.google.com
 
@@ -225,20 +216,27 @@ Back in the PowerShell Window, you will be prompted for a default project. Choos
 
 ### Container Installation
 
-clone repository button (https://dev.azure.com/gc-cpa/iac-gcp/_git/gcp-tools)
+Open VsCode
 
-Choose a folder (make a new folder GCP or something similar)
+Use either the VsCode source code GUI, or a PowerShell terminal. Clone the repository (https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) into a folder of your choosing.  
 
-Git credential manager will open. Choose/Use your Azure credentials (ds-sa) and follow the MFA process
+Git credential manager will open. Authenticate yourself. You may add your git token to $HOME/.git-credentials if you wish to auto login when using PowerShell  
 
-You will be prompted to "Open the cloned repository", go ahead and Open.  
+Open terminal --> New Terminal.  
+```cd``` to the folder you choose to clone the repo into. Then ```cd .\devcontainer\run\```  
 
-Trust the authors of this folder.
+Authenticate to the Google Artifact Registry in the PowerShell Terminal.
 
-Open terminal --> new terminal.
-cd  devcontainer/run
+```PowerShell
+gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
+```
 
+Use the provided docker-compose.yaml to pull the container locally
 
+```Powershell
+docker compose up -d
+```
+The container should pull (about 2.5GB) and start. It should also be viewable inside of docker desktop.
 
 ## Storage Volumes & Windows Mapping
 
