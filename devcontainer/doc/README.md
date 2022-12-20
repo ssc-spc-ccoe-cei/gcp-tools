@@ -1,7 +1,7 @@
 # GCP Development Environment
 
 ## Purpose
-<br>
+
 The gcptools/devcontainer repository includes version controlled software in a container, providing a homogenous software and runtime environment. The container facilitates GCP activities such as:  
 
 - Landing Zone creation & maintenance
@@ -9,7 +9,6 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Application workload deployment & maintenance
 
 ## Features
-<br>
 
 - Ubuntu 20.04 based image  
 - Version management of container software through .env files  
@@ -18,7 +17,6 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Method of sharing files between the host OS and the container  
 
 ## Required Desktop Components 
-<br>
 
 - Windows 10, managed by your organization. 16GB ram or higher recommended  
 - WSL2 enabled, no virtual machine needed  
@@ -29,69 +27,86 @@ The gcptools/devcontainer repository includes version controlled software in a c
 ## Getting Started
 ---
 
-*** Note: These steps should be performed by your desktop administration group but are included here for completeness.  
+<b>Note: These steps should be performed by your desktop administration group but are included here for completeness.</b>
 
 ### Install WSL
 
-Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator) and enter these two commands:  
+Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)
+
+This shortcut step may be available to use depending on your version of Windows. If this step does not complete, the older method is listed as well below.
+
+```PowerShell
+wsl --install
 ```
+
+Older Method:
+```PowerShell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 ```
-Download the Linux Kernel extensions located at:  
-```
-https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
-```
-Double click the MSI file and elevate to Admin via the UAC when prompted
 
-Restart your machine to complete the process. After restarting set the default to WSL2
+Download the Linux Kernel extensions for WSL. [Docker Desktop](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
 
-```
+
+Run the MSI file (wsl_update_x64.msi) and elevate to Admin via the UAC when prompted.  
+
+Restart your machine to complete the process.  
+
+After restarting, launch a powershell and set WSL2 to version 2  
+
+```PowerShell
 wsl --set-default-version 2
 ```
 
-
-##### TEMP NOTE:
-This shortcut step may be available to use depending on your version of windows ```wsl --install``  
-
 ### Install Docker Desktop
 
-Download the installer from:  
- https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module  
+Download the installer [Docker Desktop](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module)
 
-Locate the installer in your downloads folder, and launch it  (Docker Desktop Installer.exe). Note - admin elevation was required via the UAC mechanism.  
+Locate the installer in your downloads folder, and launch it (Docker Desktop Installer.exe). Admin elevation is required via the Windows UAC mechanism.  
+
+Answer the dialogue questions as follows:  
+
 
 &#9745; Use WSL2 instead of Hyper-V (recommended)  
 &#9745; Add shortcut to desktop  
+<form>
+  <input type="button"  value = "Ok" />
+</form>
 
-Click [OK]  
+<form>
+  <input type="button"  value = "Close and Logout" />
+</form>
+<br>
 
-Click [Close and logout]  
+Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)  
+Run the following command (substitute your LOCAL_USER name):  
 
-Using an admin Powershell run the following command (substitute your local user name):  
-```
+```PowerShell
 net localgroup docker-users pwgsc-tpsgc-em\LOCAL_USER /add 
 ```
 
 Reboot your PC  
 
-Double click the Docker Desktop Icon to Start Docker Desktop.  
+Double click the Docker Desktop icon to start Docker Desktop.
 
 Accept the "Docker Subscription Service Agreement"  
 
-You may skip the tutorial, or start it to learn about Docker Desktop.  
+When prompted, you may skip the tutorial, or start it to learn about Docker Desktop.  
 
-TODO: Determine minimum requirements to pull from GCR. (Seems to be lz_admins)  
+
 
 ### GIT
-Download Git for Windows (https://git-scm.com/download/win)
+<!-- TODO: Determine minimum requirements to pull from GCR. (Seems to be lz_admins)   -->
 
-Choose the link for the 64 bit version of git  
-(https://github.com/git-for-windows/git/releases/download/v2.39.0.windows.1/Git-2.39.0-64-bit.exe)  
+Download Git for Windows [GIT for Windows](https://github.com/git-for-windows/git/releases/download/v2.39.0.windows.1/Git-2.39.0-64-bit.exe)
 
 Double click the downloaded exe, (Git-2.39.0-64-bit.exe)
 
-Accept the license by clicking Next  
+Accept the license by clicking
+<form>
+  <input type="button"  value = "Next" />
+</form>
+<br>
 
 Leave the destination at default  
 
@@ -124,6 +139,7 @@ Configuring experimental options (Leave default nothing selected). Click Install
 Click Finish.  
 
 ### VsCode
+
 
 https://code.visualstudio.com/download  
 
@@ -284,4 +300,4 @@ No more x bit set on files.
 
 
 ### WIP
-- Clone the repo, using VsCode (https://gc-cpa@dev.azure.com/gc-cpa/iac-gcp/_git/gcp-tools)
+- Clone the repo, using VsCode (https://github.com/ssc-spc-ccoe-cei/gcp-tools)
