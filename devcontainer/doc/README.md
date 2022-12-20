@@ -69,17 +69,14 @@ Answer the dialogue questions as follows:
 
 &#9745; Use WSL2 instead of Hyper-V (recommended)  
 &#9745; Add shortcut to desktop  
-<form>
-  <input type="button"  value = "Ok" />
-</form>
 
-<form>
-  <input type="button"  value = "Close and Logout" />
-</form>
-<br>
+Click  [OK]
+
+Click [Close and Logout]
+
 
 Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)  
-Run the following command (substitute your LOCAL_USER name):  
+Run the following command (substitute your organizations_domain\LOCAL_USER name):  
 
 ```PowerShell
 net localgroup docker-users pwgsc-tpsgc-em\LOCAL_USER /add 
@@ -94,7 +91,6 @@ Accept the "Docker Subscription Service Agreement"
 When prompted, you may skip the tutorial, or start it to learn about Docker Desktop.  
 
 
-
 ### GIT
 <!-- TODO: Determine minimum requirements to pull from GCR. (Seems to be lz_admins)   -->
 
@@ -102,79 +98,76 @@ Download Git for Windows [GIT for Windows](https://github.com/git-for-windows/gi
 
 Double click the downloaded exe, (Git-2.39.0-64-bit.exe)
 
-Accept the license by clicking
-<form>
-  <input type="button"  value = "Next" />
-</form>
-<br>
+Accept the license by clicking [Next]
 
-Leave the destination at default  
+Leave the [destination] at defaults  
 
-Select Components (leave as defaults) and click Next  
+Select Components (leave as defaults) and click [Next]  
 
-Startup Menu Folder (leave as defaults) and click Next  
+Startup Menu Folder (leave as defaults) and click [Next]  
 
-Choose the default editor (Leave default VIM) and click Next  
+Choose the default editor (Leave default VIM) and click [Next]  
 
-Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main). Click next  
+Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main). Click n[Next]  
 
-Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software), Next  
+Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software). Click [Next]  
 
-Choosing the SSH executable (leave default Use bundled SSH). Click next.  
+Choosing the SSH executable (leave default Use bundled SSH). Click [Next]  
 
-Choosing HTTPS transport backend (Leave default, Use the OpenSSL library). Click Next.  
+Choosing HTTPS transport backend (Leave default, Use the OpenSSL library). Click [Next]  
 
-Configuring the line end conversions (CHANGE to Checkout as is, commit Unix-stile line endings). Click next  
+Configuring the line end conversions (CHANGE to Checkout as is, commit Unix-stile line endings). Click [Next]  
 
-Configuring the terminal Emulator to use with Git Bash (Leave default Use MinTTY). Click next.  
+Configuring the terminal Emulator to use with Git Bash (Leave default Use MinTTY). Click [Next]  
 
-Choose The default behavior of git pull (Leave default(fast forward or merge)). Click next.  
+Choose The default behavior of git pull (Leave default(fast forward or merge)). Click [Next]  
 
-Choose a credential helper (Leave default, Git Credential Manager). Click Next.  
+Choose a credential helper (Leave default, Git Credential Manager). Click [Next]  
 
-Configuring extra options (Leave default, Enable file system caching). Click Next  
+Configuring extra options (Leave default, Enable file system caching). Click [Next]  
 
-Configuring experimental options (Leave default nothing selected). Click Install.  
+Configuring experimental options (Leave default nothing selected). Click [Install]  
 
-Click Finish.  
+Click [Finish]  
 
 ### VsCode
 
-
-https://code.visualstudio.com/download  
+Download VsCode [VsCode](https://code.visualstudio.com/download)
 
 Choose "User installer"  
 
 Double Click the installer exe (VSCodeUserSetup-x64-1.74.1.exe)  
 
-&#9745; I accept the agreement, Next  
+&#9745; I accept the agreement, click [Next]  
 
 Accept the default path (C:\Users\your-username\AppData\Local\Programs\Microsoft VS Code)  
 
-Select start Menu Folder - Leave default (Visual Studio Code), Next
+Select start Menu Folder. Leave default (Visual Studio Code), Click [Next]
 
-Click Install  
+Click [Install]  
 
-Click Finish
+Click [Finish]
 
-Once VsCode is installed, Add the Docker Extention
 ### Gcloud Installation On Windows 
 
-Launch https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe
+Download the SDK [Latest Google SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
 
-Prompts:
+Double click the downloaded installer (GoogleCloudSDKInstaller.exe)
+
+Answer the prompts as follows:  
+
 Google Cloud CLI Setup
 
 [] Turn on screen reader mode
 [] Help Make Google Cloud CLI better by automatically sending anonymous use statistics to Google
 
-Click "Next"
+Click [Next]
 
 Accept the TOS by clicking [Agree]
 
-(0) Single User, [Next]
+(&#9679;) Single User, click [Next]
 
-Leave "Destination Folder" as is, click [Next]
+Leave "Destination Folder" at default values, click [Next]
 
 Select components to to install  
 &#9745; Google Cloud CLI Core Libraries and tools  
@@ -182,30 +175,26 @@ Select components to to install
 &#9745; Cloud Tools for Powershell  
 &#9745; Beta Commands (check this one as it is not by default)  
 
-[Install]  
+Click [Install]  
 
-[Next]  
+Click [Next]  
 
 Completing Google Cloud CLI Setup
 
 Uncheck all the options
 
-[] Create Start Menu shortcut
-[] Create Desktop shortcut
-[] Start Google Cloud SDK Shell
-[] Run 'gcloud init' to configure the Google Cloud CLI
+[] Create Start Menu shortcut  
+[] Create Desktop shortcut  
+[] Start Google Cloud SDK Shell  
+[] Run 'gcloud init' to configure the Google Cloud CLI  
 
-[Finish]
+Click [Finish]
 
 
 Open VsCode, Open a powershell terminal
 
-Run:
-
-gcloud init  (you will need to re-open VsCode if you previously had it running to pick up the new PATH)
-
-```
-PS C:\Users\CheffJ\GCP\gcp-tools> gcloud init
+```PowerShell
+PS C:\Users\LOCAL_USER\GCP\gcp-tools> gcloud init
 Welcome! This command will take you through the configuration of gcloud.
  
 
@@ -232,31 +221,9 @@ A browser will open. You may need to copy the URL provided by the gcloud init co
 
 Google Cloud will want to confirm access for the SDK. Choose [Allow]
 
-Back in the PowerShell Window, you will be prompted for a default project. Choose [36] tools-369802 and hit return.
-
-Authenticate docker to Artifact Registry.  
-
-```
-gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
-
-Adding credentials for: northamerica-northeast1-docker.pkg.dev
-After update, the following will be written to your Docker config file located at [C:\Users\CheffJ\.docker\config.json]:
-{
-  "credHelpers": {
-    "northamerica-northeast1-docker.pkg.dev": "gcloud"
-  }
-}
-
-
-Do you want to continue (Y/n)? Y
-
-Docker configuration file updated.
-```
-
+Back in the PowerShell Window, you will be prompted for a default project. Choose any project and hit return.  
 
 ### Container Installation
-
-Ensure you are on the VPN as you will need this to authenticate to Azure Devops.  
 
 clone repository button (https://dev.azure.com/gc-cpa/iac-gcp/_git/gcp-tools)
 
@@ -268,8 +235,6 @@ You will be prompted to "Open the cloned repository", go ahead and Open.
 
 Trust the authors of this folder.
 
-*** You may need checkout gcpboard-3365 if the code has not been committed to main. Do this inside VsCode using the branch button, bottom left.  
-
 Open terminal --> new terminal.
 cd  devcontainer/run
 
@@ -280,6 +245,13 @@ cd  devcontainer/run
 A containers file systems should not be relied upon for durable storage purposes. Containers are to be treated as disposable artifacts. However, it is still a requirement (especially in a desktop environment) to have some persistent storage, regardless of the container's tag and lifecycle. 
 
 To ameliorate the temporal nature of the container, this solution uses a docker volume mount. 
+
+## Supplemental Guidance 
+
+A) Container Run  
+B) Login to GCR to pull container  
+C) Command to ensure container comes up with OS (docker update --restart unless-stopped cpedevcontainer)
+D) Add remote developer tools ### Put this into the vscode instructions
 
 
 
