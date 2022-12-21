@@ -148,6 +148,11 @@ Click [Install]
 
 Click [Finish]
 
+Use the Extensions pallet (Ctrl+Shift+X) to add in the following extensions (Minimal required as this is only on Windows):
+
+- Docker
+- Remote Development
+
 ### Gcloud Installation On Windows 
 
 Download the SDK [Latest Google SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
@@ -158,8 +163,8 @@ Answer the prompts as follows:
 
 Google Cloud CLI Setup
 
-[] Turn on screen reader mode
-[] Help Make Google Cloud CLI better by automatically sending anonymous use statistics to Google
+&#9744; Turn on screen reader mode  
+&#9744; Help Make Google Cloud CLI better by automatically sending anonymous use statistics to Google
 
 Click [Next]
 
@@ -181,16 +186,16 @@ Click [Next]
 
 Completing Google Cloud CLI Setup
 
-Uncheck all the options
+Uncheck all the options  
 
-[] Create Start Menu shortcut  
-[] Create Desktop shortcut  
-[] Start Google Cloud SDK Shell  
-[] Run 'gcloud init' to configure the Google Cloud CLI  
+&#9744; Create Start Menu shortcut  
+&#9744; Create Desktop shortcut  
+&#9744; Start Google Cloud SDK Shell  
+&#9744; 'gcloud init' to configure the Google Cloud CLI  
 
 Click [Finish]
 
-Open VsCode, Open a powershell terminal
+Open VsCode, Open a PowerShell terminal and answer [Y]
 
 ```PowerShell
 PS C:\Users\LOCAL_USER\GCP\gcp-tools> gcloud init
@@ -208,7 +213,7 @@ Network diagnostic passed (1/1 checks passed).
  
 You must log in to continue. Would you like to log in (Y/n)?  Y  
 ```
-A browser will open. You may need to copy the URL provided by the gcloud init command if your last browser session was with another account/profile. Paste the link and authenticate with accounts.google.com
+A browser will open and you will be presented with and authentication challenge. You may need to copy the URL provided by the gcloud init command if your last browser session was with another account/profile. Paste the link and authenticate with accounts.google.com
 
 Google Cloud will want to confirm access for the SDK. Choose [Allow]
 
@@ -216,9 +221,9 @@ Back in the PowerShell Window, you will be prompted for a default project. Choos
 
 ### Container Installation
 
-Open VsCode
+#### Inside VsCode
 
-Use either the VsCode source code GUI, or a PowerShell terminal. Clone the repository (https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) into a folder of your choosing.  
+Use either the VsCode source code extension (CTRL+Shift+G), or a PowerShell terminal. Clone the repository (https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) into a folder of your choosing.  
 
 Git credential manager will open. Authenticate yourself. You may add your git token to $HOME/.git-credentials if you wish to auto login when using PowerShell  
 
@@ -231,12 +236,18 @@ Authenticate to the Google Artifact Registry in the PowerShell Terminal.
 gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
 ```
 
-Use the provided docker-compose.yaml to pull the container locally
+Use the provided docker-compose.yaml to pull the image locally
 
 ```Powershell
+# from ...gcp-tools\devcontainer\run>  
 docker compose up -d
 ```
-The container should pull (about 2.5GB) and start. It should also be viewable inside of docker desktop.
+The ```docker compose up -d``` will pull a 2.5GB image and start a container of that image. The container and image should be viewable inside of docker desktop.  
+
+Set your container to start on boot (optional, but recommended)  
+```PowerShell
+docker update --restart unless-stopped cpedevcontainer
+```
 
 ## Storage Volumes & Windows Mapping
 
