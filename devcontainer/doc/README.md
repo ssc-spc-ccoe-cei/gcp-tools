@@ -44,7 +44,6 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Git on for Windows
 
 ## Getting Started
----
 
 <b>Note: These steps should be performed by your desktop administration group but are included here for completeness.</b>
 
@@ -131,9 +130,9 @@ Startup Menu Folder (leave as defaults) and click [Next]
 
 Choose the default editor (Leave default VIM) and click [Next]  
 
-Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main). Click n[Next]  
+Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main) Click [Next]  
 
-Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software). Click [Next]  
+Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software) Click [Next]  
 
 Choosing the SSH executable (leave default Use bundled SSH). Click [Next]  
 
