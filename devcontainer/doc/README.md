@@ -286,7 +286,7 @@ docker update --restart unless-stopped cpedevcontainer
 ```
 Now that your Container is up, you can use the docker extension to right click, (Attach Visual Studio Code)
 
-Subsequent Launches of Visual Studio Code should attach to your running container for your to use for your development environment.
+Subsequent launches of Visual Studio Code should attach to your running container for your to use for your development environment.
 
 #### Extras
 
