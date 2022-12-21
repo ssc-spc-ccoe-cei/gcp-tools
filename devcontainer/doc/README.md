@@ -90,9 +90,13 @@ Accept the "Docker Subscription Service Agreement"
 
 When prompted, you may skip the tutorial, or start it to learn about Docker Desktop.  
 
+Open the Gear Icon for settings. Ensure the checkbox is enabled for:
+
+&#9745; Start Docker Desktop when you log in
+
 
 ### GIT
-<!-- TODO: Determine minimum requirements to pull from GCR. (Seems to be lz_admins)   -->
+<!-- Minimum requirements to pull from GCR, lz_admins  -->
 
 Download Git for Windows [GIT for Windows](https://github.com/git-for-windows/git/releases/download/v2.39.0.windows.1/Git-2.39.0-64-bit.exe)
 
@@ -305,7 +309,58 @@ The container volume is accessible in the Windows Host OS though a network share
 
 ## Maintenance Activities
 
-TODO:
+From time to time the image will need to be updated and changed or added to. The process is as follows:
 
-Describe the container Update process
+### Edit the resources in the ```build``` folder. 
+
+For example: 
+
+#### Edit Container
+Update the ```Dockerfile``` to add software  
+Add variables to the ```.env``` file for that software
+Update versions in the ```.env``` file
+
+#### Build Container
+
+Create a branch on [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git)
+
+Increment the TAG variable in ```build\.env```
+
+Make changes to the ```Dockerfile, docker-compose.env``` etc.
+
+
+Build a new image:
+
+```bash
+docker compose build
+```
+Test your changes locally  
+```bash
+docker compose up
+```
+Once satisfied, with the changes push the image
+
+```bash 
+docker push
+```
+
+Ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` have your new TAG number  
+
+Commit your change
+
+Create a PR on the [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) branch
+
+Once the PR is approved, commit & squash merge. 
+
+Users of the container and now pull the new branch. 
+
+Run ```docker compose up``` to pull the new image into Docker Desktop
+
+Enjoy!
+
+
+
+
+
+
 
