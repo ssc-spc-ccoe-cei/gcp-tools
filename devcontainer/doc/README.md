@@ -234,6 +234,20 @@ Authenticate to the Google Artifact Registry in the PowerShell Terminal.
 
 ```PowerShell
 gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
+
+Adding credentials for: northamerica-northeast1-docker.pkg.dev
+After update, the following will be written to your Docker config file located at [C:\Users\your-username\.docker\config.json]:
+{
+  "credHelpers": {
+    "northamerica-northeast1-docker.pkg.dev": "gcloud"
+  }
+}
+
+
+Do you want to continue (Y/n)? Y
+
+Docker configuration file updated.
+
 ```
 
 Use the provided docker-compose.yaml to pull the image locally
@@ -277,21 +291,21 @@ Add your favorite VsCode Extensions (suggestions)
 
 A containers file systems should not be relied upon for durable storage purposes. Containers are to be treated as disposable artifacts. However, it is still a requirement (especially in a desktop environment) to have some persistent storage, regardless of the container's tag and lifecycle. 
 
-To ameliorate the temporal nature of the container, this solution uses a docker volume mount. 
+To ameliorate the temporal nature of the container, this solution uses a docker volume mount, connected to the container users $HOME directory. If there are any files in the container $HOME, such as .bashrc, they will be added to the docker volume when it is first created. 
 
+### Access Volume in Host OS
+
+The container volume is accessible in the Windows Host OS though a network share provided by WSL. It can be accessed through:  
+
+```bash
+\\wsl$\docker-desktop-data\data\docker\volumes\cpedevcontainer_vol\_data
+```
+
+** Please note that if you wish to edit files dropped into the Windows share, you must take ownership of them. 
 
 ## Maintenance Activities
 
-
 TODO:
-I figure out using a volume mount (vs bind) does not overwrite the mounted directory (unless you tell it to), and leaves .bashrc intact as per the Dockerfile. It then is accessible via \\wsl$\docker-desktop-data\data\docker\volumes\cpedevcontainer_vol\_data. ​docker compose up​ creates the volume and it is persistent.  Permissions on files dropped from windows look like this: 
 
--rw-r--r-- 1 root    root       0 Dec 13 21:28 mikestest.txt 
-drwxr-xr-x 2 root    root    4096 Dec 13 21:29 testfolder 
+Describe the container Update process
 
-No more x bit set on files. 
-
-
-
-### WIP
-- Clone the repo, using VsCode (https://github.com/ssc-spc-ccoe-cei/gcp-tools)
