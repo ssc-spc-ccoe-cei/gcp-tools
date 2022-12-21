@@ -309,9 +309,9 @@ The container volume is accessible in the Windows Host OS though a network share
 
 ## Maintenance Activities
 
-From time to time the image will need to be updated and changed or added to. An example of updating and distributing a new image is provided.
+From time to time the image will need to be updated, changed or added to. An example of updating and distributing a new image is provided.
 
-#### Build a New Image
+#### New Image Example
 
 Create a branch on [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git)  
 
@@ -338,7 +338,7 @@ Test your changes locally
 ```bash
 docker compose up
 ```
-Once satisfied with your changes, ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` have your new TAG number.
+Once satisfied with your changes, ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` has your new TAG number.
 
 Push your code to Google Artifact Registry  
 
@@ -351,13 +351,13 @@ Create a PR on the [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tool
 
 Once the PR is approved, commit & squash merge. 
 
-Users of the container can now pull the new branch to their workstations.
+Users of the container can now pull the new branch to their workstations. This task can be done by:
 
-Run 
-```
+```PowerShell
+git pull  # Allow a fast forward, there should be no conflicts
+cd devcontainer\run
 docker compose up
 ```
-This will pull the new image into Docker Desktop. **Note: You will need to do this from VsCode using a PowerShell Terminal, not inside
 
 Enjoy!
 
