@@ -42,6 +42,7 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Docker Desktop, licensed
 - VsCode
 - Git on for Windows
+- Admin Elevation
 
 ## Getting Started
 
@@ -88,9 +89,9 @@ Answer the dialogue questions as follows:
 &#9745; Use WSL2 instead of Hyper-V (recommended)  
 &#9745; Add shortcut to desktop  
 
-Click  [OK]
+Click  **[OK]**
 
-Click [Close and Logout]
+Click **[Close and Logout]**
 
 
 Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)  
@@ -100,84 +101,83 @@ Run the following command (substitute your organizations_domain\LOCAL_USER name)
 net localgroup docker-users pwgsc-tpsgc-em\LOCAL_USER /add 
 ```
 
-Reboot your PC  
+Reboot your PC.  
 
 Double click the Docker Desktop icon to start Docker Desktop.
 
-Accept the "Docker Subscription Service Agreement"  
+Accept the "Docker Subscription Service Agreement".  
 
 When prompted, you may skip the tutorial, or start it to learn about Docker Desktop.  
 
-Open the Gear Icon for settings. Ensure the checkbox is enabled for:
+Open the Gear Icon for settings. Ensure the checkbox is enabled for:  
 
 &#9745; Start Docker Desktop when you log in
-
 
 ### GIT
 <!-- Minimum requirements to pull from GCR, lz_admins  -->
 
 Download Git for Windows [GIT for Windows](https://github.com/git-for-windows/git/releases/download/v2.39.0.windows.1/Git-2.39.0-64-bit.exe)
 
-Double click the downloaded exe, (Git-2.39.0-64-bit.exe)
+Double click the downloaded exe, (Git-2.39.0-64-bit.exe).
 
-Accept the license by clicking [Next]
+Accept the license by clicking **[Next]**
 
-Leave the [destination] at defaults  
+Leave the [destination] at defaults.  
 
-Select Components (leave as defaults) and click [Next]  
+Select Components (leave as defaults). Click **[Next]**  
 
-Startup Menu Folder (leave as defaults) and click [Next]  
+Startup Menu Folder (leave as defaults). Click **[Next]**  
 
-Choose the default editor (Leave default VIM) and click [Next]  
+Choose the default editor (Leave default VIM). Click **[Next]**  
 
-Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main) Click [Next]  
+Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main).Click **[Next]**  
 
-Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software) Click [Next]  
+Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software). Click **[Next]**  
 
-Choosing the SSH executable (leave default Use bundled SSH). Click [Next]  
+Choosing the SSH executable (leave default Use bundled SSH). Click **[Next]**  
 
-Choosing HTTPS transport backend (Leave default, Use the OpenSSL library). Click [Next]  
+Choosing HTTPS transport backend (Leave default, Use the OpenSSL library). Click **[Next]**  
 
-Configuring the line end conversions (CHANGE to Checkout as is, commit Unix-stile line endings). Click [Next]  
+Configuring the line end conversions (CHANGE to Checkout as is, commit Unix-stile line endings). Click **[Next]**  
 
-Configuring the terminal Emulator to use with Git Bash (Leave default Use MinTTY). Click [Next]  
+Configuring the terminal Emulator to use with Git Bash (Leave default Use MinTTY). Click **[Next]**  
 
-Choose The default behavior of git pull (Leave default(fast forward or merge)). Click [Next]  
+Choose The default behavior of git pull (Leave default(fast forward or merge)). Click **[Next]**  
 
-Choose a credential helper (Leave default, Git Credential Manager). Click [Next]  
+Choose a credential helper (Leave default, Git Credential Manager). Click **[Next]**  
 
-Configuring extra options (Leave default, Enable file system caching). Click [Next]  
+Configuring extra options (Leave default, Enable file system caching). Click **[Next]**  
 
-Configuring experimental options (Leave default nothing selected). Click [Install]  
+Configuring experimental options (Leave default nothing selected). Click **[Install]**  
 
-Click [Finish]  
+Click **[Finish]**  
 
 ### VsCode
 
-Download VsCode [VsCode](https://code.visualstudio.com/download)
+Download [VsCode](https://code.visualstudio.com/download)  
 
-Choose "User installer"  
+Choose "User installer".
 
-Double Click the installer exe (VSCodeUserSetup-x64-1.74.1.exe)  
+Double Click the installer exe (VSCodeUserSetup-x64-1.74.1.exe).  
 
-&#9745; I accept the agreement, click [Next]  
+&#9745; I accept the agreement, click **[Next]**  
 
-Accept the default path (C:\Users\your-username\AppData\Local\Programs\Microsoft VS Code)  
+Accept the default path (C:\Users\your-username\AppData\Local\Programs\Microsoft VS Code).  
 
-Select start Menu Folder. Leave default (Visual Studio Code), Click [Next]
+Select start Menu Folder. Leave default (Visual Studio Code). Click **[Next]** 
 
-Click [Install]  
+Click **[Install]**  
 
-Click [Finish]
+Click **[Finish]**
 
-Use the Extensions pallet (Ctrl+Shift+X) to add in the following extensions (Minimal required as this is only on Windows):
+Use the Extensions pallet *(Ctrl+Shift+X)* to add in the following extensions (Minimal extentions required as this is only on Windows/PowerShell):
 
 - Docker
 - Remote Development
 
 ### Gcloud Installation On Windows 
 
-Download the SDK [Latest Google SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
+Download the [Latest Google SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
 
 Double click the downloaded installer (GoogleCloudSDKInstaller.exe)
 
@@ -186,15 +186,15 @@ Answer the prompts as follows:
 Google Cloud CLI Setup
 
 &#9744; Turn on screen reader mode  
-&#9744; Help Make Google Cloud CLI better by automatically sending anonymous use statistics to Google
+&#9744; Help Make Google Cloud CLI better by automatically sending anonymous use statistics to Google  
 
-Click [Next]
+Click **[Next]**
 
-Accept the TOS by clicking [Agree]
+Accept the TOS by clicking **[Agree]**
 
-(&#9679;) Single User, click [Next]
+(&#9679;) Single User. Click **[Next]**
 
-Leave "Destination Folder" at default values, click [Next]
+Leave "Destination Folder" at default values. Click **[Next]**
 
 Select components to to install  
 &#9745; Google Cloud CLI Core Libraries and tools  
@@ -202,9 +202,9 @@ Select components to to install
 &#9745; Cloud Tools for Powershell  
 &#9745; Beta Commands (check this one as it is not by default)  
 
-Click [Install]  
+Click **[Install]**  
 
-Click [Next]  
+Click **[Next]**  
 
 Completing Google Cloud CLI Setup
 
@@ -215,9 +215,9 @@ Uncheck all the options
 &#9744; Start Google Cloud SDK Shell  
 &#9744; 'gcloud init' to configure the Google Cloud CLI  
 
-Click [Finish]
+Click **[Finish]**
 
-Open VsCode, Open a PowerShell terminal and answer [Y]
+Open VsCode, Open a PowerShell terminal. Initialize your Google SDK.
 
 ```PowerShell
 PS C:\Users\LOCAL_USER\GCP\gcp-tools> gcloud init
@@ -249,7 +249,7 @@ Use either the VsCode source code extension (CTRL+Shift+G), or a PowerShell term
 
 Git credential manager will open. Authenticate yourself. You may add your git token to $HOME/.git-credentials if you wish to auto login when using PowerShell  
 
-Open terminal --> New Terminal.  
+Open Terminal --> New Terminal.  
 ```cd``` to the folder you choose to clone the repo into. Then ```cd .\devcontainer\run\```  
 
 Authenticate to the Google Artifact Registry in the PowerShell Terminal.
@@ -313,7 +313,7 @@ Add your favorite VsCode Extensions (suggestions)
 
 A containers file systems should not be relied upon for durable storage purposes. Containers are to be treated as disposable artifacts. However, it is still a requirement (especially in a desktop environment) to have some persistent storage, regardless of the container's tag and lifecycle. 
 
-To ameliorate the temporal nature of the container, this solution uses a docker volume mount, connected to the container users $HOME directory. If there are any files in the container $HOME, such as .bashrc, they will be added to the docker volume when it is first created. 
+To ameliorate the temporal nature of the container, this solution uses a docker volume mount, connected to the container users $HOME directory. If there are any files in the container $HOME, such as .bashrc, they will be added to the docker volume when it is first created.  
 
 ### Access Volume in Host OS
 
@@ -339,9 +339,9 @@ git pull https://github.com/ssc-spc-ccoe-cei/gcp-tools.git
 git checkout "mybranch"
 ```
 
-Update ```Dockerfile, docker-compose.env``` etc to add software or modify the environment as required  
+Update ```Dockerfile, docker-compose.env``` etc to add software or modify the environment as required.  
 
-Add or update the variables to the ```.env``` file  
+Add or update the variables to the ```.env``` file(s).  
 
 Increment the TAG variable in ```build\.env```  
 
