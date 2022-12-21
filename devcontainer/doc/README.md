@@ -309,25 +309,25 @@ The container volume is accessible in the Windows Host OS though a network share
 
 ## Maintenance Activities
 
-From time to time the image will need to be updated and changed or added to. The process is as follows:
+From time to time the image will need to be updated and changed or added to. An example of updating and distributing a new image is provided.
 
-### Edit the resources in the ```build``` folder. 
+#### Build a New Image
 
-For example: 
+Create a branch on [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git)  
 
-#### Edit Container
-Update the ```Dockerfile``` to add software  
-Add variables to the ```.env``` file for that software
-Update versions in the ```.env``` file
+Pull your the gcp-tools repo and checkout your branch  
+```PowerShell
+git pull https://github.com/ssc-spc-ccoe-cei/gcp-tools.git
+git checkout "mybranch"
+```
 
-#### Build Container
+Update ```Dockerfile, docker-compose.env``` etc to add software or modify the environment as required  
 
-Create a branch on [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git)
+Add or update the variables to the ```.env``` file  
 
-Increment the TAG variable in ```build\.env```
+Increment the TAG variable in ```build\.env```  
 
-Make changes to the ```Dockerfile, docker-compose.env``` etc.
-
+Increment the TAG variable in ```run\.env``` 
 
 Build a new image:
 
@@ -338,23 +338,26 @@ Test your changes locally
 ```bash
 docker compose up
 ```
-Once satisfied, with the changes push the image
+Once satisfied with your changes, ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` have your new TAG number.
+
+Push your code to Google Artifact Registry  
 
 ```bash 
 docker push
 ```
+Commit your change and push to github.com
 
-Ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` have your new TAG number  
-
-Commit your change
-
-Create a PR on the [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) branch
+Create a PR on the [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) "mybranch"
 
 Once the PR is approved, commit & squash merge. 
 
-Users of the container and now pull the new branch. 
+Users of the container can now pull the new branch to their workstations.
 
-Run ```docker compose up``` to pull the new image into Docker Desktop
+Run 
+```
+docker compose up
+```
+This will pull the new image into Docker Desktop. **Note: You will need to do this from VsCode using a PowerShell Terminal, not inside
 
 Enjoy!
 
