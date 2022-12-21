@@ -244,10 +244,34 @@ docker compose up -d
 ```
 The ```docker compose up -d``` will pull a 2.5GB image and start a container of that image. The container and image should be viewable inside of docker desktop.  
 
-Set your container to start on boot (optional, but recommended)  
+Set your container to start on boot (optional, but recommended). Docker Desktop should start automatically.  
 ```PowerShell
 docker update --restart unless-stopped cpedevcontainer
 ```
+Now that your Container is up, you can use the docker extension to right click, (Attach Visual Studio Code)
+
+Subsequent Launches of Visual Studio Code should attach to your running container for your to use for your development environment.
+
+#### Extras
+
+Once inside your container, using a terminal configure git for yourself
+
+```bash
+git config --global user.name "username-ssc"
+git config --global user.email "username@ssc-spc.gc.ca"
+# Set git to use the credential memory cache
+git config --global credential.helper cache
+# Set the cache to timeout after 24 hour (setting is in seconds)
+git config --global credential.helper 'cache --timeout=86400'
+```
+
+Add your favorite VsCode Extensions (suggestions)
+
+- Code Spell Checker
+- Docker
+- Markdown All in One
+- Trailing Spaces
+- YAML (RedHat)
 
 ## Storage Volumes & Windows Mapping
 
@@ -255,19 +279,8 @@ A containers file systems should not be relied upon for durable storage purposes
 
 To ameliorate the temporal nature of the container, this solution uses a docker volume mount. 
 
-## Supplemental Guidance 
 
-A) Container Run  
-B) Login to GCR to pull container  
-C) Command to ensure container comes up with OS (docker update --restart unless-stopped cpedevcontainer)
-D) Add remote developer tools ### Put this into the vscode instructions
-
-
-
-
-
-
-Maintenance
+## Maintenance Activities
 
 
 TODO:
