@@ -57,7 +57,8 @@ RUN \
      bash-completion=${BASH_COMPLETION}
 
  # Add the fortigate certificates as trust anchors
-COPY PSPC-CA.crt PSPC-SSL.crt /usr/local/share/ca-certificates/
+ # Dynamically pull needed certificates
+#COPY mycert /usr/local/share/ca-certificates/
 
 # TODO config-connector
 RUN   wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
