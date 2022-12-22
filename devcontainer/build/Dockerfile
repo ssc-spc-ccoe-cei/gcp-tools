@@ -56,11 +56,12 @@ RUN \
      docker-compose-plugin=${DOCKER_COMPOSE_PLUGIN} \
      bash-completion=${BASH_COMPLETION}
 
- # Add the fortigate certificates as trust anchors
- # Dynamically pull needed certificates
-#COPY mycert /usr/local/share/ca-certificates/
+# Add certificates as trust anchors
+# TODO: Dynamically pull needed certificates
+# COPY mycert /usr/local/share/ca-certificates/
+# RUN update-ca-certificates
 
-# TODO config-connector
+
 RUN   wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
       /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector && \
       curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.21/kpt_linux_amd64 && \
@@ -74,10 +75,9 @@ RUN   wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cl
 
 RUN echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 
+#TODO:
 #https://www.openpolicyagent.org/docs/latest/cli/
 #https://open-policy-agent.github.io/gatekeeper/website/docs/install
-
-
 
 USER ${CPE_USERNAME}
 
