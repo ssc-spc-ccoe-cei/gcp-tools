@@ -87,7 +87,7 @@ RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                              >> 
      echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"   >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx" >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo chown root:docker /var/run/docker.sock"                      >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "sudo update-ca-certificates > /dev/null 2>&1"                                      >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /home/${CPE_USERNAME}/.bashrc && \
      echo "# END OF DOCKERFILE BASHRC MODS #"                                >> /home/${CPE_USERNAME}/.bashrc
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
