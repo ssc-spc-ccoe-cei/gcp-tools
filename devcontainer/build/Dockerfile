@@ -23,6 +23,7 @@ ARG CONTAINERD_IO
 ARG DOCKER_COMPOSE_PLUGIN
 ARG BASH_COMPLETION
 ARG GCLD_SDK
+ARG GATOR
 
 RUN  adduser --quiet  \
      --shell /bin/bash --home /home/${CPE_USERNAME} \
@@ -53,9 +54,9 @@ RUN  apt-get update && \
      docker-ce-cli=${DOCKER_CE_CLI} \
      containerd.io=${CONTAINERD_IO} \
      docker-compose-plugin=${DOCKER_COMPOSE_PLUGIN} \
-     bash-completion=${BASH_COMPLETION}
-
-RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
+     bash-completion=${BASH_COMPLETION} && \
+     usermod -a -G docker ${CPE_USERNAME} && \
+     wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
      /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector && \
      curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.21/kpt_linux_amd64 && \
      chmod +x kpt_linux_amd64 && \
@@ -63,7 +64,7 @@ RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli
      git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx && \
      ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
-     usermod -a -G docker ${CPE_USERNAME}
+     wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 
