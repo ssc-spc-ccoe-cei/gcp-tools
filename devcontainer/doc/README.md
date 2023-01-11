@@ -41,14 +41,14 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - WSL2 enabled, no virtual machine needed  
 - Docker Desktop, licensed
 - VsCode
-- Git on for Windows
+- Git for Windows
 - Admin Elevation
 
 ## Getting Started
 
 <b>Note: These steps should be performed by your desktop administration group but are included here for completeness.</b>
 
-### Install WSL
+### Install WSL2
 
 Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)
 
@@ -64,22 +64,27 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 ```
 
-Download the Linux Kernel extensions for WSL. [Docker Desktop](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
+Download the Linux Kernel extensions for WSL with the following link. [WSL Update](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
 
 
 Run the MSI file (wsl_update_x64.msi) and elevate to Admin via the UAC when prompted.  
 
 Restart your machine to complete the process.  
 
-After restarting, launch a powershell and set WSL2 to version 2  
+After restarting, launch a powershell and set WSL2 to version 2
 
 ```PowerShell
 wsl --set-default-version 2
 ```
+Validate that WSL version 2 is running
+
+```PowerShell
+wsl -l -v
+```
 
 ### Install Docker Desktop
 
-Download the installer [Docker Desktop](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module)
+Download the installer with the following link [Docker Desktop](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module)
 
 Locate the installer in your downloads folder, and launch it (Docker Desktop Installer.exe). Admin elevation is required via the Windows UAC mechanism.  
 
@@ -95,10 +100,11 @@ Click **[Close and Logout]**
 
 
 Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)  
-Run the following command (substitute your organizations_domain\LOCAL_USER name):  
+Run the following command: ()
 
 ```PowerShell
-net localgroup docker-users pwgsc-tpsgc-em\LOCAL_USER /add 
+$myuser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+net localgroup docker-users $myuser /add 
 ```
 
 Reboot your PC.  
@@ -128,9 +134,9 @@ Select Components (leave as defaults). Click **[Next]**
 
 Startup Menu Folder (leave as defaults). Click **[Next]**  
 
-Choose the default editor (Leave default VIM). Click **[Next]**  
+Choose the default editor (Leave default VIM). You will be cautioned about this, but this is ok. Click **[Next]**  
 
-Adjusting the name of of the initial branch in new repositories (Change to Override option, and leave as main).Click **[Next]**  
+Adjusting the name of of the initial branch in new repositories (CHANGE to Override option, and leave as main).Click **[Next]**  
 
 Adjusting your PATH environment. Leave default (Git from the command line and also from 3rd party software). Click **[Next]**  
 
@@ -142,7 +148,7 @@ Configuring the line end conversions (CHANGE to Checkout as is, commit Unix-stil
 
 Configuring the terminal Emulator to use with Git Bash (Leave default Use MinTTY). Click **[Next]**  
 
-Choose The default behavior of git pull (Leave default(fast forward or merge)). Click **[Next]**  
+Choose The default behavior of git pull (Leave default (fast forward or merge)). Click **[Next]**  
 
 Choose a credential helper (Leave default, Git Credential Manager). Click **[Next]**  
 
@@ -177,7 +183,9 @@ Use the Extensions pallet *(Ctrl+Shift+X)* to add in the following extensions (M
 
 ### Gcloud Installation On Windows 
 
-Download the [Latest Google SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
+Use the following link to download the [latest Google SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
+
+Ensure you are DISCONNECTED from VPN prior to launching the installer in the next step.
 
 Double click the downloaded installer (GoogleCloudSDKInstaller.exe)
 
