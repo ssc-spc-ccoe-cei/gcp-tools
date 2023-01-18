@@ -102,9 +102,16 @@ Click **[Close and Logout]**
 Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)  
 Run the following command: ()
 
+Hint:  
+To obtain your Windows username:
+Press Control + Alt + Delete.
+Click Task Manager.
+Click Users. Your username will be listed under 'User'
+
 ```PowerShell
-$myuser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-net localgroup docker-users $myuser /add 
+$myuser = Read-Host -Prompt 'Enter your Windows user name'
+$mydomain =  [System.Environment]::GetEnvironmentVariables().USERDOMAIN_ROAMINGPROFILE
+net localgroup docker-users $mydomain\$myuser /add
 ```
 
 Reboot your PC.  
