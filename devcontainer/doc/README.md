@@ -82,6 +82,20 @@ Validate that WSL version 2 is running
 wsl -l -v
 ```
 
+#### Memory Limits
+To control WSL memory usage, you may add a file ``` %userprofile%/.wslconfig``` with the following contents:
+
+```PowerShel
+# Settings apply across all Linux distros running on WSL 2
+[wsl2]
+# Limits VM memory to use no more than 4 GB, this can be set as whole numbers using GB or MB
+memory=4GB
+# Sets the VM to use two virtual processors
+processors=2
+# Sets amount of swap storage space to 8GB, default is 25% of available RAM
+swap=8GB
+```
+
 ### Install Docker Desktop
 
 Download the installer with the following link [Docker Desktop](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module)
