@@ -34,7 +34,7 @@ else
 fi
 
 print_info "Checking if the release version is newer than the latest existing tag version ..."
-currentLatestVersion="$(git tag | sort -rV | head -1)"
+currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
 # using powershell's built-in [semver] type to perform the greater than operation
 # save non-zero exit codes in a temporary variable to avoid the entire script from failing
 rc=0
