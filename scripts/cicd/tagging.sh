@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# this script validates a proper semantic version defined on the first line of VERSION.txt
+# it does NOT support a 'v' prefix (v0.0.0)
+
+# PowerShell's built-in [semver] type is used to perform a greater than operation
+# a bash equivalent function would need to be created if PowerShell is not available
+
 # Bash safeties: exit on error, pipelines can't hide errors
 set -eo pipefail
 
@@ -35,10 +41,11 @@ fi
 
 print_info "Checking if the release version is newer than the latest existing tag version ..."
 git fetch --tags --quiet
-currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
-# using powershell's built-in [semver] type to perform the greater than operation
-# save non-zero exit codes in a temporary variable to avoid the entire script from failing
-if [[ "${currentLatestVersion}" != "" ]] ; then
+# ensure a properly formatted tag exists before performing comparison
+if git tag | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
+    # using powershell's built-in [semver] type to perform the greater than operation
+    # save non-zero exit codes in a temporary variable to avoid the entire script from failing
+    currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
     rc=0
     pwsh -Command "if (-not ([semver]\"$releaseVersion\" -gt [semver]\"$currentLatestVersion\") ) {exit 1}" || rc=$?
     if [[ $rc -eq 0 ]] ; then
@@ -48,8 +55,9 @@ if [[ "${currentLatestVersion}" != "" ]] ; then
         exit 1
     fi
 else
-    print_success "A current, properly formatted, tag does not exist.  '$releaseVersion' will be the first release version."
+    print_success "'$releaseVersion' will be the first release version. A properly formatted tag does not currently exist."
 fi
+
 # validate changelog, unless the 'VALIDATE_CHANGELOG' env. variable is set to false
 if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
     print_info "Checking if release version is referenced in CHANGELOG.md ..."
