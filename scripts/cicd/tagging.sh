@@ -38,15 +38,18 @@ git fetch --tags --quiet
 currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
 # using powershell's built-in [semver] type to perform the greater than operation
 # save non-zero exit codes in a temporary variable to avoid the entire script from failing
-rc=0
-pwsh -Command "if (-not ([semver]\"$releaseVersion\" -gt [semver]\"$currentLatestVersion\") ) {exit 1}" || rc=$?
-if [[ $rc -eq 0 ]] ; then
-    print_success "'$releaseVersion' is greater than latest existing tag '$currentLatestVersion'."
+if [[ "${currentLatestVersion}" != "" ]] ; then
+    rc=0
+    pwsh -Command "if (-not ([semver]\"$releaseVersion\" -gt [semver]\"$currentLatestVersion\") ) {exit 1}" || rc=$?
+    if [[ $rc -eq 0 ]] ; then
+        print_success "'$releaseVersion' is greater than latest existing tag '$currentLatestVersion'."
+    else
+        print_error "'$releaseVersion' is not greater than latest existing tag '$currentLatestVersion'."
+        exit 1
+    fi
 else
-    print_error "'$releaseVersion' is not greater than latest existing tag '$currentLatestVersion'."
-    exit 1
+    print_success "A current, properly formatted, tag does not exist.  '$releaseVersion' will be the first release version."
 fi
-
 # validate changelog, unless the 'VALIDATE_CHANGELOG' env. variable is set to false
 if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
     print_info "Checking if release version is referenced in CHANGELOG.md ..."
