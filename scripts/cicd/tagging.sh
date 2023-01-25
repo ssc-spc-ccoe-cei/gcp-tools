@@ -40,9 +40,11 @@ else
 fi
 
 print_info "Checking if the release version is newer than the latest existing tag version ..."
-git fetch --tags --quiet
+git fetch --tags --recurse-submodules=no --quiet
+
 # ensure a properly formatted tag exists before performing comparison
 if git tag | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
+    
     # using powershell's built-in [semver] type to perform the greater than operation
     # save non-zero exit codes in a temporary variable to avoid the entire script from failing
     currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
@@ -61,6 +63,7 @@ fi
 # validate changelog, unless the 'VALIDATE_CHANGELOG' env. variable is set to false
 if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
     print_info "Checking if release version is referenced in CHANGELOG.md ..."
+
     if grep --fixed-strings --quiet "[${releaseVersion}]" CHANGELOG.md ; then
         print_success "'[$releaseVersion]' is included in CHANGELOG.md."
     else
@@ -68,4 +71,22 @@ if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
         Please make sure the CHANGELOG.md is updated with the released changes."
         exit 1
     fi
+fi
+
+print_info "Checking if the tag should be created (when pipeline is running through CI on push to main trigger) ..."
+# Azure DevOps and GitHub runners have environment variables to check specific run conditions
+# a tag should not be created if it runs from a PR or if it runs manually
+
+if [[ "${BUILD_SOURCEBRANCHNAME}" == "main" ]] && [[ "${BUILD_REASON}" == "IndividualCI" || "${BUILD_REASON}" == "BatchedCI" ]] ; then
+  echo "Creating and pushing tag to Azure DevOps repo ..."
+  git tag ${releaseVersion}
+  git push origin tag ${releaseVersion}
+
+elif [[ "${GITHUB_REF_NAME}" == "main" && "${GITHUB_EVENT_NAME}" == "push" ]] ; then
+  echo "Creating and pushing tag to GitHub repo ..."
+  git tag ${releaseVersion}
+  git push origin tag ${releaseVersion}
+
+else
+  echo "A tag will not be created yet. The pipeline is most likely running from a PR or manually."
 fi
