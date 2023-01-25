@@ -1,6 +1,0 @@
-
-steps:
-
-- script: |
-    echo "Hello from sample template in another repo"
-  displayName: 'sample pipeline template from other repo'

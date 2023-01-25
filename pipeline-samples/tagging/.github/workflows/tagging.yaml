@@ -1,0 +1,33 @@
+# TODO: add instructions
+
+name: tagging
+
+# Triggers the workflow on push or pull request events but only for the "main" branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # This workflow contains a single job called "tagging" and needs write permission
+  tagging:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Checkout git submodule
+        run: |
+          echo "Checking out git submodule with 'bash modupdate.sh' ..."
+          bash modupdate.sh
+
+      - name: Validate git tag - create it on push to main trigger
+        run: |
+          echo "Running 'bash tools/scripts/cicd/tagging.sh' ..."
+          bash tools/scripts/cicd/tagging.sh
+        env:
+          VALIDATE_CHANGELOG: 'true'

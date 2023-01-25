@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# this script validates a proper semantic version defined on the first line of VERSION.txt
+# this script is called from pipelines to validate a proper semantic version on the first line of 'VERSION.txt'
 # it does NOT support a 'v' prefix (v0.0.0)
+# it optionally checks that an entry is included in 'CHANGELOG.md'
 
 # PowerShell's built-in [semver] type is used to perform a greater than operation
 # a bash equivalent function would need to be created if PowerShell is not available
@@ -15,6 +16,8 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 releaseVersion="$(head -1 VERSION.txt)"
 
+##########
+# validate tag syntax
 print_info "Validating semantic version syntax in VERSION.txt ..."
 SEMVER_PATTERN='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
 # use perl-regexp for compatibility with '\d'
@@ -26,6 +29,8 @@ else
     exit 1
 fi
 
+##########
+# validate tag duplication
 print_info "Checking if the git tag already exists for release version ..."
 # the expected return code if the tag doesn't exit is 2
 # save non-zero exit codes in a temporary variable to avoid the entire script from failing
@@ -39,6 +44,8 @@ else
     exit 1
 fi
 
+##########
+# validate tag increment
 print_info "Checking if the release version is newer than the latest existing tag version ..."
 git fetch --tags --recurse-submodules=no --quiet
 
@@ -60,6 +67,7 @@ else
     print_success "'$releaseVersion' will be the first release version. A properly formatted tag does not currently exist."
 fi
 
+##########
 # validate changelog, unless the 'VALIDATE_CHANGELOG' env. variable is set to false
 if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
     print_info "Checking if release version is referenced in CHANGELOG.md ..."
@@ -73,20 +81,23 @@ if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
     fi
 fi
 
+##########
+# validate when tag is created
 print_info "Checking if the tag should be created (when pipeline is running through CI on push to main trigger) ..."
+
 # Azure DevOps and GitHub runners have environment variables to check specific run conditions
 # a tag should not be created if it runs from a PR or if it runs manually
 
 if [[ "${BUILD_SOURCEBRANCHNAME}" == "main" ]] && [[ "${BUILD_REASON}" == "IndividualCI" || "${BUILD_REASON}" == "BatchedCI" ]] ; then
-  echo "Creating and pushing tag to Azure DevOps repo ..."
+  echo -e "Creating and pushing tag to Azure DevOps repo ...\n"
   git tag ${releaseVersion}
   git push origin tag ${releaseVersion}
 
 elif [[ "${GITHUB_REF_NAME}" == "main" && "${GITHUB_EVENT_NAME}" == "push" ]] ; then
-  echo "Creating and pushing tag to GitHub repo ..."
+  echo -e "Creating and pushing tag to GitHub repo ...\n"
   git tag ${releaseVersion}
   git push origin tag ${releaseVersion}
 
 else
-  echo "A tag will not be created yet. The pipeline is most likely running from a PR or manually."
+  echo -e "A tag will not be created yet. The pipeline is either running from a PR or manually.\n"
 fi

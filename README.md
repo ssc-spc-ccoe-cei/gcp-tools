@@ -1,4 +1,7 @@
 # Introduction 
-This is a repo to store common scripts, pipeline templates, etc.
+This is a repo to store common scripts, pipeline samples, etc.
 
-It's designed to be used as a git submodule.
+It's designed to be used as a git submodule in [deployment repos](https://github.com/ssc-spc-ccoe-cei/gcp-repo-template) and should be pinned to a specific version tag or commit sha.
+
+## `pipeline-samples`
+This folder contains sample of pipeline definitions.

@@ -1,0 +1,25 @@
+# TODO: add instructions
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: tagging
+  steps:
+  - checkout: self
+    persistCredentials: true
+  
+  - script: |
+      echo "Checking out git submodule with 'bash modupdate.sh' ..."
+      bash modupdate.sh
+    displayName: 'Checkout git submodule'
+  
+  - script: |
+      echo "Running 'bash tools/scripts/cicd/tagging.sh' ..."
+      bash tools/scripts/cicd/tagging.sh
+    displayName: 'Validate git tag - create it on push to main trigger'
+    env:
+      VALIDATE_CHANGELOG: 'true'
