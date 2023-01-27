@@ -4,7 +4,7 @@ This folder contains samples of YAML definitions primarily for Azure DevOps Pipe
 
 ## Adding / Editing a Pipeline
 
-Simply copy a sample YAML file to your repo in the appropriate directory (`.azure-pipelines` or `.github`).
+Simply copy a sample YAML file to your repo in the appropriate directory (`.azure-pipelines` or `.github/workflows`).
 
 Each sample may have instructions specific to itself.
 

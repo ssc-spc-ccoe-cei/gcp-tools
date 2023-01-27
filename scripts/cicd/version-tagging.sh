@@ -30,7 +30,7 @@ else
 fi
 
 ##########
-# validate tag duplication
+# validate no tag duplication
 print_info "Checking if the git tag already exists for release version ..."
 # the expected return code if the tag doesn't exit is 2
 # save non-zero exit codes in a temporary variable to avoid the entire script from failing

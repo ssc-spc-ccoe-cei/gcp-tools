@@ -1,6 +1,6 @@
 # TODO: add instructions
 
-name: tagging
+name: version_tagging
 
 # Triggers the workflow on push or pull request events but only for the "main" branch
 on:
@@ -10,8 +10,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # This workflow contains a single job called "tagging" and needs write permission
-  tagging:
+  # This workflow contains a single job called "version_tagging" and needs write permission
+  version_tagging:
     permissions:
       contents: write
 
@@ -27,7 +27,7 @@ jobs:
 
       - name: Validate git tag - create it on push to main trigger
         run: |
-          echo "Running 'bash tools/scripts/cicd/tagging.sh' ..."
-          bash tools/scripts/cicd/tagging.sh
+          echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
+          bash tools/scripts/cicd/version-tagging.sh
         env:
           VALIDATE_CHANGELOG: 'true'

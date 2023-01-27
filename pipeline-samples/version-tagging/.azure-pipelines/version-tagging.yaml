@@ -7,7 +7,7 @@ pool:
   vmImage: ubuntu-latest
 
 jobs:
-- job: tagging
+- job: version_tagging
   steps:
   - checkout: self
     persistCredentials: true
@@ -18,8 +18,8 @@ jobs:
     displayName: 'Checkout git submodule'
   
   - script: |
-      echo "Running 'bash tools/scripts/cicd/tagging.sh' ..."
-      bash tools/scripts/cicd/tagging.sh
+      echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
+      bash tools/scripts/cicd/version-tagging.sh
     displayName: 'Validate git tag - create it on push to main trigger'
     env:
       VALIDATE_CHANGELOG: 'true'
