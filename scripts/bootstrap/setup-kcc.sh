@@ -1,6 +1,6 @@
 if [ $# -eq 0 ]; then
-    echo "No environment variables found, please pass ENV name or local as argument , 
-Script Usage: bash setup-kcc.sh <env/local> <ENV-REPO(Optional)>"
+    echo "No environment variables found, please pass ENV name or local as argument.
+Script Usage: bash setup-kcc.sh <env/local> <ENV-Tier1-REPO>"
     exit 1
 fi
 
@@ -10,9 +10,9 @@ if [ $2 ]
 then
   git clone $2
 else
-  echo "defaulting to use https://gc-cpa@dev.azure.com/gc-cpa/iac-gcp/_git/gcp-tier1-infra as tier 1 repo"
-  rm -rf gcp-tier1-infra
-  git clone https://gc-cpa@dev.azure.com/gc-cpa/iac-gcp/_git/gcp-tier1-infra
+  echo "No Tier 1 repo found, please provide Tier1 Repo. 
+Script Usage: bash setup-kcc.sh <env/local> <ENV-Tier1-REPO>"
+  exit 1
 fi
 
 
