@@ -1,6 +1,9 @@
-# TODO: add instructions
-
+# A simple pipeline to increment version tags for a git repo
 name: version_tagging
+
+# can be set to false to disable the check for an entry in CHANGELOG.md
+env:
+  VALIDATE_CHANGELOG: 'true'
 
 # Triggers the workflow on push or pull request events but only for the "main" branch
 on:
@@ -29,5 +32,3 @@ jobs:
         run: |
           echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
           bash tools/scripts/cicd/version-tagging.sh
-        env:
-          VALIDATE_CHANGELOG: 'true'

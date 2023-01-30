@@ -15,10 +15,10 @@ It follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 - `tools` sub module.
 - `VERSION.txt` in repo root.
 - `CHANGELOG.md` in repo root, if a change log is required.
-- If Azure DevOps:
+- If using Azure DevOps:
   - "Create tag" permission on repo for user "{project} Build Service ({organization})". This may be enabled by default depending on security settings.
   - A "Build Validation Policy" (PR trigger).
-- If GitHub:
+- If using GitHub:
   - "contents" write permission on repo for GitHub Actions.  This may be enabled by default depending on security settings.
 
 ## Dependencies
