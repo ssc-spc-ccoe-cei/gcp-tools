@@ -1,5 +1,11 @@
+# get the directory of this script
+SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# source print-colors.sh for better readability of the script's outputs
+source "${SCRIPT_ROOT}/../common/print-colors.sh"
+
 if [ $# -eq 0 ]; then
-    echo "No environment variables found, please pass ENV name or local as argument.
+    print_error "No environment variables found, please pass ENV name or local as argument.
 Usage: bash setup-kcc.sh ENV [REPO_URL]
 ENV is one of the following
    local : will use the current directory .env file
@@ -7,10 +13,6 @@ ENV is one of the following
 REPO_URL is the tier1-infra repo url"
     exit 1
 fi
-
-
-
-
 
 # source the env file
 if [ $1 = "local" ]
@@ -24,12 +26,12 @@ else
     then
       git clone $2 tier1-repo
     else
-      echo "No Tier 1 repo found, please provide Tier1 Repo. 
+      print_error "No REPO_URL provided, please provide Tier1 REPO_URL.
 Usage: bash setup-kcc.sh ENV [REPO_URL]
 ENV is one of the following
    local : will use the current directory .env file
    dev/prod/uat: will use the .env file from <ENV> folder in tier1-infra repo
-    REPO_URL is the tier1-infra repo url"
+REPO_URL is the tier1-infra repo url"
       exit 1
     fi
     source tier1-repo/bootstrap/$1/.env
@@ -169,5 +171,5 @@ EOF
 kubectl apply -f root-sync.yaml
 
 # Further steps
-# The root-sync.yaml file should be checked into the <tier1_infra-REPO> 
-# If .env is provided locally , it should be checked in relevant folder inside <tier1_infra-REPO>
+print_warning "The root-sync.yaml file should be checked into the <tier1_infra-REPO> 
+If .env is provided locally , it should be checked in relevant folder inside <tier1_infra-REPO>"
