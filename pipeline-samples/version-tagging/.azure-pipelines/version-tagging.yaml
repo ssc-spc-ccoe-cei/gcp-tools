@@ -4,6 +4,7 @@
 variables:
   VALIDATE_CHANGELOG: 'true'
 
+# a "Build Validation Policy" (PR trigger) must also be created
 trigger:
 - main
 

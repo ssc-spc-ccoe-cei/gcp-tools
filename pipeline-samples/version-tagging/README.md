@@ -1,5 +1,5 @@
 # Version Tagging
-A sample for a custom (basic) way to manage git tags and a changelog.
+A sample for a custom (basic) way to manage git tags and a change log.
 
 It follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
@@ -17,6 +17,7 @@ It follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 - `CHANGELOG.md` in repo root, if a change log is required.
 - If using Azure DevOps:
   - "Create tag" permission on repo for user "{project} Build Service ({organization})". This may be enabled by default depending on security settings.
+  - "Contribute" permission on repo for user "{project} Build Service ({organization})". This may only be required for the creation of the first tag depending on your environment.
   - A "Build Validation Policy" (PR trigger).
 - If using GitHub:
   - "contents" write permission on repo for GitHub Actions.  This may be enabled by default depending on security settings.
