@@ -1,6 +1,10 @@
 if [ $# -eq 0 ]; then
     echo "No environment variables found, please pass ENV name or local as argument.
-Script Usage: bash setup-kcc.sh <env/local> <ENV-Tier1-REPO>"
+Usage: bash setup-kcc.sh SOURCE [REPO_URL]
+SOURCE is one of the following
+   local : will use the current directory .env file
+   remote: will use the .env file from tier1-infra repo
+REPO_URL is the tier1-infra repo url"
     exit 1
 fi
 
@@ -11,7 +15,11 @@ then
   git clone $2
 else
   echo "No Tier 1 repo found, please provide Tier1 Repo. 
-Script Usage: bash setup-kcc.sh <env/local> <ENV-Tier1-REPO>"
+Usage: bash setup-kcc.sh SOURCE [REPO_URL]
+SOURCE is one of the following
+   local : will use the current directory .env file
+   remote: will use the .env file from tier1-infra repo
+REPO_URL is the tier1-infra repo url"
   exit 1
 fi
 
