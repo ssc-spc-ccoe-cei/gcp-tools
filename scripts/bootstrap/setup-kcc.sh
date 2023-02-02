@@ -1,3 +1,6 @@
+# Bash safeties: exit on error, pipelines can't hide errors
+set -eo pipefail
+
 # get the directory of this script
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
