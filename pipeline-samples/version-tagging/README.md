@@ -1,7 +1,7 @@
 # Version Tagging
 A sample for a custom (basic) way to manage git tags and a change log.
 
-It follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
+The pipeline follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 > **It does NOT support a "v" prefix.**
 
