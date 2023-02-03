@@ -1,0 +1,28 @@
+# A simple pipeline to increment version tags for a git repo
+
+# can be set to false to disable the check for an entry in CHANGELOG.md
+variables:
+  VALIDATE_CHANGELOG: 'true'
+
+# a "Build Validation Policy" (PR trigger) must also be created
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-22.04
+
+jobs:
+- job: version_tagging
+  steps:
+  - checkout: self
+    persistCredentials: true
+  
+  - script: |
+      echo "Checking out git submodule with 'bash modupdate.sh' ..."
+      bash modupdate.sh
+    displayName: 'Checkout git submodule'
+  
+  - script: |
+      echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
+      bash tools/scripts/cicd/version-tagging.sh
+    displayName: 'Validate git tag - create it on push to main trigger'
