@@ -8,37 +8,13 @@ SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 if [ $# -eq 0 ]; then
-    print_error "No environment variables found, please pass ENV name or local as argument.
-Usage: bash setup-kcc.sh ENV [REPO_URL]
-ENV is one of the following
-   local : will use the current directory .env file
-   dev/prod/uat: will use the .env file from <ENV> folder in tier1-infra repo
-REPO_URL is the tier1-infra repo url"
+    print_error "No input file provided.
+Usage: bash setup-kcc.sh PATH_TO_ENV_FILE"
     exit 1
 fi
 
 # source the env file
-if [ $1 = "local" ]
-then
-    echo "Local Env flag set , will use local .env"
-    source .env
-else
-    echo "Local Env flag NOT set , will use Env from remote tier1-infra repo"
-    # source the env file
-    if [ $2 ]
-    then
-      git clone $2 tier1-repo
-    else
-      print_error "No REPO_URL provided, please provide Tier1 REPO_URL.
-Usage: bash setup-kcc.sh ENV [REPO_URL]
-ENV is one of the following
-   local : will use the current directory .env file
-   dev/prod/uat: will use the .env file from <ENV> folder in tier1-infra repo
-REPO_URL is the tier1-infra repo url"
-      exit 1
-    fi
-    source tier1-repo/bootstrap/$1/.env
-fi
+source $1
 
 FOLDER_ID=$(gcloud resource-manager folders create --display-name=$LZ_FOLDER_NAME --organization=$ORG_ID --format="value(name)" --quiet | cut -d "/" -f 2)
 gcloud projects create $PROJECT_ID --set-as-default --organization=$ORG_ID
@@ -174,5 +150,4 @@ EOF
 kubectl apply -f root-sync.yaml
 
 # Further steps
-print_warning "The root-sync.yaml file should be checked into the <tier1_infra-REPO> 
-If .env is provided locally , it should be checked in relevant folder inside <tier1_infra-REPO>"
+print_warning "The root-sync.yaml file should be checked into the <tier1_infra-REPO>"
