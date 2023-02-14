@@ -141,8 +141,8 @@ spec:
   git:
     repo: "${CONFIG_SYNC_REPO}"
     branch: main # eg. : main
-    dir: "${CONFIG_SYNC_DIR}" # eg.: deploy
-    revision: "${CONFIG_SYNC_VERSION}" # ex. : 0.0.0
+    dir: "${CONFIG_SYNC_DIR}" # eg.: deploy/<env>
+    revision: "${CONFIG_SYNC_VERSION}"
     auth: token
     secretRef:
       name: git-creds
