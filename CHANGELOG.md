@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.0...0.1.1) (2023-02-14)
+
+
+### Bug Fixes
+
+* remove token from bootstrap .env, fix comments and broken links ([#11](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/11)) ([53efe0e](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/53efe0ead73a1bfd0b00a8b07fc7c89424229d7b))
+* removed remote functionality from setup-kcc.sh ([#8](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/8)) ([504d1f7](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/504d1f734f8ff2385be1e7f435e3bf33fe72c1fd))
+
 ## [0.1.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/v0.0.1...0.1.0) (2023-02-03)
 
 
