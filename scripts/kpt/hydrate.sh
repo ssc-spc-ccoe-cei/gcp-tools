@@ -113,7 +113,7 @@ fi
 # the hydrate-env function might need to be broken down into separate functions...
 
 # TODO: possible enhancement, loop on $(ls ${SOURCE_CUSTOMIZATION_DIR}) and validate folder names instead of hardcoded loop with skips
-for en in experimentation dev uat prod
+for en in experimentation dev preprod prod
 do
     # check if env. folder exists in source-customization
     if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${en}" ]; then
