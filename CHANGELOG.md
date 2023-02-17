@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.1...0.2.0) (2023-02-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* changing sandbox to experimentation and uat to preprod
+
+### Features
+
+* changing sandbox to experimentation and uat to preprod  ([eb6c15a](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/eb6c15a1defdb6bcab19d8fb548eca815fe11374))
+
 ## [0.1.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.0...0.1.1) (2023-02-14)
 
 
