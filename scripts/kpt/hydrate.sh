@@ -94,7 +94,7 @@ function hydrate-env () {
     # map deploy directory to docker then run nomos vet from image
     # volume mapping need absolute path
     print_info "Running 'nomos vet' on ${env_deploy_dir} ..."
-    docker run -v "$PWD/${env_deploy_dir}:/${env_deploy_dir}" gcr.io/config-management-release/nomos:stable nomos vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
+    docker run -v "$PWD/${env_deploy_dir}:/${env_deploy_dir}" gcr.io/config-management-release/nomos:v1.14.0-rc.1 nomos vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
 
     print_success "function 'hydrate-env ${1}' finished successfully."
 }
