@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.0...0.2.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* hydrate.sh nomos vet ([#17](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/17)) ([dbd7f04](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/dbd7f046625914dc297bc9be0463bdd6fb3b1231))
+
 ## [0.2.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.1...0.2.0) (2023-02-17)
 
 
