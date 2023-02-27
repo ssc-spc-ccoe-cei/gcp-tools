@@ -99,29 +99,37 @@ function hydrate-env () {
     print_success "function 'hydrate-env ${1}' finished successfully."
 }
 
-# check if source directories are valid
-if [ ! -d "${SOURCE_BASE_DIR}" ]; then
-    print_error "invalid SOURCE_BASE_DIR: ${SOURCE_BASE_DIR}"
-    exit 1
-fi
-if [ ! -d "${SOURCE_CUSTOMIZATION_DIR}" ]; then
-    print_error "invalid SOURCE_CUSTOMIZATION_DIR: ${SOURCE_CUSTOMIZATION_DIR}"
-    exit 1
-fi
-
-# TODO: handle test folder, it should only run the hydration (not the validation againts the deploy folder)
-# the hydrate-env function might need to be broken down into separate functions...
-
-# TODO: possible enhancement, loop on $(ls ${SOURCE_CUSTOMIZATION_DIR}) and validate folder names instead of hardcoded loop with skips
-
-for en in experimentation dev preprod prod
+for folder in configsync security workloads
 do
-    # check if env. folder exists in source-customization
-    if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${en}" ]; then
-        hydrate-env "${en}"
-    else
-        print_info "'${SOURCE_CUSTOMIZATION_DIR}/${en}' does not exists, skipping."
+    # move into folder
+    cd ${folder}
+
+    # check if source directories are valid
+    if [ ! -d "${SOURCE_BASE_DIR}" ]; then
+        print_error "invalid SOURCE_BASE_DIR: ${SOURCE_BASE_DIR}"
+        exit 1
     fi
+    if [ ! -d "${SOURCE_CUSTOMIZATION_DIR}" ]; then
+        print_error "invalid SOURCE_CUSTOMIZATION_DIR: ${SOURCE_CUSTOMIZATION_DIR}"
+        exit 1
+    fi
+
+    # TODO: handle test folder, it should only run the hydration (not the validation againts the deploy folder)
+    # the hydrate-env function might need to be broken down into separate functions...
+
+    # TODO: possible enhancement, loop on $(ls ${SOURCE_CUSTOMIZATION_DIR}) and validate folder names instead of hardcoded loop with skips
+
+    for en in experimentation dev preprod prod
+    do
+        # check if env. folder exists in source-customization
+        if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${en}" ]; then
+            hydrate-env "${en}"
+        else
+            print_info "'${SOURCE_CUSTOMIZATION_DIR}/${en}' does not exists, skipping."
+        fi
+    done
+    # return to root of repo
+    cd ..
 done
 
 if [ ${exit_code} -ne 0 ]; then
