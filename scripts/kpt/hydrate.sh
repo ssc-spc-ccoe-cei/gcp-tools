@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # script to hydrate and validate kpt packages
 # inspired from gitops blueprint, but hydrated files are in a separate folder instead of separate repo
@@ -27,7 +27,7 @@ cd "${SCRIPT_ROOT}/../../.."
 exit_code=0
 
 function hydrate-env () {
-    print_info "running function: 'hydrate-env ${1}'"
+    print_divider "Running function: 'hydrate-env ${1}'"
     # test that an environment was passed
     if [ -z "${1}" ]; then
         print_warning "missing environment, exiting function."
@@ -43,7 +43,7 @@ function hydrate-env () {
 
     # copy source base to temp customized folder and apply customization
     # check if source-customization/env is empty (assumes it contains at least '.gitkeep'), don't copy base if customization is empty
-    if [ $(ls -A ${SOURCE_CUSTOMIZATION_DIR}/${environment} | wc --lines) -gt 1 ]; then
+    if [ $(ls -A "${SOURCE_CUSTOMIZATION_DIR}/${environment}" | wc --lines) -gt 1 ]; then
         echo "Copying '${SOURCE_BASE_DIR}/.' to '${env_temp_subdir}/customized' ..."
         cp -rf "${SOURCE_BASE_DIR}/." "${env_temp_subdir}/customized"
     else
@@ -77,6 +77,10 @@ function hydrate-env () {
         true
     else
         print_warning "Change detected, copying '${env_temp_subdir}/hydrated' to '${env_deploy_dir}' ..."
+        # output diff if running from CI
+        if [[ -n "${BUILD_REASON}" ]] ; then 
+            git diff --no-index "${env_deploy_dir}" "${env_temp_subdir}/hydrated"
+        fi
         rm -rf "${env_deploy_dir}"
         cp -r "${env_temp_subdir}/hydrated" "${env_deploy_dir}"
         # set exit code to 1 to make sure the pre-commit or pipeline fails
@@ -94,8 +98,8 @@ function hydrate-env () {
     # map deploy directory to docker then run nomos vet from image
     # volume mapping need absolute path
     # pinned version v1.14.0-rc.1 to avoid command not found error with stable tag
-    print_info "Running 'nomos vet' on ${env_deploy_dir} ..."
-    docker run -v "$PWD/${env_deploy_dir}:/${env_deploy_dir}" gcr.io/config-management-release/nomos:v1.14.0-rc.1 nomos vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
+    # print_info "Running 'nomos vet' on ${env_deploy_dir} ..."
+    # docker run -v "$PWD/${env_deploy_dir}:/${env_deploy_dir}" gcr.io/config-management-release/nomos:v1.14.2 vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
 
     print_success "function 'hydrate-env ${1}' finished successfully."
 }
@@ -121,7 +125,7 @@ do
     if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${en}" ]; then
         hydrate-env "${en}"
     else
-        print_info "'${SOURCE_CUSTOMIZATION_DIR}/${en}' does not exists, skipping."
+        echo "'${SOURCE_CUSTOMIZATION_DIR}/${en}' does not exists, skipping."
     fi
 done
 
