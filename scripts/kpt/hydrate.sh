@@ -78,7 +78,7 @@ function hydrate-env () {
     else
         print_warning "Change detected, copying '${env_temp_subdir}/hydrated' to '${env_deploy_dir}' ..."
         # output diff if running from CI
-        if [[ -n "${BUILD_REASON}" ]] ; then 
+        if [[ -n "${BUILD_REASON}" || -n "${GITHUB_EVENT_NAME}" ]] ; then 
             git diff --no-index "${env_deploy_dir}" "${env_temp_subdir}/hydrated"
         fi
         rm -rf "${env_deploy_dir}"
