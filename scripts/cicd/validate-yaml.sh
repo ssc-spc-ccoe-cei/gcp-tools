@@ -13,8 +13,8 @@ SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [[ -n "${RUN_WITH_DOCKER_IMAGE}" ]] ; then
     docker run \
         --volume /var/run/docker.sock:/var/run/docker.sock \
-        --volume "$PWD:$PWD" \
-        --workdir "$PWD" \
+        --volume $PWD:$PWD \
+        --workdir $PWD \
         --user $(id -u):$(id -g) \
         --env VALIDATE_YAML_KUBEVAL \
         --env VALIDATE_YAML_NOMOS \

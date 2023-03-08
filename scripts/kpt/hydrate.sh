@@ -41,7 +41,7 @@ cd "${SCRIPT_ROOT}/../../.."
 # workaround for running kpt CLI through docker on pipeline runners
 # the render results are different if running directly in OS
 if [[ "${RUN_KPT_CLI_WITH_DOCKER}" == "true" ]] ; then
-    KPT="docker run -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w \"$PWD\" --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
+    KPT="docker run -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:$PWD -w $PWD --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
     echo "kpt will run with container image: ${KPT}"
 else
     KPT="kpt"
