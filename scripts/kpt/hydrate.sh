@@ -117,11 +117,12 @@ function hydrate-env () {
 
     ### START - VALIDATE YAML FILES POST HYDRATION ####
     # defaults to always run, unless environment variable flags are set to false
+    # validates files in the '${env_temp_subdir}/hydrated' directory to avoid kubeval from re-linting files
     # TODO: possibly handle validation exit codes to separate from other failures
 
     if [[ "${VALIDATE_YAML_KUBEVAL}" != "false" ]] ; then
         print_info "Validating YAML files with 'kubeval' ..."
-        ${KPT} fn eval -i kubeval:v0.3.0 "${env_deploy_dir}" --truncate-output=false -- ignore_missing_schemas=true strict=true
+        ${KPT} fn eval -i kubeval:v0.3.0 "${env_temp_subdir}/hydrated" --truncate-output=false -- ignore_missing_schemas=true strict=true
         print_success "'kubeval' was successful."
     fi
 
@@ -129,12 +130,12 @@ function hydrate-env () {
         print_info "Validating YAML files with 'nomos vet' ..."
         if gcloud version | grep nomos ; then
             echo "Running nomos with locally installed CLI."
-            nomos vet --no-api-server-check --source-format unstructured --path "${env_deploy_dir}"
+            nomos vet --no-api-server-check --source-format unstructured --path "${env_temp_subdir}/hydrated"
         else
             echo "Running nomos with docker image: ${NOMOS}"
-            docker run --volume "$PWD/${env_deploy_dir}:/${env_deploy_dir}" \
+            docker run --volume "$PWD/${env_temp_subdir}/hydrated:/${env_temp_subdir}/hydrated" \
                 gcr.io/config-management-release/nomos:${NOMOS_VERSION} \
-                vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
+                vet --no-api-server-check --source-format unstructured --path "/${env_temp_subdir}/hydrated"
         fi
         print_success "'nomos vet' was successful."
     fi
