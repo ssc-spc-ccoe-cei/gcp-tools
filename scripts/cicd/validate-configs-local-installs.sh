@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Bash safeties: exit on error, pipelines can't hide errors
 set -o errexit

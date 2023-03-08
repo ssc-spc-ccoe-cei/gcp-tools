@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # scripts are designed to run from the root of the deployment git repo
 # the directories defined here are relative to that directory

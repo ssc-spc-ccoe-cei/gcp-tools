@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # this script is meant to be sourced from other scripts to output text in color
 # the color codes are between '\033[' and 'm'
@@ -7,7 +7,7 @@
 print_divider() {
   lightpurple='\033[1;35m'
   nocolor='\033[0m'
-  echo -e "\n${lightpurple}##########\n## ${1}\n##########${nocolor}"
+  echo -e "\n${lightpurple}####################  ${1}  ####################${nocolor}\n"
 }
 
 print_info() {
