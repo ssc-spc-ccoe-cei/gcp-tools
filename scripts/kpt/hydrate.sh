@@ -128,13 +128,14 @@ function hydrate-env () {
     if [[ "${VALIDATE_YAML_NOMOS}" != "false" ]] ; then
         print_info "Validating YAML files with 'nomos vet' ..."
         if gcloud version | grep nomos ; then
-            NOMOS="nomos"
             echo "Running nomos with locally installed CLI."
+            nomos vet --no-api-server-check --source-format unstructured --path "${env_deploy_dir}"
         else
-            NOMOS="docker run --volume \"$PWD/${env_deploy_dir}:/${env_deploy_dir}\" gcr.io/config-management-release/nomos:${NOMOS_VERSION}"
-            echo "Running nomos with container image: ${NOMOS}"
+            echo "Running nomos with docker image: ${NOMOS}"
+            docker run --volume "$PWD/${env_deploy_dir}:/${env_deploy_dir}" \
+                gcr.io/config-management-release/nomos:${NOMOS_VERSION} \
+                vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
         fi
-        ${NOMOS} vet --no-api-server-check --source-format unstructured --path "/${env_deploy_dir}"
         print_success "'nomos vet' was successful."
     fi
     ### END - VALIDATE YAML FILES POST HYDRATION ####
