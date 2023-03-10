@@ -9,6 +9,7 @@
 set -o errexit
 set -o pipefail
 
+# pin kpt and nomos versions
 KPT_VERSION='v1.0.0-beta.21'
 NOMOS_VERSION='v1.14.2'
 
@@ -19,16 +20,6 @@ SOURCE_BASE_DIR="source-base"
 SOURCE_CUSTOMIZATION_DIR="source-customization"
 TEMP_DIR="temp-workspace"
 
-# check if source directories are valid
-if [ ! -d "${SOURCE_BASE_DIR}" ]; then
-    print_error "invalid SOURCE_BASE_DIR: ${SOURCE_BASE_DIR}"
-    exit 1
-fi
-if [ ! -d "${SOURCE_CUSTOMIZATION_DIR}" ]; then
-    print_error "invalid SOURCE_CUSTOMIZATION_DIR: ${SOURCE_CUSTOMIZATION_DIR}"
-    exit 1
-fi
-
 # get the directory of this script
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -38,16 +29,34 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 # ensure the working directory is set to the root of the deployment git repo
 cd "${SCRIPT_ROOT}/../../.."
 
-# workaround for running kpt CLI through docker on pipeline runners
-# the render results are different if running directly in OS
+# check if directories are valid
+if [ ! -d "${DEPLOY_DIR}" ]; then
+    print_error "invalid DEPLOY_DIR: ${DEPLOY_DIR}"
+    exit 1
+fi
+if [ ! -d "${SOURCE_BASE_DIR}" ]; then
+    print_error "invalid SOURCE_BASE_DIR: ${SOURCE_BASE_DIR}"
+    exit 1
+fi
+if [ ! -d "${SOURCE_CUSTOMIZATION_DIR}" ]; then
+    print_error "invalid SOURCE_CUSTOMIZATION_DIR: ${SOURCE_CUSTOMIZATION_DIR}"
+    exit 1
+fi
+if ! grep "^${TEMP_DIR}/" .gitignore >/dev/null 2>&1 ; then
+    print_error "TEMP_DIR/ is not in '.gitignore': ${TEMP_DIR}"
+    exit 1
+fi
+
+# kpt is not installed on pipeline runners, if this flag is set, run kpt CLI with docker image
 if [[ "${RUN_KPT_CLI_WITH_DOCKER}" == "true" ]] ; then
-    KPT="docker run -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:$PWD -w $PWD --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
+    KPT="docker run --volume /var/run/docker.sock:/var/run/docker.sock --volume $PWD:/workspace --workdir /workspace --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
     echo "kpt will run with container image: ${KPT}"
 else
     KPT="kpt"
     echo "kpt will run with locally installed CLI."
 fi
 
+# initialize exit code variable, to keep track of failures while continuing the script executions
 exit_code=0
 
 function hydrate-env () {
@@ -102,10 +111,10 @@ function hydrate-env () {
     else
         print_warning "Change detected, copying '${env_temp_subdir}/hydrated' to '${env_deploy_dir}' ..."
         
-        # output diff if running from CI but don't let it fail the script (|| true)
-        if [[ -n "${BUILD_REASON}" || -n "${GITHUB_EVENT_NAME}" ]] ; then 
-            git diff --no-index "${env_deploy_dir}" "${env_temp_subdir}/hydrated" || true
-        fi
+        # output diff if running from CI but don't let it fail the script (|| true) - comment out, could be too verbose
+        # if [[ -n "${BUILD_REASON}" || -n "${GITHUB_EVENT_NAME}" ]] ; then 
+        #     git diff --no-index "${env_deploy_dir}" "${env_temp_subdir}/hydrated" || true
+        # fi
 
         rm -rf "${env_deploy_dir}"
         cp -r "${env_temp_subdir}/hydrated" "${env_deploy_dir}"
@@ -117,7 +126,7 @@ function hydrate-env () {
 
     ### START - VALIDATE YAML FILES POST HYDRATION ####
     # defaults to always run, unless environment variable flags are set to false
-    # validates files in the '${env_temp_subdir}/hydrated' directory to avoid kubeval from re-linting files
+    # validate files in the '${env_temp_subdir}/hydrated' directory to avoid kubeval from re-linting files
     # TODO: possibly handle validation exit codes to separate from other failures
 
     if [[ "${VALIDATE_YAML_KUBEVAL}" != "false" ]] ; then
@@ -128,15 +137,17 @@ function hydrate-env () {
 
     if [[ "${VALIDATE_YAML_NOMOS}" != "false" ]] ; then
         print_info "Validating YAML files with 'nomos vet' ..."
-        if gcloud version | grep nomos ; then
-            echo "Running nomos with locally installed CLI."
-            nomos vet --no-api-server-check --source-format unstructured --path "${env_temp_subdir}/hydrated"
-        else
+        # check if nomos CLI is installed
+        # if nomos help >/dev/null 2>&1 ; then
+        #     echo "Running nomos with locally installed CLI."
+        #     nomos vet --no-api-server-check --source-format unstructured --path "${env_temp_subdir}/hydrated"
+        # else
             echo "Running nomos with docker image: ${NOMOS}"
-            docker run --volume "$PWD/${env_temp_subdir}/hydrated:/${env_temp_subdir}/hydrated" \
+            docker run --volume "$PWD:/workspace" \
+                --workdir /workspace \
                 gcr.io/config-management-release/nomos:${NOMOS_VERSION} \
-                vet --no-api-server-check --source-format unstructured --path "/${env_temp_subdir}/hydrated"
-        fi
+                vet --no-api-server-check --source-format unstructured --path "${env_temp_subdir}/hydrated"
+        # fi
         print_success "'nomos vet' was successful."
     fi
     ### END - VALIDATE YAML FILES POST HYDRATION ####
@@ -149,13 +160,13 @@ function hydrate-env () {
 
 # TODO: possible enhancement, loop on $(ls ${SOURCE_CUSTOMIZATION_DIR}) and validate folder names instead of hardcoded loop with skips
 
-for en in experimentation dev preprod prod
+for env_subdir in experimentation dev preprod prod
 do
     # check if env. folder exists in source-customization
-    if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${en}" ]; then
-        hydrate-env "${en}"
+    if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${env_subdir}" ]; then
+        hydrate-env "${env_subdir}"
     else
-        echo "'${SOURCE_CUSTOMIZATION_DIR}/${en}' does not exists, skipping."
+        echo "'${SOURCE_CUSTOMIZATION_DIR}/${env_subdir}' does not exists, skipping."
     fi
 done
 

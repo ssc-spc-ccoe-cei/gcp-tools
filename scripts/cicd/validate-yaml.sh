@@ -9,18 +9,21 @@ set -o pipefail
 # get the directory of this script
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# if defined, run with the docker image passed in RUN_WITH_DOCKER_IMAGE
-if [[ -n "${RUN_WITH_DOCKER_IMAGE}" ]] ; then
+# for future use
+# if RUN_WITH_DOCKER is true, run with the docker image passed in DOCKER_IMAGE
+# TODO: set default image if DOCKER_IMAGE not defined
+if [[ "${RUN_WITH_DOCKER}" == "true" ]] ; then
     docker run \
         --volume /var/run/docker.sock:/var/run/docker.sock \
-        --volume $PWD:$PWD \
-        --workdir $PWD \
+        --volume $PWD:/workspace \
+        --workdir /workspace \
         --user $(id -u):$(id -g) \
         --env VALIDATE_YAML_KUBEVAL \
         --env VALIDATE_YAML_NOMOS \
-        ${RUN_WITH_DOCKER_IMAGE} \
+        ${DOCKER_IMAGE} \
         bash ${SCRIPT_ROOT}/../kpt/hydrate.sh
 else
+    # kpt is not installed on pipeline runners, set this flag to run kpt CLI with its docker image
     export RUN_KPT_CLI_WITH_DOCKER='true'
     bash ${SCRIPT_ROOT}/../kpt/hydrate.sh
 fi
