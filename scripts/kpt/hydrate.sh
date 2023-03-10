@@ -123,36 +123,49 @@ function hydrate-env () {
         # print the git status, could be commented out if too verbose
         git status
     fi
-
-    ### START - VALIDATE YAML FILES POST HYDRATION ####
-    # defaults to always run, unless environment variable flags are set to false
+    
     # validate files in the '${env_temp_subdir}/hydrated' directory to avoid kubeval from re-linting files
+    validate_yaml_in_dir "${env_temp_subdir}/hydrated"
+
+    print_success "function 'hydrate-env ${1}' finished successfully."
+}
+
+# function to run validation in a given directory, if environment variable is defined
+validate_yaml_in_dir() {
+    
+    if [ -d "${1}" ]; then
+        dir_to_validate="${1}"
+    else
+        print_error "Invalid directory passed as argument: '${1}'"
+        exit 1
+    fi
+
+    print_info "Starting validation in directory '${dir_to_validate}'"
+
+    # defaults to always run, unless environment variable flags are set to false
     # TODO: possibly handle validation exit codes to separate from other failures
 
     if [[ "${VALIDATE_YAML_KUBEVAL}" != "false" ]] ; then
-        print_info "Validating YAML files with 'kubeval' ..."
-        ${KPT} fn eval -i kubeval:v0.3.0 "${env_temp_subdir}/hydrated" --truncate-output=false -- ignore_missing_schemas=true strict=true
+        echo "Validating YAML files with 'kubeval' ..."
+        ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --truncate-output=false -- ignore_missing_schemas=true strict=true
         print_success "'kubeval' was successful."
     fi
 
     if [[ "${VALIDATE_YAML_NOMOS}" != "false" ]] ; then
-        print_info "Validating YAML files with 'nomos vet' ..."
+        echo "Validating YAML files with 'nomos vet' ..."
         # check if nomos CLI is installed
-        # if nomos help >/dev/null 2>&1 ; then
-        #     echo "Running nomos with locally installed CLI."
-        #     nomos vet --no-api-server-check --source-format unstructured --path "${env_temp_subdir}/hydrated"
-        # else
+        if nomos help >/dev/null 2>&1 ; then
+            echo "Running nomos with locally installed CLI."
+            nomos vet --no-api-server-check --source-format unstructured --path "${dir_to_validate}"
+        else
             echo "Running nomos with docker image: ${NOMOS}"
             docker run --volume "$PWD:/workspace" \
                 --workdir /workspace \
                 gcr.io/config-management-release/nomos:${NOMOS_VERSION} \
-                vet --no-api-server-check --source-format unstructured --path "${env_temp_subdir}/hydrated"
-        # fi
+                vet --no-api-server-check --source-format unstructured --path "${dir_to_validate}"
+        fi
         print_success "'nomos vet' was successful."
     fi
-    ### END - VALIDATE YAML FILES POST HYDRATION ####
-
-    print_success "function 'hydrate-env ${1}' finished successfully."
 }
 
 # TODO: handle test folder, it should only run the hydration (not the validation againts the deploy folder)
