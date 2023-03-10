@@ -77,8 +77,17 @@ function hydrate-env () {
     # copy source base to temp customized folder and apply customization
     # check if source-customization/env is empty (assumes it contains at least '.gitkeep'), don't copy base if customization is empty
     if [ $(ls -A "${SOURCE_CUSTOMIZATION_DIR}/${environment}" | wc --lines) -gt 1 ]; then
-        echo "Copying '${SOURCE_BASE_DIR}/.' to '${env_temp_subdir}/customized' ..."
+        echo "Copying '${SOURCE_BASE_DIR}/.' to '${env_temp_subdir}/customized' and verifying customization ..."
         cp -rf "${SOURCE_BASE_DIR}/." "${env_temp_subdir}/customized"
+        # check that each setters file in the source base folder are in the customization folder
+        for setters_file in $(find ${SOURCE_BASE_DIR} -name "setters*.yaml" | cut --delimiter '/' --fields 2-)
+        do
+            if [ ! -f "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}" ]; then
+                print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
+                exit 1
+            fi
+            # TODO: maybe check if there is a diff?
+        done
     else
         echo "'${SOURCE_CUSTOMIZATION_DIR}/${environment}' is empty, skipping '${SOURCE_BASE_DIR}' copy."
     fi
