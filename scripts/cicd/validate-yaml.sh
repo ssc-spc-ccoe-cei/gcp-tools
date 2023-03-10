@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# script to run YAML validation in CI environment to avoid pitfalls of running in inconsitent environments
+# script to run YAML validation in CI environment
 
 # Bash safeties: exit on error, pipelines can't hide errors
 set -o errexit
 set -o pipefail
 
 # get the directory of this script
-SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # for future use
 # if RUN_WITH_DOCKER is true, run with the docker image passed in DOCKER_IMAGE
@@ -21,9 +21,9 @@ if [[ "${RUN_WITH_DOCKER}" == "true" ]] ; then
         --env VALIDATE_YAML_KUBEVAL \
         --env VALIDATE_YAML_NOMOS \
         ${DOCKER_IMAGE} \
-        bash ${SCRIPT_ROOT}/../kpt/hydrate.sh
+        bash tools/scripts/kpt/hydrate.sh
 else
     # kpt is not installed on pipeline runners, set this flag to run kpt CLI with its docker image
     export RUN_KPT_CLI_WITH_DOCKER='true'
-    bash ${SCRIPT_ROOT}/../kpt/hydrate.sh
+    bash tools/scripts/kpt/hydrate.sh
 fi
