@@ -77,17 +77,23 @@ function hydrate-env () {
     # copy source base to temp customized folder and apply customization
     # check if source-customization/env is empty (assumes it contains at least '.gitkeep'), don't copy base if customization is empty
     if [ $(ls -A "${SOURCE_CUSTOMIZATION_DIR}/${environment}" | wc --lines) -gt 1 ]; then
-        echo "Copying '${SOURCE_BASE_DIR}/.' to '${env_temp_subdir}/customized' and verifying customization ..."
+        echo "Copying '${SOURCE_BASE_DIR}/.' to '${env_temp_subdir}/customized' ..."
         cp -rf "${SOURCE_BASE_DIR}/." "${env_temp_subdir}/customized"
+
         # check that each setters file in the source base folder are in the customization folder
-        for setters_file in $(find ${SOURCE_BASE_DIR} -name "setters*.yaml" | cut --delimiter '/' --fields 2-)
-        do
-            if [ ! -f "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}" ]; then
-                print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
-                exit 1
-            fi
-            # TODO: maybe check if there is a diff?
-        done
+        if [[ "${VALIDATE_SETTERS_CUSTOMIZATION}" != "false" ]] ; then
+            echo "Validating that all 'setters.yaml' files exist in '${SOURCE_CUSTOMIZATION_DIR}/${environment}' ..."
+            for setters_file in $(find ${SOURCE_BASE_DIR} -name "setters*.yaml" | cut --delimiter '/' --fields 2-)
+            do
+                if [ ! -f "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}" ]; then
+                    print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
+                    exit 1
+                fi
+                # TODO: maybe check if there is a diff?
+            done
+        else
+            echo "Skipping setters customization validation."
+        fi
     else
         echo "'${SOURCE_CUSTOMIZATION_DIR}/${environment}' is empty, skipping '${SOURCE_BASE_DIR}' copy."
     fi
@@ -160,6 +166,8 @@ validate_yaml_in_dir() {
         rm -rf "${TEMP_DIR}/kubeval/${dir_to_validate}"
         ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --output="${TEMP_DIR}/kubeval/${dir_to_validate}" --truncate-output=false -- ignore_missing_schemas=true strict=true
         print_success "'kubeval' was successful."
+    else
+        echo "Skipping YAML validation with 'kubeval'."
     fi
 
     if [[ "${VALIDATE_YAML_NOMOS}" != "false" ]] ; then
@@ -176,6 +184,8 @@ validate_yaml_in_dir() {
                 vet --no-api-server-check --source-format unstructured --path "${dir_to_validate}"
         fi
         print_success "'nomos vet' was successful."
+    else
+        echo "Skipping YAML validation with 'nomos'."
     fi
 }
 
