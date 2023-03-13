@@ -133,8 +133,7 @@ function hydrate-env () {
         git status
     fi
     
-    # validate files in the '${env_temp_subdir}/hydrated' directory to avoid kubeval from re-linting files
-    validate_yaml_in_dir "${env_temp_subdir}/hydrated"
+    validate_yaml_in_dir "${env_deploy_dir}"
 
     print_success "function 'hydrate-env ${1}' finished successfully."
 }
@@ -156,7 +155,10 @@ validate_yaml_in_dir() {
 
     if [[ "${VALIDATE_YAML_KUBEVAL}" != "false" ]] ; then
         echo "Validating YAML files with 'kubeval' ..."
-        ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --truncate-output=false -- ignore_missing_schemas=true strict=true
+        # whether it's by design or not, kubeval can change quotes in annotations and remove duplicate resources (maybe 'kpt fn eval' does this?)
+        # to workaround this, set an '--output' directory to avoid in-place modifications, the directory must not exist
+        rm -rf "${TEMP_DIR}/kubeval/${dir_to_validate}"
+        ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --output="${TEMP_DIR}/kubeval/${dir_to_validate}" --truncate-output=false -- ignore_missing_schemas=true strict=true
         print_success "'kubeval' was successful."
     fi
 
