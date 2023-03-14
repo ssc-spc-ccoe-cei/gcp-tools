@@ -5,6 +5,11 @@
 # this allows for reviewing source files and hydrated files in a single Pull Request
 # https://github.com/GoogleCloudPlatform/blueprints/blob/main/catalog/gitops/hydration-trigger.yaml
 
+# some of the script's execution can be controlled with environment variables.
+#   VALIDATE_SETTERS_CUSTOMIZATION: set to 'false' to disable the check for setters customization
+#   VALIDATE_YAML_KUBEVAL: set to 'false' to disable the YAML file validation with kubeval
+#   VALIDATE_YAML_NOMOS: set to 'false' to disable the YAML file validation with nomos
+
 # TODO: add better error handling/trapping
 set -o errexit
 set -o pipefail
@@ -82,7 +87,7 @@ function hydrate-env () {
 
         # check that each setters file in the source base folder are in the customization folder
         if [[ "${VALIDATE_SETTERS_CUSTOMIZATION}" != "false" ]] ; then
-            echo "Validating that all 'setters.yaml' files exist in '${SOURCE_CUSTOMIZATION_DIR}/${environment}' ..."
+            echo "Validating that all 'setters*.yaml' files exist in '${SOURCE_CUSTOMIZATION_DIR}/${environment}' ..."
             for setters_file in $(find ${SOURCE_BASE_DIR} -name "setters*.yaml" | cut --delimiter '/' --fields 2-)
             do
                 if [ ! -f "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}" ]; then

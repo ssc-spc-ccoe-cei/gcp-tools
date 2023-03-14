@@ -14,7 +14,7 @@ A sample to validate that YAML configs have been properly hydrated.
 
 ## Usage
 
-All validations will run by default, some can be disabled by adding environment variables in the "Validate YAML" step:
+All validations will run by default, some can be disabled by adding environment variables in the "Validate YAML" step, for example:
 ```yaml
   env:
     VALIDATE_SETTERS_CUSTOMIZATION: 'false'
