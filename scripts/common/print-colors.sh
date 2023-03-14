@@ -4,6 +4,12 @@
 # the color codes are between '\033[' and 'm'
 # https://linuxhandbook.com/change-echo-output-color/
 
+print_divider() {
+  lightpurple='\033[1;35m'
+  nocolor='\033[0m'
+  echo -e "\n${lightpurple}####################  ${1}  ####################${nocolor}\n"
+}
+
 print_info() {
   lightcyan='\033[1;36m'
   nocolor='\033[0m'
