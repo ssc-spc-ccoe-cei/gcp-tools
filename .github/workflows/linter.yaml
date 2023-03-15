@@ -8,9 +8,6 @@ name: Lint Code Base
 
 # only run during PRs or manually
 on:
-  # push:
-  #   branches-ignore: [master, main]
-    # Remove the line above to run when pushing to master
   pull_request:
     branches: [main]
 
@@ -29,14 +26,14 @@ jobs:
           # list of changed files within `super-linter`
           fetch-depth: 0
 
-      - name: shellcheck command line
-        if: ${{ success() || failure() }}
-        run: |
-          for sh_file in $(git diff origin/main --name-only -- '*.sh')
-          do
-            echo -e "\n##############################\n## Checking '${sh_file}' \n##############################"
-            shellcheck --color --format=json1 ${sh_file}
-          done
+      # - name: shellcheck command line
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     for sh_file in $(git diff origin/main --name-only -- '*.sh')
+      #     do
+      #       echo -e "\n##############################\n## Checking '${sh_file}' \n##############################"
+      #       shellcheck --color --format=json1 ${sh_file}
+      #     done
 
       ################################
       # Run Linter against code base
@@ -63,7 +60,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
           VALIDATE_BASH: true
-          SHELLCHECK_OPTS: "--severity=error"
+          SHELLCHECK_OPTS: "--severity=style --format=json1"
 
       - name: Lint Docker
         if: ${{ success() || failure() }}
