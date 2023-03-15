@@ -7,17 +7,17 @@ pool:
   vmImage: ubuntu-22.04
 
 jobs:
-- job: validate_yaml
-  steps:
-  - checkout: self
-    persistCredentials: true
+  - job: validate_yaml
+    steps:
+      - checkout: self
+        persistCredentials: true
 
-  - script: |
-      echo "Checking out git submodule with 'bash modupdate.sh' ..."
-      bash modupdate.sh
-    displayName: 'Checkout git submodule'
+      - script: |
+          echo "Checking out git submodule with 'bash modupdate.sh' ..."
+          bash modupdate.sh
+        displayName: 'Checkout git submodule'
 
-  - script: |
-      echo "Running 'bash tools/scripts/cicd/validate-yaml.sh' ..."
-      bash tools/scripts/cicd/validate-yaml.sh
-    displayName: 'Validate YAML'
+      - script: |
+          echo "Running 'bash tools/scripts/cicd/validate-yaml.sh' ..."
+          bash tools/scripts/cicd/validate-yaml.sh
+        displayName: 'Validate YAML'

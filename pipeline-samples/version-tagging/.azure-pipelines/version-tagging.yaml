@@ -6,23 +6,23 @@ variables:
 
 # a "Build Validation Policy" (PR trigger) must also be created
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-22.04
 
 jobs:
-- job: version_tagging
-  steps:
-  - checkout: self
-    persistCredentials: true
+  - job: version_tagging
+    steps:
+      - checkout: self
+        persistCredentials: true
 
-  - script: |
-      echo "Checking out git submodule with 'bash modupdate.sh' ..."
-      bash modupdate.sh
-    displayName: 'Checkout git submodule'
+      - script: |
+          echo "Checking out git submodule with 'bash modupdate.sh' ..."
+          bash modupdate.sh
+        displayName: 'Checkout git submodule'
 
-  - script: |
-      echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
-      bash tools/scripts/cicd/version-tagging.sh
-    displayName: 'Validate git tag - create it on push to main trigger'
+      - script: |
+          echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
+          bash tools/scripts/cicd/version-tagging.sh
+        displayName: 'Validate git tag - create it on push to main trigger'
