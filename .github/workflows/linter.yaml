@@ -44,6 +44,9 @@ jobs:
           VALIDATE_YAML: true
           YAML_CONFIG_FILE: .yaml-lint-config.yaml
       
+      # use SHELLCHECK_OPTS to ignore certain errors or add comments in problem script
+      # https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md
+      # SC2016: 
       - name: Lint Bash
         if: ${{ success() || failure() }}
         uses: github/super-linter/slim@v4
@@ -52,6 +55,8 @@ jobs:
           DEFAULT_BRANCH: main
           LINTER_RULES_PATH: .github/linter-rules
           VALIDATE_BASH: true
+          # SHELLCHECK_OPTS: "-S warning -e SC2016"
+          SHELLCHECK_OPTS: "-S warning"
       
       - name: Lint Docker
         if: ${{ success() || failure() }}

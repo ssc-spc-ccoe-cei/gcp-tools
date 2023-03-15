@@ -11,6 +11,7 @@
 #   VALIDATE_YAML_NOMOS: set to 'false' to disable the YAML file validation with nomos
 
 # TODO: add better error handling/trapping
+# Bash safeties: exit on error, pipelines can't hide errors
 set -o errexit
 set -o pipefail
 
@@ -52,13 +53,13 @@ if ! grep "^${TEMP_DIR}/" .gitignore >/dev/null 2>&1 ; then
     exit 1
 fi
 
-# kpt is not installed on pipeline runners, if this flag is set, run kpt CLI with docker image
-if [[ "${RUN_KPT_CLI_WITH_DOCKER}" == "true" ]] ; then
-    KPT="docker run --volume /var/run/docker.sock:/var/run/docker.sock --volume $PWD:/workspace --workdir /workspace --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
-    echo "kpt will run with container image: ${KPT}"
-else
+# run kpt CLI with docker image when not installed (it is not installed on pipeline runners)
+if [[ "v$(kpt version)" == "${KPT_VERSION}" ]] ; then
+    echo "kpt CLI version '$(kpt version)' is installed and will be used."
     KPT="kpt"
-    echo "kpt will run with locally installed CLI."
+else
+    KPT="docker run --volume /var/run/docker.sock:/var/run/docker.sock --volume $PWD:/workspace --workdir /workspace --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
+    echo "kpt will run with docker image: ${KPT}"
 fi
 
 # initialize exit code variable, to keep track of failures while continuing the script executions
@@ -94,7 +95,7 @@ function hydrate-env () {
                     print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
                     exit 1
                 fi
-                # TODO: maybe check if there is a diff?
+                # TODO: possible enhancement, maybe check if there is a diff?
             done
         else
             echo "Skipping setters customization validation."
@@ -131,11 +132,6 @@ function hydrate-env () {
     else
         print_warning "Change detected, copying '${env_temp_subdir}/hydrated' to '${env_deploy_dir}' ..."
         
-        # output diff if running from CI but don't let it fail the script (|| true) - comment out, could be too verbose
-        # if [[ -n "${BUILD_REASON}" || -n "${GITHUB_EVENT_NAME}" ]] ; then 
-        #     git diff --no-index "${env_deploy_dir}" "${env_temp_subdir}/hydrated" || true
-        # fi
-
         rm -rf "${env_deploy_dir}"
         cp -r "${env_temp_subdir}/hydrated" "${env_deploy_dir}"
         # set exit code to 1 to make sure the pre-commit or pipeline fails

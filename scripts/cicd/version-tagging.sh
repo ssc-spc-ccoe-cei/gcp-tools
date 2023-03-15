@@ -8,7 +8,8 @@
 # a bash equivalent function would need to be created if PowerShell is not available
 
 # Bash safeties: exit on error, pipelines can't hide errors
-set -eo pipefail
+set -o errexit
+set -o pipefail
 
 # get the directory of this script and source print-colors.sh for better readability of the script's outputs
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

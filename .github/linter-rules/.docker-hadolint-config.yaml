@@ -1,8 +1,10 @@
 ---
-##########################
-## Hadolint config file ##
-##########################
+###########################################
+# The rules used for linting Dockerfile files
+# https://github.com/github/super-linter/blob/main/TEMPLATES/.hadolint.yaml
+# https://github.com/hadolint/hadolint
+###########################################
 
-failure-threshold: warning
+failure-threshold: error
 
 ignored:
