@@ -44,15 +44,15 @@ jobs:
           VALIDATE_YAML: true
           YAML_CONFIG_FILE: .yaml-lint-config.yaml
 
-      # use SHELLCHECK_OPTS to ignore certain errors or add command options
+      # no linter-rules file for bash, use SHELLCHECK_OPTS to ignore certain errors and/or add command options
       # https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md
+      # TODO: possibly change severity to its default 'style' and refactor as required
       - name: Lint Bash
         if: ${{ success() || failure() }}
         uses: github/super-linter/slim@v4
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
-          LINTER_RULES_PATH: .github/linter-rules
           VALIDATE_BASH: true
           SHELLCHECK_OPTS: "--severity=error"
 

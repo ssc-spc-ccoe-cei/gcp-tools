@@ -5,7 +5,7 @@
   - [Features](#features)
   - [Required Desktop Components](#required-desktop-components)
   - [Getting Started](#getting-started)
-    - [Install WSL](#install-wsl)
+    - [Install WSL](#install-wsl2)
     - [Install Docker Desktop](#install-docker-desktop)
     - [GIT](#git)
     - [VsCode](#vscode)
@@ -16,7 +16,7 @@
   - [Storage Volumes \& Windows Mapping](#storage-volumes--windows-mapping)
     - [Access Volume in Host OS](#access-volume-in-host-os)
   - [Maintenance Activities](#maintenance-activities)
-      - [New Image Example](#new-image-example)
+    - [New Image Example](#new-image-example)
 
 
 ## Purpose
@@ -83,7 +83,7 @@ wsl -l -v
 ```
 
 #### Memory Limits
-To control WSL memory usage, you may add a file ``` %userprofile%/.wslconfig``` with the following contents:
+To control WSL memory usage, you may add a file `%userprofile%/.wslconfig` with the following contents:
 
 ```PowerShel
 # Settings apply across all Linux distros running on WSL 2
@@ -274,7 +274,7 @@ Back in the PowerShell Window, you will be prompted for a default project. Choos
 
 #### Inside VsCode
 
-Use either the VsCode source code extension (CTRL+Shift+G), or a PowerShell terminal. Clone the repository (https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) into a folder of your choosing.
+Use either the VsCode source code extension (CTRL+Shift+G), or a PowerShell terminal. Clone the repository (`git clone https://github.com/ssc-spc-ccoe-cei/gcp-tools.git`) into a folder of your choosing.
 
 Git credential manager will open. Authenticate yourself. You may add your git token to $HOME/.git-credentials if you wish to auto login when using PowerShell
 
@@ -358,7 +358,7 @@ The container volume is accessible in the Windows Host OS though a network share
 
 From time to time the image will need to be updated, changed or added to. An example of updating and distributing a new image is provided.
 
-#### New Image Example
+### New Image Example
 
 Create a branch on [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git)
 

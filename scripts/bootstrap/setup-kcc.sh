@@ -1,5 +1,10 @@
+#!/bin/bash
+
+# script to bootstrap a Config Controller project
+
 # Bash safeties: exit on error, pipelines can't hide errors
-set -eo pipefail
+set -o errexit
+set -o pipefail
 
 # get the directory of this script
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

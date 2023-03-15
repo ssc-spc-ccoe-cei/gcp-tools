@@ -50,14 +50,14 @@ rules:
     level: warning
     max-spaces-after: 1
   indentation:
-    level: warning
+    level: error
     spaces: consistent
     indent-sequences: true
     check-multi-line-strings: false
   key-duplicates: enable
   # disable line-length, kpt-set comments would almost always trigger warnings
   line-length: disable
-  new-line-at-end-of-file: disable
+  new-line-at-end-of-file: enable
   new-lines:
     type: unix
   trailing-spaces: enable
