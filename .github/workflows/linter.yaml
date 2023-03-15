@@ -29,6 +29,15 @@ jobs:
           # list of changed files within `super-linter`
           fetch-depth: 0
 
+      - name: shellcheck command line
+        if: ${{ success() || failure() }}
+        run: |
+          for sh_file in $(git diff origin/main --name-only -- '*.sh')
+          do
+            echo -e "\n##############################\n## Checking '${sh_file}' \n##############################"
+            shellcheck --color --format=json1 ${sh_file}
+          done
+
       ################################
       # Run Linter against code base
       # each step will run even if one fails
