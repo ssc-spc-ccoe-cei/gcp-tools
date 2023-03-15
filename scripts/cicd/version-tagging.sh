@@ -52,7 +52,7 @@ git fetch --tags --recurse-submodules=no --quiet
 
 # ensure a properly formatted tag exists before performing comparison
 if git tag | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
-    
+
     # using powershell's built-in [semver] type to perform the greater than operation
     # save non-zero exit codes in a temporary variable to avoid the entire script from failing
     currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"

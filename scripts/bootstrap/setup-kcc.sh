@@ -18,7 +18,7 @@ source $1
 
 FOLDER_ID=$(gcloud resource-manager folders create --display-name=$LZ_FOLDER_NAME --organization=$ORG_ID --format="value(name)" --quiet | cut -d "/" -f 2)
 gcloud projects create $PROJECT_ID --set-as-default --organization=$ORG_ID
-gcloud beta billing projects link $PROJECT_ID --billing-account $BILLING_ID 
+gcloud beta billing projects link $PROJECT_ID --billing-account $BILLING_ID
 gcloud config set project $PROJECT_ID
 gcloud services enable krmapihosting.googleapis.com container.googleapis.com cloudresourcemanager.googleapis.com cloudbilling.googleapis.com serviceusage.googleapis.com servicedirectory.googleapis.com dns.googleapis.com
 export PROJECT_NUM=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
@@ -39,7 +39,7 @@ gcloud compute routers create kcc-router --project=$PROJECT_ID  --network=$NETWO
 gcloud compute routers nats create kcc-router --router=kcc-router --region=$REGION --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges --enable-logging
 
 
-# enable logging for dns 
+# enable logging for dns
 gcloud dns policies create dnspolicy1 \
 --networks=$NETWORK \
 --enable-logging \
@@ -90,15 +90,15 @@ gcloud compute firewall-rules create allow-egress-github --action ALLOW --rules 
 
 # Allow egress to internal, peered vpc and secondary ranges
 gcloud compute firewall-rules create allow-egress-internal --action ALLOW --rules=all --destination-ranges 192.168.0.0/16,172.16.0.128/28,10.0.0.0/8 --direction EGRESS --priority 1000 --network $NETWORK --enable-logging
- 
+
 # Deny egress to internet
 gcloud compute firewall-rules create deny-egress-internet --action DENY --rules=all --destination-ranges 0.0.0.0/0 --direction EGRESS --priority 65535 --network $NETWORK --enable-logging
 
 # Create and Config controller
-gcloud anthos config controller create $CLUSTER --location $REGION --network $NETWORK --subnet $SUBNET 
+gcloud anthos config controller create $CLUSTER --location $REGION --network $NETWORK --subnet $SUBNET
 
 # Config controller get credentials
-gcloud anthos config controller get-credentials $CLUSTER --location $REGION 
+gcloud anthos config controller get-credentials $CLUSTER --location $REGION
 
 export SA_EMAIL="$(kubectl get ConfigConnectorContext -n config-control \
     -o jsonpath='{.items[0].spec.googleServiceAccount}' 2> /dev/null)"
@@ -107,7 +107,7 @@ gcloud organizations add-iam-policy-binding "${ORG_ID}" \
   --member="serviceAccount:${SA_EMAIL}" \
   --role=roles/resourcemanager.organizationAdmin \
   --condition=None
-  
+
 gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
   --member "serviceAccount:${SA_EMAIL}" \
   --role "roles/editor" \

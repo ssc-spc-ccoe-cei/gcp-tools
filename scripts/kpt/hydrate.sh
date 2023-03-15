@@ -103,10 +103,10 @@ function hydrate-env () {
     else
         echo "'${SOURCE_CUSTOMIZATION_DIR}/${environment}' is empty, skipping '${SOURCE_BASE_DIR}' copy."
     fi
-    
+
     echo "Copying '${SOURCE_CUSTOMIZATION_DIR}/${environment}/.' over '${env_temp_subdir}/customized' ..."
     cp -rf "${SOURCE_CUSTOMIZATION_DIR}/${environment}/." "${env_temp_subdir}/customized/."
-    
+
     # initialize the customized directory as a top level kpt package
     echo -e "\nInitializing kpt in '${env_temp_subdir}/customized' ..."
     ${KPT} pkg init "${env_temp_subdir}/customized"
@@ -126,12 +126,12 @@ function hydrate-env () {
     touch "${env_temp_subdir}/hydrated/.gitkeep"
 
     # check for rendered changes
-    if git diff --no-index --quiet --exit-code "${env_deploy_dir}" "${env_temp_subdir}/hydrated"; then 
+    if git diff --no-index --quiet --exit-code "${env_deploy_dir}" "${env_temp_subdir}/hydrated"; then
         print_info "No changes detected for rendered resources."
         true
     else
         print_warning "Change detected, copying '${env_temp_subdir}/hydrated' to '${env_deploy_dir}' ..."
-        
+
         rm -rf "${env_deploy_dir}"
         cp -r "${env_temp_subdir}/hydrated" "${env_deploy_dir}"
         # set exit code to 1 to make sure the pre-commit or pipeline fails
@@ -139,7 +139,7 @@ function hydrate-env () {
         # print the git status, could be commented out if too verbose
         git status
     fi
-    
+
     validate_yaml_in_dir "${env_deploy_dir}"
 
     print_success "function 'hydrate-env ${1}' finished successfully."
@@ -147,7 +147,7 @@ function hydrate-env () {
 
 # function to run validation in a given directory, if environment variable is defined
 validate_yaml_in_dir() {
-    
+
     if [ -d "${1}" ]; then
         dir_to_validate="${1}"
     else
