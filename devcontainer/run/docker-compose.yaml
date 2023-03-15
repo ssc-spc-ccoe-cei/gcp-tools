@@ -10,12 +10,12 @@ services:
       - source: pub_cert2
         target: /usr/local/share/ca-certificates/pub_cert2.crt
     volumes:
-       - type: bind
-         source: /var/run/docker.sock
-         target: /var/run/docker.sock
-       - type: volume
-         source: vol
-         target: /home/${CPE_USERNAME}/
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: volume
+        source: vol
+        target: /home/${CPE_USERNAME}/
 secrets:
   pub_cert1:
     file: ${PUB_CERT1_PATH}

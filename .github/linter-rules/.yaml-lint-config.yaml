@@ -5,29 +5,14 @@
 # https://yamllint.readthedocs.io/en/stable/configuration.html
 # https://yamllint.readthedocs.io/en/stable/rules.html
 ###########################################
-# extends: relaxed
-
-# rules:
-#   line-length: disable
-#   new-line-at-end-of-file: disable
 
 yaml-files:
   - '*.yaml'
   - '*.yml'
 
 rules:
-  braces:
-    level: warning
-    min-spaces-inside: 0
-    max-spaces-inside: 0
-    min-spaces-inside-empty: 1
-    max-spaces-inside-empty: 5
-  brackets:
-    level: warning
-    min-spaces-inside: 0
-    max-spaces-inside: 0
-    min-spaces-inside-empty: 1
-    max-spaces-inside-empty: 5
+  braces: disable
+  brackets: disable
   colons:
     level: warning
     max-spaces-before: 0
@@ -37,8 +22,11 @@ rules:
     max-spaces-before: 0
     min-spaces-after: 1
     max-spaces-after: 1
-  comments: disable
-  comments-indentation: disable
+  comments:
+    level: error
+    min-spaces-from-content: 1
+  comments-indentation:
+    level: error
   document-end: disable
   # disable document-start, some kpt functions remove the document start
   document-start: disable
@@ -47,6 +35,8 @@ rules:
     max: 2
     max-start: 0
     max-end: 0
+  empty-values: disable
+  float-values: disable
   hyphens:
     level: warning
     max-spaces-after: 1
@@ -56,9 +46,13 @@ rules:
     indent-sequences: true
     check-multi-line-strings: false
   key-duplicates: enable
+  key-ordering: disable
   # disable line-length, kpt-set comments would almost always trigger warnings
   line-length: disable
   new-line-at-end-of-file: enable
   new-lines:
     type: unix
+  octal-values: disable
+  quoted-strings: disable
   trailing-spaces: enable
+  truthy: disable
