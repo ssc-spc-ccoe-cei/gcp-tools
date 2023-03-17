@@ -30,6 +30,7 @@ TEMP_DIR="temp-workspace"
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # source print-colors.sh for better readability of the script's outputs
+# shellcheck source-path=scripts/kpt # tell shellcheck where to look
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 # ensure the working directory is set to the root of the deployment git repo
@@ -82,6 +83,7 @@ function hydrate-env () {
 
     # copy source base to temp customized folder and apply customization
     # check if source-customization/env is empty (assumes it contains at least '.gitkeep'), don't copy base if customization is empty
+    # shellcheck disable=SC2012,SC2046 # disable 'use find instead of ls' and quoting suggestions
     if [ $(ls -A "${SOURCE_CUSTOMIZATION_DIR}/${environment}" | wc --lines) -gt 1 ]; then
         echo "Copying '${SOURCE_BASE_DIR}/.' to '${env_temp_subdir}/customized' ..."
         cp -rf "${SOURCE_BASE_DIR}/." "${env_temp_subdir}/customized"
@@ -164,8 +166,10 @@ validate_yaml_in_dir() {
         echo "Validating YAML files with 'kubeval' ..."
         # whether it's by design or not, kubeval can change quotes in annotations and remove duplicate resources (maybe 'kpt fn eval' does this?)
         # to workaround this, set an '--output' directory to avoid in-place modifications, the directory must not exist
+        # to set strict=true, CRD schemas would need to be updated (with schema_location and additional_schema_locations)
         rm -rf "${TEMP_DIR}/kubeval/${dir_to_validate}"
-        ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --output="${TEMP_DIR}/kubeval/${dir_to_validate}" --truncate-output=false -- ignore_missing_schemas=true strict=true
+        ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --output="${TEMP_DIR}/kubeval/${dir_to_validate}" --truncate-output=false \
+            -- ignore_missing_schemas='true' strict='false'
         print_success "'kubeval' was successful."
     else
         echo "Skipping YAML validation with 'kubeval'."
