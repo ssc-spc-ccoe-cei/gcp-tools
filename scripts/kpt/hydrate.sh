@@ -99,10 +99,11 @@ function hydrate-env () {
     print_success "function 'hydrate-env ${1}' finished successfully."
 }
 
-for folder in configsync security workloads
+# iterate through folders with a source-base subfolder
+for folder in $(find . -type d -name 'source-base')
 do
     # move into folder
-    cd ${folder}
+    cd ${folder}/..
 
     # check if source directories are valid
     if [ ! -d "${SOURCE_BASE_DIR}" ]; then
@@ -129,7 +130,7 @@ do
         fi
     done
     # return to root of repo
-    cd ..
+    cd $(git rev-parse --show-toplevel)
 done
 
 if [ ${exit_code} -ne 0 ]; then
