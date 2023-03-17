@@ -10,6 +10,7 @@ set -o pipefail
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # source print-colors.sh for better readability of the script's outputs
+# shellcheck source-path=scripts/bootstrap # tell shellcheck where to look
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 if [ $# -eq 0 ]; then
@@ -19,34 +20,35 @@ Usage: bash setup-kcc.sh PATH_TO_ENV_FILE"
 fi
 
 # source the env file
-source $1
+# shellcheck disable=SC1090 # don't look for sourced file, it won't exist in this repo
+source "$1"
 
-FOLDER_ID=$(gcloud resource-manager folders create --display-name=$LZ_FOLDER_NAME --organization=$ORG_ID --format="value(name)" --quiet | cut -d "/" -f 2)
-gcloud projects create $PROJECT_ID --set-as-default --organization=$ORG_ID
-gcloud beta billing projects link $PROJECT_ID --billing-account $BILLING_ID
-gcloud config set project $PROJECT_ID
+gcloud resource-manager folders create --display-name="$LZ_FOLDER_NAME" --organization="$ORG_ID" --format="value(name)"
+gcloud projects create "$PROJECT_ID" --set-as-default --organization="$ORG_ID"
+gcloud beta billing projects link "$PROJECT_ID" --billing-account "$BILLING_ID"
+gcloud config set project "$PROJECT_ID"
 gcloud services enable krmapihosting.googleapis.com container.googleapis.com cloudresourcemanager.googleapis.com cloudbilling.googleapis.com serviceusage.googleapis.com servicedirectory.googleapis.com dns.googleapis.com
-export PROJECT_NUM=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+
 # VPC
-gcloud compute networks create $NETWORK --subnet-mode=custom
+gcloud compute networks create "$NETWORK" --subnet-mode=custom
 
 # Subnet
-gcloud compute networks subnets create $SUBNET  \
---network $NETWORK \
+gcloud compute networks subnets create "$SUBNET"  \
+--network "$NETWORK" \
 --range 192.168.0.0/16 \
---region $REGION \
+--region "$REGION" \
 --stack-type=IPV4_ONLY \
 --enable-private-ip-google-access \
 --enable-flow-logs --logging-aggregation-interval=interval-5-sec --logging-flow-sampling=1.0 --logging-metadata=include-all
 
 # Cloud router and Cloud NAT
-gcloud compute routers create kcc-router --project=$PROJECT_ID  --network=$NETWORK  --asn=64513 --region=$REGION
-gcloud compute routers nats create kcc-router --router=kcc-router --region=$REGION --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges --enable-logging
+gcloud compute routers create kcc-router --project="$PROJECT_ID"  --network="$NETWORK"  --asn=64513 --region="$REGION"
+gcloud compute routers nats create kcc-router --router=kcc-router --region="$REGION" --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges --enable-logging
 
 
 # enable logging for dns
 gcloud dns policies create dnspolicy1 \
---networks=$NETWORK \
+--networks="$NETWORK" \
 --enable-logging \
 --description="dns policy to enable logging"
 
@@ -55,15 +57,15 @@ gcloud compute addresses create apis-private-ip \
 --global \
 --purpose=PRIVATE_SERVICE_CONNECT \
 --addresses=10.255.255.254 \
---network=$NETWORK
+--network="$NETWORK"
 
 # private endpoint
 gcloud compute forwarding-rules create endpoint1 \
 --global \
---network=$NETWORK \
+--network="$NETWORK" \
 --address=apis-private-ip \
 --target-google-apis-bundle=all-apis \
---service-directory-registration=projects/$PROJECT_ID/locations/$REGION
+--service-directory-registration=projects/"$PROJECT_ID"/locations/"$REGION"
 
 # private dns zone for googleapis.com
 gcloud dns managed-zones create googleapis \
