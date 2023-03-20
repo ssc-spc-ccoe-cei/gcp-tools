@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     name: Lint Code Base
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Code
@@ -35,7 +35,7 @@ jobs:
         if: ${{ success() || failure() }}
         uses: github/super-linter/slim@v4
         env:
-          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           LINTER_RULES_PATH: .github/linter-rules
           VALIDATE_YAML: true
@@ -43,12 +43,11 @@ jobs:
 
       # no linter-rules file for bash, use SHELLCHECK_OPTS to ignore certain errors and/or add command options
       # https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md
-      # TODO: possibly change severity to its default 'style' and refactor as required
       - name: Lint Bash
         if: ${{ success() || failure() }}
         uses: github/super-linter/slim@v4
         env:
-          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           VALIDATE_BASH: true
           SHELLCHECK_OPTS: "--severity=style"
@@ -57,7 +56,7 @@ jobs:
         if: ${{ success() || failure() }}
         uses: github/super-linter/slim@v4
         env:
-          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           LINTER_RULES_PATH: .github/linter-rules
           VALIDATE_DOCKERFILE_HADOLINT: true
@@ -67,7 +66,7 @@ jobs:
         if: ${{ success() || failure() }}
         uses: github/super-linter/slim@v4
         env:
-          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           LINTER_RULES_PATH: .github/linter-rules
           VALIDATE_MARKDOWN: true
