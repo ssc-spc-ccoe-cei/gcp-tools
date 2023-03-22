@@ -1,5 +1,5 @@
 # Parent source image location is dockerhub.io
-FROM ubuntu:20.04 
+FROM ubuntu:20.04
 
 # Update values in .env for building a new version
 # ARG is only accessable during the build process

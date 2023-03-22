@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.1...0.3.0) (2023-03-22)
+
+
+### Features
+
+* validation pipelines ([#19](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/19)) ([d711400](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/d7114007bbc33d68c915d6658f8763483fade830))
+
 ## [0.2.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.0...0.2.1) (2023-02-21)
 
 
