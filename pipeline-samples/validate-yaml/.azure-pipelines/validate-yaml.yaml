@@ -1,4 +1,4 @@
-# A simple pipeline to increment version tags for a git repo
+# A pipeline to validate proper hydration of YAML config files
 
 # a "Build Validation Policy" (PR trigger) must be created
 trigger: none
