@@ -8,10 +8,12 @@
 # a bash equivalent function would need to be created if PowerShell is not available
 
 # Bash safeties: exit on error, pipelines can't hide errors
-set -eo pipefail
+set -o errexit
+set -o pipefail
 
 # get the directory of this script and source print-colors.sh for better readability of the script's outputs
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# shellcheck source-path=scripts/cicd # tell shellcheck where to look
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 releaseVersion="$(head -1 VERSION.txt)"
@@ -21,7 +23,7 @@ releaseVersion="$(head -1 VERSION.txt)"
 print_info "Validating semantic version syntax in VERSION.txt ..."
 SEMVER_PATTERN='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
 # use perl-regexp for compatibility with '\d'
-if echo "${releaseVersion}" | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
+if echo "${releaseVersion}" | grep --perl-regexp --quiet "${SEMVER_PATTERN}" ; then
     print_success "'$releaseVersion' is a valid semantic release version number."
 else
     print_error "'$releaseVersion' is not a valid semantic release version number. \n \
@@ -47,13 +49,14 @@ fi
 ##########
 # validate tag increment
 print_info "Checking if the release version is newer than the latest existing tag version ..."
-git fetch --tags --recurse-submodules=no --quiet
+git fetch --tags --recurse-submodules=no
 
 # ensure a properly formatted tag exists before performing comparison
-if git tag | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
-    
+if git tag | grep --perl-regexp --quiet "${SEMVER_PATTERN}" ; then
+
     # using powershell's built-in [semver] type to perform the greater than operation
     # save non-zero exit codes in a temporary variable to avoid the entire script from failing
+    # shellcheck disable=SC2086 # double quote suggestion for ${SEMVER_PATTERN}
     currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
     rc=0
     pwsh -Command "if (-not ([semver]\"$releaseVersion\" -gt [semver]\"$currentLatestVersion\") ) {exit 1}" || rc=$?
@@ -90,13 +93,13 @@ print_info "Checking if the tag should be created (when pipeline is running thro
 
 if [[ "${BUILD_SOURCEBRANCHNAME}" == "main" ]] && [[ "${BUILD_REASON}" == "IndividualCI" || "${BUILD_REASON}" == "BatchedCI" ]] ; then
   echo -e "Creating and pushing tag to Azure DevOps repo ...\n"
-  git tag ${releaseVersion}
-  git push origin tag ${releaseVersion}
+  git tag "${releaseVersion}"
+  git push origin tag "${releaseVersion}"
 
 elif [[ "${GITHUB_REF_NAME}" == "main" && "${GITHUB_EVENT_NAME}" == "push" ]] ; then
   echo -e "Creating and pushing tag to GitHub repo ...\n"
-  git tag ${releaseVersion}
-  git push origin tag ${releaseVersion}
+  git tag "${releaseVersion}"
+  git push origin tag "${releaseVersion}"
 
 else
   echo -e "A tag will not be created yet. The pipeline is either running from a PR or manually.\n"
