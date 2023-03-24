@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.3.0...0.4.0) (2023-03-24)
+
+
+### Features
+
+* adjust yakima roles in bootstrap ([#21](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/21)) ([aeea254](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/aeea254441a4484a581c12e71206a11833db6296))
+
 ## [0.3.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.1...0.3.0) (2023-03-22)
 
 
