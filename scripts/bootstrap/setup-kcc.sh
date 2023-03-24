@@ -117,12 +117,7 @@ gcloud organizations add-iam-policy-binding "${ORG_ID}" \
 
 gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
   --member "serviceAccount:${SA_EMAIL}" \
-  --role "roles/editor" \
-  --project "${PROJECT_ID}"
-
-gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
-  --member "serviceAccount:${SA_EMAIL}" \
-  --role "roles/iam.serviceAccountAdmin" \
+  --role "roles/serviceusage.serviceUsageConsumer" \
   --project "${PROJECT_ID}"
 
 EMAIL=$(gcloud config list --format json|jq .core.account | sed 's/"//g')
