@@ -1,4 +1,5 @@
 # Version Tagging
+
 A sample for a custom (basic) way to manage git tags and a change log.
 
 The pipeline follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
@@ -12,6 +13,7 @@ The pipeline follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PAT
 **If a changelog is not required, `VALIDATE_CHANGELOG` can be set to 'false' in `version-tagging.yaml`.*
 
 ## Requirements
+
 - `tools` sub module.
 - `VERSION.txt` in repo root.
 - `CHANGELOG.md` in repo root, if a change log is required.
@@ -23,11 +25,13 @@ The pipeline follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PAT
   - "contents" write permission on repo for GitHub Actions.  This may be enabled by default depending on security settings.
 
 ## Dependencies
+
 - `tools/scripts/cicd/version-tagging.sh`
 
 ## Usage
 
 Before creating a PR, push these changes as well:
+
 - Edit `VERSION.txt` to increment the version accordingly. (Reminder: no "v" prefix allowed.)
 - Edit `CHANGELOG.md` to add an entry for the new version.  It must be enclosed in square brackets, for example [0.0.0].  Refer to the sample file for more info.
 

@@ -10,5 +10,5 @@ Each sample may have instructions specific to itself.
 
 For general documentation on how to manage pipelines, please refer to the [gcp-documentation](https://github.com/ssc-spc-ccoe-cei/gcp-documentation/blob/main/Landing%20Zone%20Operations/Pipelines.md) repo.
 
-> **!!! Note when changing the `tools` sub module version !!!**<br>
+**!!! Note when changing the `tools` sub module version !!!**
 Because the pipeline samples can have dependencies in the `scripts\` directory, it's important to compare with your copy if a change is required.
