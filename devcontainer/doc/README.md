@@ -72,13 +72,13 @@ Restart your machine to complete the process.
 
 After restarting, launch a powershell and set WSL2 to version 2
 
-```shell
+```PowerShell
 wsl --set-default-version 2
 ```
 
 Validate that WSL version 2 is running
 
-```shell
+```PowerShell
 wsl -l -v
 ```
 
@@ -86,7 +86,7 @@ wsl -l -v
 
 To control WSL memory usage, you may add a file `%userprofile%/.wslconfig` with the following contents:
 
-```shell
+```plaintext
 # Settings apply across all Linux distros running on WSL 2
 [wsl2]
 # Limits VM memory to use no more than 4 GB, this can be set as whole numbers using GB or MB
@@ -121,7 +121,7 @@ Press Control + Alt + Delete.
 Click Task Manager.
 Click Users. Your username will be listed under 'User'
 
-```shell
+```PowerShell
 $myuser = Read-Host -Prompt 'Enter your Windows user name'
 $mydomain =  [System.Environment]::GetEnvironmentVariables().USERDOMAIN_ROAMINGPROFILE
 net localgroup docker-users $mydomain\$myuser /add
@@ -247,7 +247,7 @@ Click **[Finish]**
 
 Open VsCode, Open a PowerShell terminal. Initialize your Google SDK.
 
-```shell
+```PowerShell
 PS C:\Users\LOCAL_USER\GCP\gcp-tools> gcloud init
 Welcome! This command will take you through the configuration of gcloud.
 
@@ -283,7 +283,7 @@ Open Terminal --> New Terminal.
 
 Authenticate to the Google Artifact Registry in the PowerShell Terminal.
 
-```shell
+```PowerShell
 gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
 
 Adding credentials for: northamerica-northeast1-docker.pkg.dev
