@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.4.0...0.4.1) (2023-04-05)
+
+
+### Bug Fixes
+
+* linting gcp-tools ([#23](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/23)) ([2f02eef](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/2f02eef0b297c84d0282e398879c27cb63150130))
+
 ## [0.4.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.3.0...0.4.0) (2023-03-24)
 
 
