@@ -2,11 +2,13 @@
 
 ## [0.4.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.3.0...0.4.0) (2023-03-24)
 
+
 ### Features
 
 * adjust yakima roles in bootstrap ([#21](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/21)) ([aeea254](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/aeea254441a4484a581c12e71206a11833db6296))
 
 ## [0.3.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.1...0.3.0) (2023-03-22)
+
 
 ### Features
 
@@ -14,11 +16,13 @@
 
 ## [0.2.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.0...0.2.1) (2023-02-21)
 
+
 ### Bug Fixes
 
 * hydrate.sh nomos vet ([#17](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/17)) ([dbd7f04](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/dbd7f046625914dc297bc9be0463bdd6fb3b1231))
 
 ## [0.2.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.1...0.2.0) (2023-02-17)
+
 
 ### ⚠ BREAKING CHANGES
 
@@ -30,12 +34,14 @@
 
 ## [0.1.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.0...0.1.1) (2023-02-14)
 
+
 ### Bug Fixes
 
 * remove token from bootstrap .env, fix comments and broken links ([#11](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/11)) ([53efe0e](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/53efe0ead73a1bfd0b00a8b07fc7c89424229d7b))
 * removed remote functionality from setup-kcc.sh ([#8](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/8)) ([504d1f7](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/504d1f734f8ff2385be1e7f435e3bf33fe72c1fd))
 
 ## [0.1.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/v0.0.1...0.1.0) (2023-02-03)
+
 
 ### Features
 
