@@ -18,7 +18,6 @@
   - [Maintenance Activities](#maintenance-activities)
     - [New Image Example](#new-image-example)
 
-
 ## Purpose
 
 The gcptools/devcontainer repository includes version controlled software in a container, providing a homogenous software and runtime environment. The container facilitates GCP activities such as:
@@ -46,7 +45,7 @@ The gcptools/devcontainer repository includes version controlled software in a c
 
 ## Getting Started
 
-<b>Note: These steps should be performed by your desktop administration group but are included here for completeness.</b>
+*Note: These steps should be performed by your desktop administration group but are included here for completeness.*
 
 ### Install WSL2
 
@@ -54,18 +53,18 @@ Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as
 
 This shortcut step may be available to use depending on your version of Windows. If this step does not complete, the older method is listed as well below.
 
-```PowerShell
+```shell
 wsl --install
 ```
 
 Older Method:
-```PowerShell
+
+```shell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 ```
 
 Download the Linux Kernel extensions for WSL with the following link. [WSL Update](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
-
 
 Run the MSI file (wsl_update_x64.msi) and elevate to Admin via the UAC when prompted.
 
@@ -76,6 +75,7 @@ After restarting, launch a powershell and set WSL2 to version 2
 ```PowerShell
 wsl --set-default-version 2
 ```
+
 Validate that WSL version 2 is running
 
 ```PowerShell
@@ -83,9 +83,10 @@ wsl -l -v
 ```
 
 #### Memory Limits
+
 To control WSL memory usage, you may add a file `%userprofile%/.wslconfig` with the following contents:
 
-```PowerShel
+```plaintext
 # Settings apply across all Linux distros running on WSL 2
 [wsl2]
 # Limits VM memory to use no more than 4 GB, this can be set as whole numbers using GB or MB
@@ -104,14 +105,12 @@ Locate the installer in your downloads folder, and launch it (Docker Desktop Ins
 
 Answer the dialogue questions as follows:
 
-
 &#9745; Use WSL2 instead of Hyper-V (recommended)
 &#9745; Add shortcut to desktop
 
 Click  **[OK]**
 
 Click **[Close and Logout]**
-
 
 Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator)
 Run the following command: ()
@@ -197,7 +196,7 @@ Click **[Install]**
 
 Click **[Finish]**
 
-Use the Extensions pallet *(Ctrl+Shift+X)* to add in the following extensions (Minimal extentions required as this is only on Windows/PowerShell):
+Use the Extensions pallet *(Ctrl+Shift+X)* to add in the following extensions (Minimal extensions required as this is only on Windows/PowerShell):
 
 - Docker
 - Remote Development
@@ -264,6 +263,7 @@ Network diagnostic passed (1/1 checks passed).
 
 You must log in to continue. Would you like to log in (Y/n)?  Y
 ```
+
 A browser will open and you will be presented with and authentication challenge. You may need to copy the URL provided by the gcloud init command if your last browser session was with another account/profile. Paste the link and authenticate with accounts.google.com
 
 Google Cloud will want to confirm access for the SDK. Choose [Allow]
@@ -303,16 +303,19 @@ Docker configuration file updated.
 
 Use the provided docker-compose.yaml to pull the image locally
 
-```Powershell
+```shell
 # from ...gcp-tools\devcontainer\run>
 docker compose up -d
 ```
+
 The ```docker compose up -d``` will pull a 2.5GB image and start a container of that image. The container and image should be viewable inside of docker desktop.
 
 Set your container to start on boot (optional, but recommended). Docker Desktop should start automatically.
-```PowerShell
+
+```shell
 docker update --restart unless-stopped cpedevcontainer
 ```
+
 Now that your Container is up, you can use the docker extension to right click, (Attach Visual Studio Code)
 
 Subsequent launches of Visual Studio Code should attach to your running container for your to use for your development environment.
@@ -321,7 +324,7 @@ Subsequent launches of Visual Studio Code should attach to your running containe
 
 Once inside your container, using a terminal configure git for yourself
 
-```bash
+```shell
 git config --global user.name "username-ssc"
 git config --global user.email "username@ssc-spc.gc.ca"
 # Set git to use the credential memory cache
@@ -348,7 +351,7 @@ To ameliorate the temporal nature of the container, this solution uses a docker 
 
 The container volume is accessible in the Windows Host OS though a network share provided by WSL. It can be accessed through:
 
-```bash
+```shell
 \\wsl$\docker-desktop-data\data\docker\volumes\cpedevcontainer_vol\_data
 ```
 
@@ -363,7 +366,8 @@ From time to time the image will need to be updated, changed or added to. An exa
 Create a branch on [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git)
 
 Pull your the gcp-tools repo and checkout your branch
-```PowerShell
+
+```shell
 git pull https://github.com/ssc-spc-ccoe-cei/gcp-tools.git
 git checkout "mybranch"
 ```
@@ -378,20 +382,24 @@ Increment the TAG variable in ```run\.env```
 
 Build a new image:
 
-```bash
+```shell
 docker compose build
 ```
+
 Test your changes locally
-```bash
+
+```shell
 docker compose up
 ```
+
 Once satisfied with your changes, ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` has your new TAG number.
 
 Push your code to Google Artifact Registry
 
-```bash
+```shell
 docker push
 ```
+
 Commit your change and push to github.com
 
 Create a PR on the [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) "mybranch"
@@ -400,17 +408,10 @@ Once the PR is approved, commit & squash merge.
 
 Users of the container can now pull the new branch to their workstations. This task can be done by:
 
-```PowerShell
+```shell
 git pull  # Allow a fast forward, there should be no conflicts
 cd devcontainer\run
 docker compose up
 ```
 
 Enjoy!
-
-
-
-
-
-
-
