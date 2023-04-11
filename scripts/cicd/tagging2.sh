@@ -45,7 +45,7 @@ for package in $packages; do
     #git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package
     #LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..HEAD -- $package)
     LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package)
-    echo $LOGS
+    #echo $LOGS
     echo "------"
     VERSION=""
     echo "$LOGS" | while read LOG; do
@@ -74,8 +74,9 @@ for package in $packages; do
         VERSION=$(echo $package_version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
         ;;
       esac
+      echo "new version: $VERSION"
     done
-    echo "new version: $VERSION"
+    echo "final version: $VERSION"
     # Create the tag
     # git tag $name$sep$VERSION
     echo "Created tag: $name$sep$VERSION"
