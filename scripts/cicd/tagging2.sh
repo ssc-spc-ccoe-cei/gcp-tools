@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git status
+
 # Load the input file
 config_file="release-please-config.json"
 release_file=".release-please-manifest.json"
