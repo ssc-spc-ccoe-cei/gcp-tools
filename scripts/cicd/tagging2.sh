@@ -2,7 +2,7 @@
 
 git status
 
-git checkout ${{ env.BUILD_SOURCEBRANCH }}
+git checkout $BUILD_SOURCEBRANCH
 
 echo "----"
 git status
