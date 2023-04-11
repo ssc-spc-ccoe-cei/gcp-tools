@@ -45,6 +45,7 @@ for package in $packages; do
     #git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package
     #LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..HEAD -- $package)
     LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package)
+    echo $LOGS
     echo "------"
     VERSION=""
     echo "$LOGS" | while read LOG; do
