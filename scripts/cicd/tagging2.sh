@@ -4,10 +4,14 @@ echo "git status"
 git status
 echo "------------"
 
-echo "git show HEAD"
-git show HEAD
-echo "------------"
+#echo "git show HEAD"
+#git show HEAD
+#echo "------------"
 #git checkout $BUILD_SOURCEBRANCHNAME
+
+echo "source version"
+echo $BUILD_SOURCEVERSION
+echo "------------"
 
 echo "----"
 #git status
