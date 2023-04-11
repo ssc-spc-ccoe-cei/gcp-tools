@@ -78,8 +78,9 @@ for package in $packages; do
         ;;
       esac
       echo "new version: $VERSION"
-      export VERSION=$VERSION
-    done < <(find tmp -type f)
+      #export VERSION=$VERSION
+    #done < <(find tmp -type f)
+    done
     echo "final version: $VERSION"
     # Create the tag
     # git tag $name$sep$VERSION
