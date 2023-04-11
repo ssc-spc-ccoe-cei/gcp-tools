@@ -47,31 +47,31 @@ for package in $packages; do
     LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package)
     #echo $LOGS
     echo "------"
-    VERSION=""
+    VERSION=$package_version
     echo "$LOGS" | while read LOG; do
       echo "parsing commit message: $LOG"
       PREFIX=$(echo $LOG | cut -d' ' -f1)
       case $PREFIX in
         "fix:")
             echo "fix"
-            VERSION=$(echo $package_version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+            VERSION=$(echo $VERSION | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
             ;;
         "feat:")
             echo "feat"
-            VERSION=$(echo $package_version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
+            VERSION=$(echo $VERSION | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
             ;;
         "feat!:")
             echo "feat!"
-            VERSION=$(echo $package_version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+            VERSION=$(echo $VERSION | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
             ;;
         "fix!:")
             echo "fix!"
-            VERSION=$(echo $package_version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+            VERSION=$(echo $VERSION | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
             ;;
         *)
         echo "no valid prefix found"
         # If no valid prefix is found, increase patch version by 1
-        VERSION=$(echo $package_version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+        VERSION=$(echo $VERSION | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
         ;;
       esac
       echo "new version: $VERSION"
