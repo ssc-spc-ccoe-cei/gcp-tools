@@ -1,7 +1,12 @@
 #!/bin/bash
 
+echo "git status"
 git status
+echo "------------"
 
+echo "git show HEAD"
+git show HEAD
+echo "------------"
 #git checkout $BUILD_SOURCEBRANCHNAME
 
 echo "----"
@@ -31,7 +36,9 @@ for package in $packages; do
     echo "last_tag: $LAST_TAG"
 
     # To list all commit messages that have affected a specific folder since a specific tag,
+    git log --pretty=format:"%s" --follow $LAST_TAG..HEAD -- $package
     LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..HEAD -- $package)
+    echo "------"
     VERSION=""
     echo "$LOGS" | while read LOG; do
       echo "parsing commit message: $LOG"
