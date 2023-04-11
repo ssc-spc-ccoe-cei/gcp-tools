@@ -47,7 +47,7 @@ for package in $packages; do
     # To list all commit messages that have affected a specific folder since a specific tag,
     #git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package
     #LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..HEAD -- $package)
-    LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package)
+    LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION --reverse -- $package)
     #echo $LOGS
     echo "------"
     VERSION=$package_version
