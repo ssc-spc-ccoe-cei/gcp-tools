@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
+shopt -s lastpipe
+
 echo "git status"
 git status
 echo "------------"
