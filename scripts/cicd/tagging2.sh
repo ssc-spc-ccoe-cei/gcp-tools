@@ -2,10 +2,10 @@
 
 git status
 
-git checkout $BUILD_SOURCEBRANCH
+#git checkout $BUILD_SOURCEBRANCH
 
 echo "----"
-git status
+#git status
 
 # Load the input file
 config_file="release-please-config.json"
