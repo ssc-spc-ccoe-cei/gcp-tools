@@ -2,7 +2,7 @@
 
 git status
 
-#git checkout $BUILD_SOURCEBRANCH
+#git checkout $BUILD_SOURCEBRANCHNAME
 
 echo "----"
 #git status
