@@ -75,6 +75,7 @@ for package in $packages; do
         ;;
       esac
       echo "new version: $VERSION"
+      export VERSION=$VERSION
     done
     echo "final version: $VERSION"
     # Create the tag
