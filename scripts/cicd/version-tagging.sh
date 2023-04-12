@@ -4,9 +4,12 @@
 # the CONFIG_FILE contains the information for each package and it's tag format
 # the commit messages are evaluated to determine what number (major or minor or patch) should be increased
 # they need to use one of the following prefixes :
-# fix: which represents bug fixes, and correlates to a SemVer patch."
-# feat: which represents a new feature, and correlates to a SemVer minor."
-# "feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major."
+# fix: which represents bug fixes, and correlates to a SemVer patch.
+# feat: which represents a new feature, and correlates to a SemVer minor.
+# feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major.
+# doc: which represents an update to documentation won't modify the version.
+# commit message not following this convention correlates to a SemVer patch
+# https://www.conventionalcommits.org/en/v1.0.0/
 
 
 # bash safeties: exit on error, pipelines can't hide errors
@@ -21,6 +24,8 @@ print_info "The prefixes you should be using are:"
 print_info "fix: which represents bug fixes, and correlates to a SemVer patch."
 print_info "feat: which represents a new feature, and correlates to a SemVer minor."
 print_info "feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major."
+print_info "doc: which represents an update to documentation won't modify the version."
+print_info "commit message not following this convention correlates to a SemVer patch."
 print_info "-----------------------------------"
 
 print_info "git status"
@@ -134,6 +139,10 @@ for package in $packages; do
             # The awk command uses the same format as feat!
             version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
             ;;
+        "doc:")
+            print_success "prefix 'doc:' found"
+            print_info "version will remain the same"
+            ;;
         *)
         # if no valid prefix is found, increase patch version by 1
         print_warning "no valid prefix found, increasing patch version by 1"
@@ -146,9 +155,15 @@ for package in $packages; do
     done
     print_info "final version: $version"
 
-    # create the tag and push it to origin
-    git tag ${name}${separator}${version}
-    # git push origin tag ${name}${sep}${version}
-    print_success "Created tag: ${name}${separator}${version}"
+    # check if a new tag is required
+    if [ "${name}${separator}${version}" -ne "${latest_tag}"]; then
+      # create the tag and push it to origin
+      git tag ${name}${separator}${version}
+      # git push origin tag ${name}${sep}${version}
+      print_success "Created tag: ${name}${separator}${version}"
+    else
+      print_info "no new tag required"
+    fi
+
     print_info "-----------------------------------"
 done
