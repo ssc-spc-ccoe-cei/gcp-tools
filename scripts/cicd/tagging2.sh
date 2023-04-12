@@ -1,92 +1,83 @@
 #!/bin/bash
 
-# while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
-shopt -s lastpipe
+# Bash safeties: exit on error, pipelines can't hide errors
+set -eo pipefail
 
-echo "git status"
+# get the directory of this script and source print-colors.sh for better readability of the script's outputs
+SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_ROOT}/../common/print-colors.sh"
+
+print_info "git status"
 git status
-echo "------------"
+print_info "------------"
 
-#echo "git show HEAD"
-#git show HEAD
-#echo "------------"
-#git checkout $BUILD_SOURCEBRANCHNAME
-
-echo "source version"
+print_info "source version"
 echo $BUILD_SOURCEVERSION
-echo "------------"
+print_info "------------"
 
-echo "git log"
-git log | head -n100
-echo "----"
-#git status
-
-# Load the input file
+# Load the config file
 config_file="release-please-config.json"
-release_file=".release-please-manifest.json"
 
 packages=$(jq -r '.packages | keys[]' $config_file)
 
 # Loop through each package and execute a command
 for package in $packages; do
-    echo "-----------------------------------"
-    echo "treating package : $package"
+    print_info "-----------------------------------"
+    print_info "treating package : $package"
 
     name=$(jq -r ".packages[\"$package\"].\"package-name\"" $config_file)
-    echo "name : $name"
+    print_info "name : $name"
     sep=$(jq -r ".packages[\"$package\"].\"tag-separator\"" $config_file)
-    echo "sep : $sep"
+    print_info "separator : $sep"
 
-    # package=tier3
-    package_version=$(jq -r ".$package" $release_file)
-    echo "package_version : $package_version"
+    # get the latest tag
+    LAST_TAG=$(git tag -l "$name$sep*" --sort=-refname | head -n1)
+    print_info "lastest tag: $LAST_TAG"
 
-    LAST_TAG="$name$sep$package_version"
-    echo "last_tag: $LAST_TAG"
+    # extract just the version
+    package_version=$(echo $LAST_TAG | cut -d$sep -f2 | head -n 1)
+    print_info "package_version : $package_version"
 
-    # To list all commit messages that have affected a specific folder since a specific tag,
-    #git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION -- $package
-    #LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..HEAD -- $package)
+    # To list all commit messages that have affected a specific folder since a specific tag in chronological order
     LOGS=$(git log --pretty=format:"%s" --follow $LAST_TAG..$BUILD_SOURCEVERSION --reverse -- $package)
-    #echo $LOGS
-    echo "------"
     VERSION=$package_version
+
+    # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
+    shopt -s lastpipe
+
+    # loop through LOGS
     echo "$LOGS" | while read LOG; do
-      echo "parsing commit message: $LOG"
+      print_info "parsing commit message: $LOG"
       PREFIX=$(echo $LOG | cut -d' ' -f1)
       case $PREFIX in
         "fix:")
-            echo "fix"
+            print_success "prefix 'fix' found"
             VERSION=$(echo $VERSION | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
             ;;
         "feat:")
-            echo "feat"
+            print_success "prefix 'feat' found"
             VERSION=$(echo $VERSION | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
             ;;
         "feat!:")
-            echo "feat!"
+            print_success "prefix 'feat!' found"
             VERSION=$(echo $VERSION | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
             ;;
         "fix!:")
-            echo "fix!"
+            print_success "prefix 'fix!' found"
             VERSION=$(echo $VERSION | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
             ;;
         *)
-        echo "no valid prefix found"
+        print_warning "no valid prefix found"
         # If no valid prefix is found, increase patch version by 1
         VERSION=$(echo $VERSION | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
         ;;
       esac
-      echo "new version: $VERSION"
-      #export VERSION=$VERSION
-    #done < <(find tmp -type f)
+      print_info "new version: $VERSION"
     done
-    echo "final version: $VERSION"
+    print_info "final version: $VERSION"
     # Create the tag
     # git tag $name$sep$VERSION
-    echo "Created tag: $name$sep$VERSION"
-    # update manifest
-    #jq -i ".$package = $VERSION" $release_file
+    print_success "Created tag: $name$sep$VERSION"
 done
 
     # # Determine the new version based on commit messages
