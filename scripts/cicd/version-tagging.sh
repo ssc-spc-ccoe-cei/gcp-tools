@@ -1,103 +1,136 @@
 #!/bin/bash
 
-# this script is called from pipelines to validate a proper semantic version on the first line of 'VERSION.txt'
-# it does NOT support a 'v' prefix (v0.0.0)
-# it optionally checks that an entry is included in 'CHANGELOG.md'
-
-# PowerShell's built-in [semver] type is used to perform a greater than operation
-# a bash equivalent function would need to be created if PowerShell is not available
-
-# Bash safeties: exit on error, pipelines can't hide errors
+# bash safeties: exit on error, pipelines can't hide errors
 set -eo pipefail
 
 # get the directory of this script and source print-colors.sh for better readability of the script's outputs
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
-releaseVersion="$(head -1 VERSION.txt)"
+print_info "This script assumes you are using Conventional Commit messages."
+print_info "The prefixes you should be using are:"
+print_info "fix: which represents bug fixes, and correlates to a SemVer patch."
+print_info "feat: which represents a new feature, and correlates to a SemVer minor."
+print_info "feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major."
+print_info "-----------------------------------"
 
-##########
-# validate tag syntax
-print_info "Validating semantic version syntax in VERSION.txt ..."
-SEMVER_PATTERN='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
-# use perl-regexp for compatibility with '\d'
-if echo "${releaseVersion}" | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
-    print_success "'$releaseVersion' is a valid semantic release version number."
-else
-    print_error "'$releaseVersion' is not a valid semantic release version number. \n \
-    refer to https://semver.org/ for valid pattern, using the 2nd regular expression at the bottom of the page."
-    exit 1
+print_info "git status"
+git status
+print_info "-----------------------------------"
+
+print_info "source version"
+echo $BUILD_SOURCEVERSION
+print_info "-----------------------------------"
+
+# load the config file
+CONFIG_FILE="version-tagging-config.json"
+packages=$(jq -r '.packages | keys[]' $CONFIG_FILE)
+if [ -z "${packages}" ]; then
+  print_error "unable to find key 'packages' in $CONFIG_FILE"
+  exit1
 fi
 
-##########
-# validate no tag duplication
-print_info "Checking if the git tag already exists for release version ..."
-# the expected return code if the tag doesn't exit is 2
-# save non-zero exit codes in a temporary variable to avoid the entire script from failing
-rc=0
-git ls-remote --tags --exit-code origin "refs/tags/${releaseVersion}" || rc=$?
-if [[ $rc -eq 2 ]] ; then
-    print_success "'$releaseVersion' git tag does not exist."
-else
-    print_error "'$releaseVersion' git tag already exists or repo could not be reached.  \n \
-    Please check and update VERSION.txt"
-    exit 1
-fi
+# loop through each package and execute a command
+print_info "Looping through packages"
+print_info "-----------------------------------"
+for package in $packages; do
+    print_info "treating package : $package"
 
-##########
-# validate tag increment
-print_info "Checking if the release version is newer than the latest existing tag version ..."
-git fetch --tags --recurse-submodules=no --quiet
-
-# ensure a properly formatted tag exists before performing comparison
-if git tag | grep --perl-regexp --quiet ${SEMVER_PATTERN} ; then
-    
-    # using powershell's built-in [semver] type to perform the greater than operation
-    # save non-zero exit codes in a temporary variable to avoid the entire script from failing
-    currentLatestVersion="$(git tag | grep --perl-regexp ${SEMVER_PATTERN} | sort --reverse --version-sort | head -1)"
-    rc=0
-    pwsh -Command "if (-not ([semver]\"$releaseVersion\" -gt [semver]\"$currentLatestVersion\") ) {exit 1}" || rc=$?
-    if [[ $rc -eq 0 ]] ; then
-        print_success "'$releaseVersion' is greater than latest existing tag '$currentLatestVersion'."
-    else
-        print_error "'$releaseVersion' is not greater than latest existing tag '$currentLatestVersion'."
-        exit 1
+    name=$(jq -r ".packages[\"$package\"].\"package-name\"" $CONFIG_FILE)
+    if [ -z "${name}" ]; then
+      print_error "unable to find key .packages[\"$package\"].\"package-name\" in $CONFIG_FILE"
+      exit1
     fi
-else
-    print_success "'$releaseVersion' will be the first release version. A properly formatted tag does not currently exist."
-fi
+    print_info "name : $name"
 
-##########
-# validate changelog, unless the 'VALIDATE_CHANGELOG' env. variable is set to false
-if [[ "${VALIDATE_CHANGELOG}" != "false" ]] ; then
-    print_info "Checking if release version is referenced in CHANGELOG.md ..."
-
-    if grep --fixed-strings --quiet "[${releaseVersion}]" CHANGELOG.md ; then
-        print_success "'[$releaseVersion]' is included in CHANGELOG.md."
-    else
-        print_error "'[$releaseVersion]' is not found in CHANGELOG.md.  \n \
-        Please make sure the CHANGELOG.md is updated with the released changes."
-        exit 1
+    separator=$(jq -r ".packages[\"$package\"].\"tag-separator\"" $CONFIG_FILE)
+    if [ -z "${separator}" ]; then
+      print_error "unable to find key .packages[\"$package\"].\"tag-separator\" in $CONFIG_FILE"
+      exit1
     fi
-fi
+    print_info "separator : $separator"
 
-##########
-# validate when tag is created
-print_info "Checking if the tag should be created (when pipeline is running through CI on push to main trigger) ..."
+    # get the latest tag
+    # git tag is a command that displays a list of tags that exist in the Git repository.
+    # -l "${name}${separator}*" specifies a pattern to match tags against. In this case, we're looking for tags that match the pattern ${name}${separator}*. The ${name} and ${separator} variables are interpolated into the pattern, so that we can search for tags that match the naming convention we're using for version tags. The * at the end of the pattern matches any string that follows the ${name}${separator} pattern.
+    # --sort=-refname sorts the list of tags in reverse order by their reference name. This means that the most recent tag will be the first one in the list.
+    # | head -n1 pipes the output of the git tag command to the head command, which limits the output to the first line of the input. This means that we're only interested in the most recent tag that matches the pattern ${name}${separator}*. If there are no matching tags, the command will output nothing.
+    latest_tag=$(git tag -l "${name}${separator}*" --sort=-refname | head -n1)
+    if [ -z "${latest_tag}" ]; then
+      latest_tag="${name}${separator}0.0.0"
+      print_warning "no tag found ! using : $latest_tag"
+    else
+      print_info "lastest tag: $latest_tag"
+    fi
 
-# Azure DevOps and GitHub runners have environment variables to check specific run conditions
-# a tag should not be created if it runs from a PR or if it runs manually
+    # extract just the version
+    version=$(echo $latest_tag | cut -d${separator} -f2 | head -n 1)
+    print_info "version : $version"
 
-if [[ "${BUILD_SOURCEBRANCHNAME}" == "main" ]] && [[ "${BUILD_REASON}" == "IndividualCI" || "${BUILD_REASON}" == "BatchedCI" ]] ; then
-  echo -e "Creating and pushing tag to Azure DevOps repo ...\n"
-  git tag ${releaseVersion}
-  git push origin tag ${releaseVersion}
+    # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
+    # --pretty=format:"%s" specifies the format of the log output. In this case, we're only interested in the commit message, so we specify that the output should only include the subject line (%s) of each commit.
+    # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
+    # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
+    # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
+    # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
+    logs=$(git log --pretty=format:"%s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
 
-elif [[ "${GITHUB_REF_NAME}" == "main" && "${GITHUB_EVENT_NAME}" == "push" ]] ; then
-  echo -e "Creating and pushing tag to GitHub repo ...\n"
-  git tag ${releaseVersion}
-  git push origin tag ${releaseVersion}
+    # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
+    shopt -s lastpipe
 
-else
-  echo -e "A tag will not be created yet. The pipeline is either running from a PR or manually.\n"
-fi
+    # loop through logs
+    # to loop over each line of output from a command that can return a single line or multiple lines in Bash, you can use the while read loop. This loop reads input line by line until the end of the input.
+    print_info "Looping through commits that have affected this package since $latest_tag"
+    print_info "----------------"
+    echo "$logs" | while read log; do
+      print_info "parsing commit message: $log"
+      prefix=$(echo $log | cut -d' ' -f1)
+      case $prefix in
+        "fix:")
+            print_success "prefix 'fix:' found"
+            # The awk command uses -F. to specify the field separator as a period, which allows it to split the version number into its three components: major, minor, and patch.
+            # The {$3++} command increments the value of the third component (i.e., the patch value) by one.
+            # Finally, OFS="." sets the output field separator to a period, and print $1,$2,$3 prints the three components of the modified version number, separated by periods.
+            # So, if the input version number is "1.2.3", the output of this command will be "1.2.4".
+            version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+            ;;
+        "feat:")
+            print_success "prefix 'feat:' found"
+            # {$(NF-1)++;$NF=0;print $0} is an awk script that increments the second-to-last field of the version number, sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
+            # $(NF-1)++ increments the second-to-last field of the version number.
+            # $NF=0 sets the last field to zero.
+            # print $0 prints the modified version number.
+            version=$(echo $version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
+            ;;
+        "feat!:")
+            print_success "prefix 'feat!:' found"
+            # {$(NF-2)++;$(NF-1)=0;$NF=0;print $0} is an awk script that increments the third-to-last field of the version number, sets the second-to-last field to zero, and sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
+            # $(NF-2)++ increments the third-to-last field of the version number.
+            # $(NF-1)=0 sets the second-to-last field to zero.
+            # $NF=0 sets the last field to zero.
+            # print $0 prints the modified version number.
+            version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+            ;;
+        "fix!:")
+            print_success "prefix 'fix!:' found"
+            # The awk command uses the same format as feat!
+            version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+            ;;
+        *)
+        # if no valid prefix is found, increase patch version by 1
+        print_warning "no valid prefix found, increasing patch version by 1"
+        # The awk command uses the same format as fix
+        version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+        ;;
+      esac
+      print_info "new version: $version"
+      print_info "----------------"
+    done
+    print_info "final version: $version"
+
+    # create the tag and push it to origin
+    git tag ${name}${sep}${version}
+    # git push origin tag ${name}${sep}${version}
+    print_success "Created tag: ${name}${sep}${version}"
+    print_info "-----------------------------------"
+done
