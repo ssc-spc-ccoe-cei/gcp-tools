@@ -68,21 +68,30 @@ for package in $packages; do
     if [ -z "${latest_tag}" ]; then
       latest_tag="${name}${separator}0.0.0"
       print_warning "no tag found ! using : $latest_tag"
+
+      # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
+      # --pretty=format:"%s" specifies the format of the log output. In this case, we're only interested in the commit message, so we specify that the output should only include the subject line (%s) of each commit.
+      # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
+      # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
+      # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
+      # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
+      logs=$(git log --pretty=format:"%s" --follow --reverse -- $package)
+
     else
       print_info "latest tag: $latest_tag"
+
+      # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
+      # --pretty=format:"%s" specifies the format of the log output. In this case, we're only interested in the commit message, so we specify that the output should only include the subject line (%s) of each commit.
+      # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
+      # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
+      # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
+      # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
+      logs=$(git log --pretty=format:"%s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
     fi
 
     # extract just the version
     version=$(echo $latest_tag | cut -d${separator} -f2 | head -n 1)
     print_info "version : $version"
-
-    # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
-    # --pretty=format:"%s" specifies the format of the log output. In this case, we're only interested in the commit message, so we specify that the output should only include the subject line (%s) of each commit.
-    # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
-    # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
-    # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
-    # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-    logs=$(git log --pretty=format:"%s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
 
     # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
     shopt -s lastpipe
