@@ -9,20 +9,21 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 print_info "git status"
 git status
-print_info "------------"
+print_info "-----------------------------------"
 
 print_info "source version"
 echo $BUILD_SOURCEVERSION
-print_info "------------"
+print_info "-----------------------------------"
 
 # Load the config file
 config_file="release-please-config.json"
 
 packages=$(jq -r '.packages | keys[]' $config_file)
 
+print_info "Looping through packages"
+print_info "-----------------------------------"
 # Loop through each package and execute a command
 for package in $packages; do
-    print_info "-----------------------------------"
     print_info "treating package : $package"
 
     name=$(jq -r ".packages[\"$package\"].\"package-name\"" $config_file)
@@ -46,6 +47,8 @@ for package in $packages; do
     shopt -s lastpipe
 
     # loop through LOGS
+    print_info "Looping through commits that have affected this package since $LAST_TAG"
+    print_info "----------------"
     echo "$LOGS" | while read LOG; do
       print_info "parsing commit message: $LOG"
       PREFIX=$(echo $LOG | cut -d' ' -f1)
@@ -78,6 +81,7 @@ for package in $packages; do
     # Create the tag
     # git tag $name$sep$VERSION
     print_success "Created tag: $name$sep$VERSION"
+    print_info "-----------------------------------"
 done
 
     # # Determine the new version based on commit messages
