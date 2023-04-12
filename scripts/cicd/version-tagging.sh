@@ -161,7 +161,7 @@ for package in $packages; do
     if [ "${new_tag}" != "${latest_tag}" ]; then
       # create the tag and push it to origin
       git tag ${new_tag}
-      # git push origin tag ${new_tag}
+      git push origin tag ${new_tag}
       print_success "Created tag: ${new_tag}"
     else
       print_info "no new tag required"

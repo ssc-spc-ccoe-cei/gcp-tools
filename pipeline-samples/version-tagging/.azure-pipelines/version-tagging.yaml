@@ -1,8 +1,9 @@
 # A pipeline to increment version tags for a git repo containing distinct packages
 
-# a "Build Validation Policy" (PR trigger) must also be created
 trigger:
-- main
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: ubuntu-22.04
