@@ -41,14 +41,14 @@ for package in $packages; do
       print_error "unable to find key .packages[\"$package\"].\"package-name\" in $CONFIG_FILE"
       exit1
     fi
-    print_info "name : $name"
+    print_info "package-name : $name"
 
     separator=$(jq -r ".packages[\"$package\"].\"tag-separator\"" $CONFIG_FILE)
     if [ -z "${separator}" ]; then
       print_error "unable to find key .packages[\"$package\"].\"tag-separator\" in $CONFIG_FILE"
       exit1
     fi
-    print_info "separator : $separator"
+    print_info "tag-separator : $separator"
 
     # get the latest tag
     # git tag is a command that displays a list of tags that exist in the Git repository.
@@ -60,7 +60,7 @@ for package in $packages; do
       latest_tag="${name}${separator}0.0.0"
       print_warning "no tag found ! using : $latest_tag"
     else
-      print_info "lastest tag: $latest_tag"
+      print_info "latest tag: $latest_tag"
     fi
 
     # extract just the version
@@ -129,8 +129,8 @@ for package in $packages; do
     print_info "final version: $version"
 
     # create the tag and push it to origin
-    git tag ${name}${sep}${version}
+    git tag ${name}${separator}${version}
     # git push origin tag ${name}${sep}${version}
-    print_success "Created tag: ${name}${sep}${version}"
+    print_success "Created tag: ${name}${separator}${version}"
     print_info "-----------------------------------"
 done
