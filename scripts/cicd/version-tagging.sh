@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# script to create a tag that use semantic versioning for "packages/folders".
+# script to create a tag that use semantic versioning for each package(folder).
 # the CONFIG_FILE contains the information for each package and it's tag format
+#
 # the commit messages are evaluated to determine what number (major or minor or patch) should be increased
 # they need to use one of the following prefixes :
 # fix: which represents bug fixes, and correlates to a SemVer patch.
@@ -155,12 +156,13 @@ for package in $packages; do
     done
     print_info "final version: $version"
 
+    new_tag="${name}${separator}${version}"
     # check if a new tag is required
-    if [ "${name}${separator}${version}" != "${latest_tag}" ]; then
+    if [ "${new_tag}" != "${latest_tag}" ]; then
       # create the tag and push it to origin
-      git tag ${name}${separator}${version}
-      # git push origin tag ${name}${sep}${version}
-      print_success "Created tag: ${name}${separator}${version}"
+      git tag ${new_tag}
+      # git push origin tag ${new_tag}
+      print_success "Created tag: ${new_tag}"
     else
       print_info "no new tag required"
     fi
