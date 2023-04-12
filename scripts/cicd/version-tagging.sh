@@ -156,7 +156,7 @@ for package in $packages; do
     print_info "final version: $version"
 
     # check if a new tag is required
-    if [ "${name}${separator}${version}" != "${latest_tag}"]; then
+    if [ "${name}${separator}${version}" != "${latest_tag}" ]; then
       # create the tag and push it to origin
       git tag ${name}${separator}${version}
       # git push origin tag ${name}${sep}${version}
