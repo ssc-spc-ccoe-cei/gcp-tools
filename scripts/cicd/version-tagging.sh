@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# script to create a tag that use semantic versioning for "packages/folders".
+# the CONFIG_FILE contains the information for each package and it's tag format
+# the commit messages are evaluated to determine what number (major or minor or patch) should be increased
+# they need to use one of the following prefixes :
+# fix: which represents bug fixes, and correlates to a SemVer patch."
+# feat: which represents a new feature, and correlates to a SemVer minor."
+# "feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major."
+
+
 # bash safeties: exit on error, pipelines can't hide errors
 set -eo pipefail
 
