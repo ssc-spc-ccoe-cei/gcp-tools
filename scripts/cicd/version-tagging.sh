@@ -96,7 +96,7 @@ for package in $packages; do
 
     # validate that logs is not empty
     if [ -z "${logs}" ]; then
-      print_warning "no new commit messages for package $package since tag $latest_tag"
+      print_warning "no new commit affecting package $package since tag $latest_tag"
     else
       # extract just the version
       version=$(echo $latest_tag | cut -d${separator} -f2 | head -n 1)

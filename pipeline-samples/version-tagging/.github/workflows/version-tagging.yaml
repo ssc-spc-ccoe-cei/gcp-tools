@@ -5,8 +5,6 @@ name: version_tagging
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   # This workflow contains a single job called "version_tagging"
@@ -20,6 +18,11 @@ jobs:
       - uses: actions/checkout@master
         with:
           ref: ${{ github.ref }}
+
+      - name: Git Fetch
+        run: |
+          echo "git fetch --unshallow ..."
+          git fetch --unshallow
 
       - name: Checkout git submodule
         run: |
