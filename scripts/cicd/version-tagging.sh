@@ -40,10 +40,6 @@ print_info "-----------------------------------"
 # load the config file
 CONFIG_FILE="version-tagging-config.json"
 packages=$(jq -r '.packages | keys[]' $CONFIG_FILE)
-if [ -z "${packages}" ]; then
-  print_error "unable to find key 'packages' in $CONFIG_FILE"
-  exit1
-fi
 
 # loop through each package and execute a command
 print_info "Looping through packages"
@@ -52,17 +48,9 @@ for package in $packages; do
     print_info "treating package : $package"
 
     name=$(jq -r ".packages[\"$package\"].\"package-name\"" $CONFIG_FILE)
-    if [ -z "${name}" ]; then
-      print_error "unable to find key .packages[\"$package\"].\"package-name\" in $CONFIG_FILE"
-      exit1
-    fi
     print_info "package-name : $name"
 
     separator=$(jq -r ".packages[\"$package\"].\"tag-separator\"" $CONFIG_FILE)
-    if [ -z "${separator}" ]; then
-      print_error "unable to find key .packages[\"$package\"].\"tag-separator\" in $CONFIG_FILE"
-      exit1
-    fi
     print_info "tag-separator : $separator"
 
     # get the latest tag
@@ -81,7 +69,7 @@ for package in $packages; do
       # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      logs=$(git log --pretty=format:"%s" --follow --reverse -- $package)
+      logs=$(git log --pretty=format:"%h %s" --follow --reverse -- $package)
     else
       print_info "latest tag: $latest_tag"
 
@@ -91,7 +79,7 @@ for package in $packages; do
       # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      logs=$(git log --pretty=format:"%s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
+      logs=$(git log --pretty=format:"%h %s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
     fi
 
     # validate that logs is not empty
@@ -111,7 +99,8 @@ for package in $packages; do
       print_info "----------------"
       echo "$logs" | while read log; do
         print_info "parsing commit message: $log"
-        prefix=$(echo $log | cut -d' ' -f1)
+        hash=$(echo $log | cut -d' ' -f1)
+        prefix=$(echo $log | cut -d' ' -f2)
         case $prefix in
           "fix:")
               print_success "prefix 'fix:' found"
@@ -154,21 +143,16 @@ for package in $packages; do
           version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
           ;;
         esac
+
         print_info "new version: $version"
+
+         # create the tag and push it to origin
+        new_tag="${name}${separator}${version}"
+        git tag ${new_tag} ${hash}
+        git push origin tag ${new_tag}
+        print_success "Created tag ${new_tag} on commit ${hash}"
         print_info "----------------"
       done
-      print_info "final version: $version"
-
-      new_tag="${name}${separator}${version}"
-      # check if a new tag is required
-      if [ "${new_tag}" != "${latest_tag}" ]; then
-        # create the tag and push it to origin
-        git tag ${new_tag}
-        git push origin tag ${new_tag}
-        print_success "Created tag: ${new_tag}"
-      else
-        print_info "no new tag required"
-      fi
     fi
     print_info "-----------------------------------"
 done
