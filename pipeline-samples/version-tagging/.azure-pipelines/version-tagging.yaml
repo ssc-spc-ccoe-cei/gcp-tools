@@ -1,5 +1,11 @@
 # A pipeline to increment version tags for a git repo containing distinct packages
 
+# permissions:
+# the build service account associated with this pipeline requires:
+# - read
+# - contribute
+# - create tag
+
 trigger:
   branches:
     include:

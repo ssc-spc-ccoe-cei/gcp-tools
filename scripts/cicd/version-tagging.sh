@@ -82,7 +82,7 @@ for package in $packages; do
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
       logs=$(git log --pretty=format:"%s" --follow --reverse -- $package)
-
+      echo "TTTT${LOGS}TTTT"
     else
       print_info "latest tag: $latest_tag"
 
@@ -93,6 +93,7 @@ for package in $packages; do
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
       logs=$(git log --pretty=format:"%s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
+      echo "TTTT${LOGS}TTTT"
     fi
 
     # extract just the version
