@@ -43,9 +43,8 @@ packages=$(jq -r '.packages | keys[]' $CONFIG_FILE)
 
 # loop through each package and execute a command
 print_info "Looping through packages"
-print_info "-----------------------------------"
 for package in $packages; do
-    print_info "treating package : $package"
+    print_info "-----------treating package : $package---------------"
 
     name=$(jq -r ".packages[\"$package\"].\"package-name\"" $CONFIG_FILE)
     print_info "package-name : $name"
@@ -96,7 +95,7 @@ for package in $packages; do
       # loop through logs
       # to loop over each line of output from a command that can return a single line or multiple lines in Bash, you can use the while read loop. This loop reads input line by line until the end of the input.
       print_info "Looping through commits that have affected this package since $latest_tag"
-      print_info "----------------"
+      print_info "-----------"
       echo "$logs" | while read log; do
         print_info "parsing commit message: $log"
         hash=$(echo $log | cut -d' ' -f1)
@@ -151,8 +150,7 @@ for package in $packages; do
         git tag ${new_tag} ${hash}
         git push origin tag ${new_tag}
         print_success "Created tag ${new_tag} on commit ${hash}"
-        print_info "----------------"
+        print_info "-----------"
       done
     fi
-    print_info "-----------------------------------"
 done
