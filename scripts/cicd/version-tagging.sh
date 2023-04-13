@@ -82,7 +82,6 @@ for package in $packages; do
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
       logs=$(git log --pretty=format:"%s" --follow --reverse -- $package)
-      echo "TTTT${logs}TTTT"
     else
       print_info "latest tag: $latest_tag"
 
@@ -93,80 +92,83 @@ for package in $packages; do
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
       logs=$(git log --pretty=format:"%s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
-      echo "TTTT${logs}TTTT"
     fi
 
-    # extract just the version
-    version=$(echo $latest_tag | cut -d${separator} -f2 | head -n 1)
-    print_info "version : $version"
-
-    # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
-    shopt -s lastpipe
-
-    # loop through logs
-    # to loop over each line of output from a command that can return a single line or multiple lines in Bash, you can use the while read loop. This loop reads input line by line until the end of the input.
-    print_info "Looping through commits that have affected this package since $latest_tag"
-    print_info "----------------"
-    echo "$logs" | while read log; do
-      print_info "parsing commit message: $log"
-      prefix=$(echo $log | cut -d' ' -f1)
-      case $prefix in
-        "fix:")
-            print_success "prefix 'fix:' found"
-            # The awk command uses -F. to specify the field separator as a period, which allows it to split the version number into its three components: major, minor, and patch.
-            # The {$3++} command increments the value of the third component (i.e., the patch value) by one.
-            # Finally, OFS="." sets the output field separator to a period, and print $1,$2,$3 prints the three components of the modified version number, separated by periods.
-            # So, if the input version number is "1.2.3", the output of this command will be "1.2.4".
-            version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
-            ;;
-        "feat:")
-            print_success "prefix 'feat:' found"
-            # {$(NF-1)++;$NF=0;print $0} is an awk script that increments the second-to-last field of the version number, sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
-            # $(NF-1)++ increments the second-to-last field of the version number.
-            # $NF=0 sets the last field to zero.
-            # print $0 prints the modified version number.
-            version=$(echo $version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
-            ;;
-        "feat!:")
-            print_success "prefix 'feat!:' found"
-            # {$(NF-2)++;$(NF-1)=0;$NF=0;print $0} is an awk script that increments the third-to-last field of the version number, sets the second-to-last field to zero, and sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
-            # $(NF-2)++ increments the third-to-last field of the version number.
-            # $(NF-1)=0 sets the second-to-last field to zero.
-            # $NF=0 sets the last field to zero.
-            # print $0 prints the modified version number.
-            version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
-            ;;
-        "fix!:")
-            print_success "prefix 'fix!:' found"
-            # The awk command uses the same format as feat!
-            version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
-            ;;
-        "doc:")
-            print_success "prefix 'doc:' found"
-            print_info "version will remain the same"
-            ;;
-        *)
-        # if no valid prefix is found, increase patch version by 1
-        print_warning "no valid prefix found, increasing patch version by 1"
-        # The awk command uses the same format as fix
-        version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
-        ;;
-      esac
-      print_info "new version: $version"
-      print_info "----------------"
-    done
-    print_info "final version: $version"
-
-    new_tag="${name}${separator}${version}"
-    # check if a new tag is required
-    if [ "${new_tag}" != "${latest_tag}" ]; then
-      # create the tag and push it to origin
-      git tag ${new_tag}
-      git push origin tag ${new_tag}
-      print_success "Created tag: ${new_tag}"
+    # validate that logs is not empty
+    if [ -z "${logs}" ]; then
+      print_warning "no new commit messages for package $package since tag $latest_tag"
     else
-      print_info "no new tag required"
-    fi
+      # extract just the version
+      version=$(echo $latest_tag | cut -d${separator} -f2 | head -n 1)
+      print_info "version : $version"
 
+      # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
+      shopt -s lastpipe
+
+      # loop through logs
+      # to loop over each line of output from a command that can return a single line or multiple lines in Bash, you can use the while read loop. This loop reads input line by line until the end of the input.
+      print_info "Looping through commits that have affected this package since $latest_tag"
+      print_info "----------------"
+      echo "$logs" | while read log; do
+        print_info "parsing commit message: $log"
+        prefix=$(echo $log | cut -d' ' -f1)
+        case $prefix in
+          "fix:")
+              print_success "prefix 'fix:' found"
+              # The awk command uses -F. to specify the field separator as a period, which allows it to split the version number into its three components: major, minor, and patch.
+              # The {$3++} command increments the value of the third component (i.e., the patch value) by one.
+              # Finally, OFS="." sets the output field separator to a period, and print $1,$2,$3 prints the three components of the modified version number, separated by periods.
+              # So, if the input version number is "1.2.3", the output of this command will be "1.2.4".
+              version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+              ;;
+          "feat:")
+              print_success "prefix 'feat:' found"
+              # {$(NF-1)++;$NF=0;print $0} is an awk script that increments the second-to-last field of the version number, sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
+              # $(NF-1)++ increments the second-to-last field of the version number.
+              # $NF=0 sets the last field to zero.
+              # print $0 prints the modified version number.
+              version=$(echo $version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
+              ;;
+          "feat!:")
+              print_success "prefix 'feat!:' found"
+              # {$(NF-2)++;$(NF-1)=0;$NF=0;print $0} is an awk script that increments the third-to-last field of the version number, sets the second-to-last field to zero, and sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
+              # $(NF-2)++ increments the third-to-last field of the version number.
+              # $(NF-1)=0 sets the second-to-last field to zero.
+              # $NF=0 sets the last field to zero.
+              # print $0 prints the modified version number.
+              version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+              ;;
+          "fix!:")
+              print_success "prefix 'fix!:' found"
+              # The awk command uses the same format as feat!
+              version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+              ;;
+          "doc:")
+              print_success "prefix 'doc:' found"
+              print_info "version will remain the same"
+              ;;
+          *)
+          # if no valid prefix is found, increase patch version by 1
+          print_warning "no valid prefix found, increasing patch version by 1"
+          # The awk command uses the same format as fix
+          version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+          ;;
+        esac
+        print_info "new version: $version"
+        print_info "----------------"
+      done
+      print_info "final version: $version"
+
+      new_tag="${name}${separator}${version}"
+      # check if a new tag is required
+      if [ "${new_tag}" != "${latest_tag}" ]; then
+        # create the tag and push it to origin
+        git tag ${new_tag}
+        git push origin tag ${new_tag}
+        print_success "Created tag: ${new_tag}"
+      else
+        print_info "no new tag required"
+      fi
+    fi
     print_info "-----------------------------------"
 done
