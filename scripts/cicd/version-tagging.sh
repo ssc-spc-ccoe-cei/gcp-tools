@@ -133,10 +133,9 @@ for package in $packages; do
               ;;
           "doc:")
               print_success "prefix 'doc:' found"
-              print_info "removing existing tag"
+              print_info "removing previous tag"
               git tag --delete "${name}${separator}${version}"
               git push --delete origin "${name}${separator}${version}"
-              print_success "Deleted tag ${name}${separator}${version} on commit ${hash}"
               ;;
           *)
           # if no valid prefix is found, increase patch version by 1
