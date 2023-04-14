@@ -99,8 +99,9 @@ for package in $packages; do
         print_info "parsing commit: $log"
         hash=$(echo $log | cut -d' ' -f1)
         message=$(echo $log | cut -d' ' -f2-)
+        # the patterns below accomodate for default commit message from azure devops PR which add the prefix Merged PR XXXX: in front of the PR title.
         case $message in
-          "*fix:*")
+          *fix:*)
               print_success "prefix 'fix:' found"
               # The awk command uses -F. to specify the field separator as a period, which allows it to split the version number into its three components: major, minor, and patch.
               # The {$3++} command increments the value of the third component (i.e., the patch value) by one.
@@ -108,7 +109,7 @@ for package in $packages; do
               # So, if the input version number is "1.2.3", the output of this command will be "1.2.4".
               version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
               ;;
-          "*feat:*")
+          *feat:*)
               print_success "prefix 'feat:' found"
               # {$(NF-1)++;$NF=0;print $0} is an awk script that increments the second-to-last field of the version number, sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
               # $(NF-1)++ increments the second-to-last field of the version number.
@@ -116,7 +117,7 @@ for package in $packages; do
               # print $0 prints the modified version number.
               version=$(echo $version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
               ;;
-          "*feat!:*")
+          *feat!:*)
               print_success "prefix 'feat!:' found"
               # {$(NF-2)++;$(NF-1)=0;$NF=0;print $0} is an awk script that increments the third-to-last field of the version number, sets the second-to-last field to zero, and sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
               # $(NF-2)++ increments the third-to-last field of the version number.
@@ -125,12 +126,12 @@ for package in $packages; do
               # print $0 prints the modified version number.
               version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
               ;;
-          "*fix!:*")
+          *fix!:*)
               print_success "prefix 'fix!:' found"
               # The awk command uses the same format as feat!
               version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
               ;;
-          "*doc:*")
+          *doc:*)
               print_success "prefix 'doc:' found"
               print_info "removing previous tag"
               git tag --delete "${name}${separator}${version}"
