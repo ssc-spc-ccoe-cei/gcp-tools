@@ -75,7 +75,7 @@ for package in $packages; do
       print_info "latest tag: $latest_tag"
 
       # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
-      # --pretty=format:"%s" specifies the format of the log output. In this case, we're only interested in the commit message, so we specify that the output should only include the subject line (%s) of each commit.
+      # --pretty=format:"%h %s" specifies the format of the log output. In this case, we're only interested in the commit hash and message, so we specify that the output should only include the hash (%h) and the subject line (%s) of each commit.
       # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
       # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
