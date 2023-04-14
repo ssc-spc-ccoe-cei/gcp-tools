@@ -55,7 +55,7 @@ for package in $packages; do
     # get the latest tag
     # git tag is a command that displays a list of tags that exist in the Git repository.
     # -l "${name}${separator}*" specifies a pattern to match tags against. In this case, we're looking for tags that match the pattern ${name}${separator}*. The ${name} and ${separator} variables are interpolated into the pattern, so that we can search for tags that match the naming convention we're using for version tags. The * at the end of the pattern matches any string that follows the ${name}${separator} pattern.
-    # --sort=-refname sorts the list of tags in reverse order by their reference name. This means that the most recent tag will be the first one in the list.
+    # --sort=-version:refname sorts the list of tags in reverse order by their reference name. This means that the most recent tag will be the first one in the list.
     # | head -n1 pipes the output of the git tag command to the head command, which limits the output to the first line of the input. This means that we're only interested in the most recent tag that matches the pattern ${name}${separator}*. If there are no matching tags, the command will output nothing.
     latest_tag=$(git tag -l "${name}${separator}*" --sort=-version:refname | head -n1)
     if [ -z "${latest_tag}" ]; then
