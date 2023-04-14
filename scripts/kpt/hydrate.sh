@@ -52,9 +52,6 @@ warning_counter=0
 diff_counter=0
 exit_code=0
 
-# trap unhandled errors and unexpected termination
-trap 'status=$?; echo "Script terminating unexpectedly with exit code: $status"; exit $status' INT TERM ERR
-
 ################################  FUNCTIONS  ################################
 
 hydrate-env () {
@@ -62,7 +59,7 @@ hydrate-env () {
     # test that an environment was passed
     if [ -z "${1}" ]; then
         print_warning "missing environment, exiting function."
-        warning_counter=$(expr ${warning_counter} + 1)
+        warning_counter=$((warning_counter+1))
         return
     fi
 
@@ -102,7 +99,7 @@ hydrate-env () {
             do
                 if [ ! -f "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}" ]; then
                     print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
-                    error_counter=$(expr ${error_counter} + 1)
+                    error_counter=$((error_counter+1))
                     status_validate_setters["${dir_id}"]=1
                     return
                 fi
@@ -125,7 +122,7 @@ hydrate-env () {
         status_kpt["${dir_id}"]=0
     else
         print_error "'kpt pkg init' failed."
-        error_counter=$(expr ${error_counter} + 1)
+        error_counter=$((error_counter+1))
         status_kpt["${dir_id}"]=1
         return
     fi
@@ -139,7 +136,7 @@ hydrate-env () {
         status_kpt["${dir_id}"]=0
     else
         print_error "'kpt fn render' failed."
-        error_counter=$(expr ${error_counter} + 1)
+        error_counter=$((error_counter+1))
         status_kpt["${dir_id}"]=1
         return
     fi
@@ -152,7 +149,7 @@ hydrate-env () {
         status_kpt["${dir_id}"]=0
     else
         print_error "'kpt fn eval -i remove-local-config-resources' failed."
-        error_counter=$(expr ${error_counter} + 1)
+        error_counter=$((error_counter+1))
         status_kpt["${dir_id}"]=1
         return
     fi
@@ -166,8 +163,8 @@ hydrate-env () {
         status_render_diff["${dir_id}"]=0
     else
         print_warning "Change detected, copying '${env_temp_subdir}/hydrated' to '${env_deploy_dir}' ..."
-        warning_counter=$(expr ${warning_counter} + 1)
-        diff_counter=$(expr ${diff_counter} + 1)
+        warning_counter=$((warning_counter+1))
+        diff_counter=$((diff_counter+1))
         status_render_diff["${dir_id}"]=2
 
         rm -rf "${env_deploy_dir}"
@@ -189,7 +186,7 @@ validate_yaml_in_dir() {
         dir_to_validate="${1}"
     else
         print_warning "Invalid directory passed as argument in function 'validate_yaml_in_dir': '${1}'"
-        warning_counter=$(expr ${warning_counter} + 1)
+        warning_counter=$((warning_counter+1))
         return
     fi
 
@@ -210,7 +207,7 @@ validate_yaml_in_dir() {
             status_validate_kubeval["${dir_id}"]=0
         else
             print_error "'kubeval' failed."
-            error_counter=$(expr ${error_counter} + 1)
+            error_counter=$((error_counter+1))
             status_validate_kubeval["${dir_id}"]=1
         fi
     else
@@ -233,7 +230,7 @@ validate_yaml_in_dir() {
             status_validate_nomos["${dir_id}"]=0
         else
             print_error "'nomos vet' failed."
-            error_counter=$(expr ${error_counter} + 1)
+            error_counter=$((error_counter+1))
             status_validate_nomos["${dir_id}"]=1
         fi
     else
@@ -244,21 +241,28 @@ validate_yaml_in_dir() {
 # helper function to print a status icon in a summary table
 # 0=success, 1=error, 2=warning (only render diffs are considered warnings for summary)
 print_status () {
-    yellow='\033[1;33m'
-    nocolor='\033[0m'
     case "${1}" in
-        "0") printf "    \u2705    " # Green Check Mark Button
+        "0") printf "    \u2705    " # green check mark button
         ;;
-        "1") printf "    \u274c    " # Red Cross Mark
+        "1") printf "    \u274c    " # red cross mark
         ;;
-        "2") printf "   ${yellow}DIFF${nocolor}   "
+        "2") printf "   \033[1;33mDIFF\033[0m   " # yellow 'DIFF'
         ;;
         *) printf "    --    "
         ;;
     esac
 }
 
+trap_unknown_errors () {
+    status=$?
+    echo "Script terminating unexpectedly with exit code: $status"
+    exit $status
+}
+
 ################################  MAIN  ################################
+
+# trap unhandled errors and unexpected termination
+trap 'trap_unknown_errors' INT TERM ERR
 
 if ! grep "^${TEMP_DIR}/" .gitignore >/dev/null 2>&1 ; then
     print_error "TEMP_DIR/ is not in '.gitignore': ${TEMP_DIR}"
@@ -289,7 +293,7 @@ do
         done
     else
         print_warning "Invalid SOURCE_BASE_DIR '${SOURCE_BASE_DIR}', SOURCE_CUSTOMIZATION_DIR '${SOURCE_CUSTOMIZATION_DIR}' or DEPLOY_DIR '${DEPLOY_DIR}'"
-        warning_counter=$(expr ${warning_counter} + 1)
+        warning_counter=$((warning_counter+1))
     fi
     # return to the root of the repo
     cd "${REPO_ROOT}"
@@ -308,7 +312,7 @@ then
     # printf can be used to format column width, however, it does not work with unicode emojis (used in print_status)
     printf '\n\n%-40s%-10s%-10s%-10s%-10s%-10s\n' 'processed directory' '  setters' '    kpt' ' no diff' ' kubeval' 'nomos vet'
     # loop through all processed directories and lookup its status in each dictionary array
-    for processed_dir in ${processed_dir_list[@]}
+    for processed_dir in "${processed_dir_list[@]}"
     do
         printf "%-40s" "${processed_dir}"
         print_status "${status_validate_setters[${processed_dir}]}"
@@ -325,11 +329,11 @@ then
     echo "Total diffs count (also counted as warnings) = ${diff_counter}"
 
     # check for errors and handle how to proceed
-    if [ ${error_counter} -ne 0 ]; then
+    if [ "${error_counter}" -ne 0 ]; then
         print_error "The script encountered errors, please review and address them."
         exit_code=1
     else
-        if [ ${diff_counter} -ne 0 ]; then
+        if [ "${diff_counter}" -ne 0 ]; then
             print_warning "The script detected change in configurations."
 
             # push change if running from a pipeline on Pull Request
@@ -337,7 +341,7 @@ then
             # if [[ "${BUILD_REASON}" == "PullRequest" && "${BRANCH_NAME_TO_UPDATE}" != "" ]] ; then
             if [[ "${BRANCH_NAME_TO_UPDATE}" != "" ]] ; then
                 print_info "The script is running in a PR pipeline and will attempt to commit and push changes to '${BRANCH_NAME_TO_UPDATE}' ..."
-                if git checkout ${BRANCH_NAME_TO_UPDATE} \
+                if git checkout "${BRANCH_NAME_TO_UPDATE}" \
                    && git add . \
                    && git commit -m "hydrate.sh detected diff in configurations" \
                    && git push origin "${BRANCH_NAME_TO_UPDATE}"
