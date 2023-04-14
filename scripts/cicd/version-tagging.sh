@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# script to create a tag that use semantic versioning for each package(folder).
+# script to create a tag that uses semantic versioning for each package(folder).
 # the CONFIG_FILE contains the information for each package and it's tag format
 #
 # the commit messages are evaluated to determine what number (major or minor or patch) should be increased
@@ -8,7 +8,7 @@
 # fix: which represents bug fixes, and correlates to a SemVer patch.
 # feat: which represents a new feature, and correlates to a SemVer minor.
 # feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major.
-# doc: which represents an update to documentation won't modify the version.
+# doc: which represents an update to documentation won't modify the version but will move the tag to the new commit.
 # commit message not following this convention correlates to a SemVer patch
 # https://www.conventionalcommits.org/en/v1.0.0/
 
@@ -25,7 +25,7 @@ print_info "The prefixes you should be using are:"
 print_info "fix: which represents bug fixes, and correlates to a SemVer patch."
 print_info "feat: which represents a new feature, and correlates to a SemVer minor."
 print_info "feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major."
-print_info "doc: which represents an update to documentation won't modify the version."
+print_info "doc: which represents an update to documentation won't modify the version but will move the tag to the new commit."
 print_info "commit message not following this convention correlates to a SemVer patch."
 print_info "-----------------------------------"
 

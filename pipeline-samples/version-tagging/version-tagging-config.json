@@ -1,0 +1,12 @@
+{
+  "packages": {
+    "tier3": {
+      "package-name": "tier3",
+      "tag-separator": "-"
+    },
+    "tier4": {
+      "package-name": "tier4",
+      "tag-separator": "-"
+    }
+  }
+}
