@@ -18,6 +18,7 @@ set -eo pipefail
 
 # get the directory of this script and source print-colors.sh for better readability of the script's outputs
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# shellcheck source-path=scripts/cicd # tell shellcheck where to look
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
 print_info "This script assumes you are using Conventional Commit messages."

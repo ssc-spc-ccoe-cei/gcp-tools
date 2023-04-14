@@ -14,37 +14,37 @@ services:
       dockerfile: Dockerfile
       shm_size: '2gb'
       args:
-          CPE_USERNAME: ${CPE_USERNAME}
-          APT_TRANSPORT_HTTPS: ${APT_TRANSPORT_HTTPS}
-          GNUPG: ${GNUPG}
-          CURL: ${CURL}
-          LSB_RELEASE: ${LSB_RELEASE}
-          UNZIP: ${UNZIP}
-          JQ: ${JQ}
-          WGET: ${WGET}
-          GIT: ${GIT}
-          TREE: ${TREE}
-          MAKE: ${MAKE}
-          SOFTWARE_PROPERTIES_COMMON: ${SOFTWARE_PROPERTIES_COMMON}
-          NET_TOOLS: ${NET_TOOLS}
-          DOCKER_CE: ${DOCKER_CE}
-          DOCKER_CE_CLI: ${DOCKER_CE}
-          CONTAINERD_IO: ${CONTAINERD_IO}
-          DOCKER_COMPOSE_PLUGIN: ${DOCKER_COMPOSE_PLUGIN}
-          GCLD_SDK: ${GCLD_SDK}
-          BASH_COMPLETION: ${BASH_COMPLETION}
-          GATOR: ${GATOR}
+        CPE_USERNAME: ${CPE_USERNAME}
+        APT_TRANSPORT_HTTPS: ${APT_TRANSPORT_HTTPS}
+        GNUPG: ${GNUPG}
+        CURL: ${CURL}
+        LSB_RELEASE: ${LSB_RELEASE}
+        UNZIP: ${UNZIP}
+        JQ: ${JQ}
+        WGET: ${WGET}
+        GIT: ${GIT}
+        TREE: ${TREE}
+        MAKE: ${MAKE}
+        SOFTWARE_PROPERTIES_COMMON: ${SOFTWARE_PROPERTIES_COMMON}
+        NET_TOOLS: ${NET_TOOLS}
+        DOCKER_CE: ${DOCKER_CE}
+        DOCKER_CE_CLI: ${DOCKER_CE}
+        CONTAINERD_IO: ${CONTAINERD_IO}
+        DOCKER_COMPOSE_PLUGIN: ${DOCKER_COMPOSE_PLUGIN}
+        GCLD_SDK: ${GCLD_SDK}
+        BASH_COMPLETION: ${BASH_COMPLETION}
+        GATOR: ${GATOR}
       labels:
         ca.gc.ssc-spc.ctob.author: "Cloud Platform Engineering"
         ca.gc.ssc-spc.ctob.purpose: "Container used with versioned developer tools"
       network: host
     volumes:
-       - type: bind
-         source: /var/run/docker.sock
-         target: /var/run/docker.sock
-       - type: volume
-         source: vol
-         target: /home/${CPE_USERNAME}/
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: volume
+        source: vol
+        target: /home/${CPE_USERNAME}/
 secrets:
   pub_cert1:
     file: ${PUB_CERT1_PATH}

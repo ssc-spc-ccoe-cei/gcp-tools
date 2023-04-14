@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.4.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.4.0...0.4.1) (2023-04-05)
+
+
+### Bug Fixes
+
+* linting gcp-tools ([#23](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/23)) ([2f02eef](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/2f02eef0b297c84d0282e398879c27cb63150130))
+
+## [0.4.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.3.0...0.4.0) (2023-03-24)
+
+
+### Features
+
+* adjust yakima roles in bootstrap ([#21](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/21)) ([aeea254](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/aeea254441a4484a581c12e71206a11833db6296))
+
+## [0.3.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.1...0.3.0) (2023-03-22)
+
+
+### Features
+
+* validation pipelines ([#19](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/19)) ([d711400](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/d7114007bbc33d68c915d6658f8763483fade830))
+
+## [0.2.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.2.0...0.2.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* hydrate.sh nomos vet ([#17](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/17)) ([dbd7f04](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/dbd7f046625914dc297bc9be0463bdd6fb3b1231))
+
 ## [0.2.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.1.1...0.2.0) (2023-02-17)
 
 
