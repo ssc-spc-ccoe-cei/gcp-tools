@@ -39,7 +39,9 @@ print_info "-----------------------------------"
 
 # load the config file
 CONFIG_FILE="version-tagging-config.json"
-packages=$(jq -r '.packages | keys[]' $CONFIG_FILE)
+# The keys_unsorted function will extract all the keys under packages.
+# The select function with the startswith function and the negation operator (not) will exclude any key that starts with //comment.
+packages=$(jq -r '.packages | keys_unsorted[] | select(startswith("//comment") | not)' $CONFIG_FILE)
 
 # loop through each package and execute a command
 print_info "Looping through packages"
