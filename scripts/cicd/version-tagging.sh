@@ -133,7 +133,8 @@ for package in $packages; do
               ;;
           "doc:")
               print_success "prefix 'doc:' found"
-              print_info "version will remain the same"
+              print_info "removing existing tag"
+              git tag -d "${name}${separator}${version}"
               ;;
           *)
           # if no valid prefix is found, increase patch version by 1
