@@ -52,6 +52,10 @@ warning_counter=0
 diff_counter=0
 exit_code=0
 
+# trap unhandled errors and unexpected termination
+# shellcheck disable=SC2154 # disable 'var is referenced but not assigned'
+trap 'status=$?; echo "Script terminating unexpectedly with exit code: ${status}"; exit ${status}' INT TERM ERR
+
 ################################  FUNCTIONS  ################################
 
 hydrate-env () {
@@ -253,16 +257,7 @@ print_status () {
     esac
 }
 
-trap_unknown_errors () {
-    status=$?
-    echo "Script terminating unexpectedly with exit code: $status"
-    exit $status
-}
-
 ################################  MAIN  ################################
-
-# trap unhandled errors and unexpected termination
-trap 'trap_unknown_errors' INT TERM ERR
 
 if ! grep "^${TEMP_DIR}/" .gitignore >/dev/null 2>&1 ; then
     print_error "TEMP_DIR/ is not in '.gitignore': ${TEMP_DIR}"
