@@ -55,7 +55,7 @@ for package in $packages; do
     # get the latest tag
     # git tag is a command that displays a list of tags that exist in the Git repository.
     # -l "${name}${separator}*" specifies a pattern to match tags against. In this case, we're looking for tags that match the pattern ${name}${separator}*. The ${name} and ${separator} variables are interpolated into the pattern, so that we can search for tags that match the naming convention we're using for version tags. The * at the end of the pattern matches any string that follows the ${name}${separator} pattern.
-    # --sort=-version:refname sorts the list of tags in reverse order by their reference name. This means that the most recent tag will be the first one in the list.
+    # --sort=-version:refname sorts the list of tags in reverse order by their version and reference name. This means that the most recent tag will be the first one in the list.
     # | head -n1 pipes the output of the git tag command to the head command, which limits the output to the first line of the input. This means that we're only interested in the most recent tag that matches the pattern ${name}${separator}*. If there are no matching tags, the command will output nothing.
     latest_tag=$(git tag -l "${name}${separator}*" --sort=-version:refname | head -n1)
     if [ -z "${latest_tag}" ]; then
@@ -63,9 +63,8 @@ for package in $packages; do
       print_warning "no tag found ! using : $latest_tag"
 
       # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
-      # --pretty=format:"%s" specifies the format of the log output. In this case, we're only interested in the commit message, so we specify that the output should only include the subject line (%s) of each commit.
+      # --pretty=format:"%h %s" specifies the format of the log output. In this case, we're only interested in the commit hash and message, so we specify that the output should only include the hash (%h) and the subject line (%s) of each commit.
       # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
-      # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
       logs=$(git log --pretty=format:"%h %s" --follow --reverse -- $package)
@@ -97,11 +96,11 @@ for package in $packages; do
       print_info "Looping through commits that have affected this package since $latest_tag"
       print_info "-----------"
       echo "$logs" | while read log; do
-        print_info "parsing commit message: $log"
+        print_info "parsing commit: $log"
         hash=$(echo $log | cut -d' ' -f1)
-        prefix=$(echo $log | cut -d' ' -f2)
-        case $prefix in
-          "fix:")
+        message=$(echo $log | cut -d' ' -f2-)
+        case $message in
+          "*fix:*")
               print_success "prefix 'fix:' found"
               # The awk command uses -F. to specify the field separator as a period, which allows it to split the version number into its three components: major, minor, and patch.
               # The {$3++} command increments the value of the third component (i.e., the patch value) by one.
@@ -109,7 +108,7 @@ for package in $packages; do
               # So, if the input version number is "1.2.3", the output of this command will be "1.2.4".
               version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
               ;;
-          "feat:")
+          "*feat:*")
               print_success "prefix 'feat:' found"
               # {$(NF-1)++;$NF=0;print $0} is an awk script that increments the second-to-last field of the version number, sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
               # $(NF-1)++ increments the second-to-last field of the version number.
@@ -117,7 +116,7 @@ for package in $packages; do
               # print $0 prints the modified version number.
               version=$(echo $version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
               ;;
-          "feat!:")
+          "*feat!:*")
               print_success "prefix 'feat!:' found"
               # {$(NF-2)++;$(NF-1)=0;$NF=0;print $0} is an awk script that increments the third-to-last field of the version number, sets the second-to-last field to zero, and sets the last field to zero. It then prints the modified version number. Here's a breakdown of each command:
               # $(NF-2)++ increments the third-to-last field of the version number.
@@ -126,12 +125,12 @@ for package in $packages; do
               # print $0 prints the modified version number.
               version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
               ;;
-          "fix!:")
+          "*fix!:*")
               print_success "prefix 'fix!:' found"
               # The awk command uses the same format as feat!
               version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
               ;;
-          "doc:")
+          "*doc:*")
               print_success "prefix 'doc:' found"
               print_info "removing previous tag"
               git tag --delete "${name}${separator}${version}"
