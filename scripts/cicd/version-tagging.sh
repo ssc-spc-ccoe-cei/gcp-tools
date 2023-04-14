@@ -35,7 +35,7 @@ git status
 print_info "-----------------------------------"
 
 print_info "source version"
-echo $BUILD_SOURCEVERSION
+echo "$BUILD_SOURCEVERSION"
 print_info "-----------------------------------"
 
 # load the config file
@@ -70,7 +70,7 @@ for package in $packages; do
       # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      logs=$(git log --pretty=format:"%h %s" --follow --reverse -- $package)
+      logs=$(git log --pretty=format:"%h %s" --follow --reverse -- "$package")
     else
       print_info "latest tag: $latest_tag"
 
@@ -80,7 +80,7 @@ for package in $packages; do
       # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      logs=$(git log --pretty=format:"%h %s" --follow $latest_tag..$BUILD_SOURCEVERSION --reverse -- $package)
+      logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".."$BUILD_SOURCEVERSION" --reverse -- "$package")
     fi
 
     # validate that logs is not empty
@@ -88,7 +88,7 @@ for package in $packages; do
       print_warning "no new commit affecting package $package since tag $latest_tag"
     else
       # extract just the version
-      version=$(echo $latest_tag | cut -d${separator} -f2 | head -n 1)
+      version=$(echo "$latest_tag" | cut -d"${separator}" -f2 | head -n 1)
       print_info "version : $version"
 
       # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
@@ -98,10 +98,10 @@ for package in $packages; do
       # to loop over each line of output from a command that can return a single line or multiple lines in Bash, you can use the while read loop. This loop reads input line by line until the end of the input.
       print_info "Looping through commits that have affected this package since $latest_tag"
       print_info "-----------"
-      echo "$logs" | while read log; do
+      echo "$logs" | while read -r log; do
         print_info "parsing commit: $log"
-        hash=$(echo $log | cut -d' ' -f1)
-        message=$(echo $log | cut -d' ' -f2-)
+        hash=$(echo "$log" | cut -d' ' -f1)
+        message=$(echo "$log" | cut -d' ' -f2-)
         # the patterns below accomodate for default commit message from azure devops PR which add the prefix Merged PR XXXX: in front of the PR title.
         case $message in
           *fix:*)
@@ -110,7 +110,7 @@ for package in $packages; do
               # The {$3++} command increments the value of the third component (i.e., the patch value) by one.
               # Finally, OFS="." sets the output field separator to a period, and print $1,$2,$3 prints the three components of the modified version number, separated by periods.
               # So, if the input version number is "1.2.3", the output of this command will be "1.2.4".
-              version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+              version=$(echo "$version" | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
               ;;
           *feat:*)
               print_success "prefix 'feat:' found"
@@ -118,7 +118,7 @@ for package in $packages; do
               # $(NF-1)++ increments the second-to-last field of the version number.
               # $NF=0 sets the last field to zero.
               # print $0 prints the modified version number.
-              version=$(echo $version | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
+              version=$(echo "$version" | awk -F. '{$(NF-1)++;$NF=0;print $0}' OFS=.)
               ;;
           *feat!:*)
               print_success "prefix 'feat!:' found"
@@ -127,12 +127,12 @@ for package in $packages; do
               # $(NF-1)=0 sets the second-to-last field to zero.
               # $NF=0 sets the last field to zero.
               # print $0 prints the modified version number.
-              version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+              version=$(echo "$version" | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
               ;;
           *fix!:*)
               print_success "prefix 'fix!:' found"
               # The awk command uses the same format as feat!
-              version=$(echo $version | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
+              version=$(echo "$version" | awk -F. '{$(NF-2)++;$(NF-1)=0;$NF=0;print $0}' OFS=.)
               ;;
           *doc:*)
               print_success "prefix 'doc:' found"
@@ -144,7 +144,7 @@ for package in $packages; do
           # if no valid prefix is found, increase patch version by 1
           print_warning "no valid prefix found, increasing patch version by 1"
           # The awk command uses the same format as fix
-          version=$(echo $version | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
+          version=$(echo "$version" | awk -F. '{$3++; OFS="."; print $1,$2,$3}')
           ;;
         esac
 
@@ -152,8 +152,8 @@ for package in $packages; do
 
          # create the tag and push it to origin
         new_tag="${name}${separator}${version}"
-        git tag ${new_tag} ${hash}
-        git push origin tag ${new_tag}
+        git tag "${new_tag}" "${hash}"
+        git push origin tag "${new_tag}"
         print_success "Created tag ${new_tag} on commit ${hash}"
         print_info "-----------"
       done
