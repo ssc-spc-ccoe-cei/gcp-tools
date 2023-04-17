@@ -12,6 +12,8 @@ on:
 jobs:
   # This workflow contains a single job called "validate-yaml"
   validate-yaml:
+    permissions:
+      contents: write
 
     runs-on: ubuntu-22.04
 
@@ -27,3 +29,5 @@ jobs:
         run: |
           echo "Running 'bash tools/scripts/cicd/validate-yaml.sh' ..."
           bash tools/scripts/cicd/validate-yaml.sh
+        env:
+          ENABLE_PUSH_ON_DIFF: true

@@ -21,3 +21,5 @@ jobs:
           echo "Running 'bash tools/scripts/cicd/validate-yaml.sh' ..."
           bash tools/scripts/cicd/validate-yaml.sh
         displayName: 'Validate YAML'
+        env:
+          ENABLE_PUSH_ON_DIFF: true

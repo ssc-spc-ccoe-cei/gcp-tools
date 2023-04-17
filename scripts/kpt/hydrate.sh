@@ -243,14 +243,14 @@ validate_yaml_in_dir() {
 }
 
 # helper function to print a status icon in a summary table
-# 0=success, 1=error, 2=warning (only render diffs are considered warnings for summary)
+# 0=success, 1=error, 2=warning (only render diffs should be considered warnings in summary)
 print_status () {
     case "${1}" in
         "0") printf "    \u2705    " # green check mark button
         ;;
         "1") printf "    \u274c    " # red cross mark
         ;;
-        "2") printf "   \033[1;33mDIFF\033[0m   " # yellow 'DIFF'
+        "2") printf "     \033[1;33m\u26A0\033[0m    " # yellow warning
         ;;
         *) printf "    --    "
         ;;
