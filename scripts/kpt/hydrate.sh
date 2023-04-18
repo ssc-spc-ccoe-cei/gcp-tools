@@ -106,10 +106,13 @@ hydrate-env () {
                     print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
                     error_counter=$((error_counter+1))
                     status_validate_setters["${dir_id}"]=1
-                    return
                 fi
                 # TODO: possible enhancement, maybe check if there is a diff?
             done
+            # exit function if errors were found
+            if [[ "${status_validate_setters[${dir_id}]}" -ne 0 ]] ; then
+                return
+            fi
         else
             echo "Skipping setters customization validation."
         fi
