@@ -29,6 +29,7 @@ dir_id=""
 declare -a processed_dir_list
 
 # declare associative arrays (-A) to store return/status codes of each directory id
+# those key commands will run in 'if' statements to capture the result and prevent the script from failing immediately
 declare -A status_render_diff
 declare -A status_validate_setters
 declare -A status_validate_kubeval
@@ -46,7 +47,7 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "${REPO_ROOT}"
 
-# initialize exit code variable, to keep track of failures while continuing the script executions
+# initialize counters and exit code variables, to keep track of failures while continuing the script executions
 error_counter=0
 warning_counter=0
 diff_counter=0
@@ -69,11 +70,11 @@ hydrate-env () {
 
     # run kpt CLI with docker image when not installed (it is not installed on pipeline runners)
     if [[ "v$(kpt version)" == "${KPT_VERSION}" ]] ; then
-        echo "kpt CLI version '$(kpt version)' is installed and will be used."
         KPT="kpt"
+        echo "kpt CLI version '$(${KPT} version)' is installed and will be used."
     else
         KPT="docker run --volume /var/run/docker.sock:/var/run/docker.sock --volume $PWD:/workspace --workdir /workspace --user $(id -u):$(id -g) gcr.io/kpt-dev/kpt:${KPT_VERSION}"
-        echo "kpt will run with docker image: ${KPT}"
+        echo "kpt CLI not installed, will run with docker image: ${KPT}"
     fi
 
     # save the directory id before processing it
@@ -131,8 +132,8 @@ hydrate-env () {
         return
     fi
 
-    # render in temp directory because some resources, like ResourceHierarchy don't remove yaml files when there is an edit/delete
     # render to execute kpt functions defined in Kptfile pipeline
+    # output in temp directory because some resources, like ResourceHierarchy don't remove yaml files when there is an edit/delete
     # setting a different output folder ensures only proper YAML files are kept (it will remove README.md, etc.)
     print_info "Running 'kpt fn render ${env_temp_subdir}/customized' --output=${env_temp_subdir}/hydrated' ..."
     if ${KPT} fn render "${env_temp_subdir}/customized" --output="${env_temp_subdir}/hydrated" --truncate-output=false
@@ -199,7 +200,7 @@ validate_yaml_in_dir() {
     # defaults to always run, unless environment variable flags are set to false
 
     if [[ "${VALIDATE_YAML_KUBEVAL}" != "false" ]] ; then
-        echo "Validating YAML files with 'kubeval' ..."
+        print_info "Validating YAML files with 'kubeval' ..."
         # whether it's by design or not, kubeval can change quotes in annotations and remove duplicate resources (maybe 'kpt fn eval' does this?)
         # to workaround this, set an '--output' directory to avoid in-place modifications, the directory must not exist
         # to set strict=true, CRD schemas would need to be updated (with schema_location and additional_schema_locations)
@@ -219,11 +220,11 @@ validate_yaml_in_dir() {
     fi
 
     if [[ "${VALIDATE_YAML_NOMOS}" != "false" ]] ; then
-        echo "Validating YAML files with 'nomos vet' ..."
+        print_info "Validating YAML files with 'nomos vet' ..."
         # check if nomos CLI is installed
         if nomos help >/dev/null 2>&1 ; then
-            echo "Running nomos with locally installed CLI."
             NOMOS="nomos"
+            echo "Running nomos with locally installed CLI."
         else
             NOMOS="docker run --volume "$PWD:/workspace" --workdir /workspace gcr.io/config-management-release/nomos:${NOMOS_VERSION}"
             echo "Running nomos with docker image: ${NOMOS}"
@@ -250,7 +251,7 @@ print_status () {
         ;;
         "1") printf "    \u274c    " # red cross mark
         ;;
-        "2") printf "     \033[1;33m\u26A0\033[0m    " # yellow warning
+        "2") printf "    \033[1;33m\u26A0\033[0m     " # yellow warning
         ;;
         *) printf "    --    "
         ;;
@@ -268,7 +269,7 @@ fi
 # iterate through each of these top level directories
 for top_level_dir_to_process in $(find . -type d -name "${SOURCE_BASE_DIR}" -exec dirname {} \; | sort)
 do
-    echo "Found directory to process, moving into it: 'cd ${top_level_dir_to_process}' ..."
+    print_info "Found top level directory to start processing, moving into it: 'cd ${top_level_dir_to_process}' ..."
     cd "${top_level_dir_to_process}"
 
     # confirm that proper directory structure exists before continuing
@@ -331,23 +332,22 @@ then
         if [ "${diff_counter}" -ne 0 ]; then
             print_warning "The script detected change in configurations."
 
-            # push change if running from a pipeline on Pull Request
-            # the BRANCH_NAME_TO_UPDATE and git configs must be set in yaml file
-            # if [[ "${BUILD_REASON}" == "PullRequest" && "${BRANCH_NAME_TO_UPDATE}" != "" ]] ; then
-            if [[ "${BRANCH_NAME_TO_UPDATE}" != "" ]] ; then
-                print_info "The script is running in a PR pipeline and will attempt to commit and push changes to '${BRANCH_NAME_TO_UPDATE}' ..."
+            # push change if 'ENABLE_PUSH_ON_DIFF' is true (usually when executed in a pipeline's PR trigger)
+            # the 'BRANCH_NAME_TO_UPDATE' and git configs must be set outside of this script
+            if [[ "${ENABLE_PUSH_ON_DIFF}" == "true" && "${BRANCH_NAME_TO_UPDATE}" != "" ]] ; then
+                print_info "The script will attempt to commit and push the changes to '${BRANCH_NAME_TO_UPDATE}' ..."
                 if git checkout "${BRANCH_NAME_TO_UPDATE}" \
                    && git add . \
-                   && git commit -m "hydrate.sh detected diff in configurations" \
+                   && git commit -m "hydrate.sh detected a diff in rendered configs" \
                    && git push origin "${BRANCH_NAME_TO_UPDATE}"
                 then
-                    print_success "The change was pushed to '${BRANCH_NAME_TO_UPDATE}'."
+                    print_success "The changes have been pushed to '${BRANCH_NAME_TO_UPDATE}'."
                 else
-                    print_error "The change was not pushed to '${BRANCH_NAME_TO_UPDATE}'."
+                    print_error "The changes could not be pushed to '${BRANCH_NAME_TO_UPDATE}'."
                     exit_code=1
                 fi
             else
-                echo "The script will be set to fail because it's not running from a PR pipeline."
+                echo "The script is not configured to commit and push the changes.  It will be set to fail (for pre-commit and pipeline purposes)."
                 echo "This may be normal if you've run it locally for the first time after making changes to '${SOURCE_BASE_DIR}' and/or '${SOURCE_CUSTOMIZATION_DIR}'"
                 echo "If you see this message in a pre-commit hook: re-run git add, git commit and push the changes."
                 exit_code=1
