@@ -342,7 +342,7 @@ then
                 if git checkout "${BRANCH_NAME_TO_UPDATE}" \
                    && git add . \
                    && git commit -m "hydrate.sh detected a diff in rendered configs" \
-                   && git push origin "${BRANCH_NAME_TO_UPDATE}"
+                   && git push --set-upstream origin "${BRANCH_NAME_TO_UPDATE}"
                 then
                     print_success "The changes have been pushed to '${BRANCH_NAME_TO_UPDATE}'."
                 else
