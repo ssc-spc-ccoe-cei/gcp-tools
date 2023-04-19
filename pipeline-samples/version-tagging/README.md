@@ -1,26 +1,20 @@
 # Version Tagging
 
-A sample for a custom (basic) way to manage git tags and a change log.
+A sample for a way to manage git tags in a repository.
 
-The pipeline follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
-
-> **It does NOT support a "v" prefix.**
+The tags generated combine a prefix and a version that follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 1. Copy the sample `version-tagging.yaml` in the proper pipeline folder of your repo.
-1. Copy the sample `VERSION.txt` and `CHANGELOG.md`* in the root of your repo.
+1. Copy the sample `version-tagging-config.json` in the root of your repo and update it according to your package/folder structure.
 1. Add the pipeline.
-
-**If a changelog is not required, `VALIDATE_CHANGELOG` can be set to 'false' in `version-tagging.yaml`.*
 
 ## Requirements
 
 - `tools` sub module.
-- `VERSION.txt` in repo root.
-- `CHANGELOG.md` in repo root, if a change log is required.
+- `version-tagging-config.json` in repo root.
 - If using Azure DevOps:
   - "Create tag" permission on repo for user "{project} Build Service ({organization})". This may be enabled by default depending on security settings.
   - "Contribute" permission on repo for user "{project} Build Service ({organization})". This may only be required for the creation of the first tag depending on your environment.
-  - A "Build Validation Policy" (PR trigger).
 - If using GitHub:
   - "contents" write permission on repo for GitHub Actions.  This may be enabled by default depending on security settings.
 
@@ -30,11 +24,13 @@ The pipeline follows [semantic versioning](https://semver.org/) (MAJOR.MINOR.PAT
 
 ## Usage
 
-Before creating a PR, push these changes as well:
+When the PR is merged in the main branch, the pipeline will run automatically and create the tag for each package that have been modified.
 
-- Edit `VERSION.txt` to increment the version accordingly. (Reminder: no "v" prefix allowed.)
-- Edit `CHANGELOG.md` to add an entry for the new version.  It must be enclosed in square brackets, for example [0.0.0].  Refer to the sample file for more info.
-
-The PR trigger will run the pipeline to validate the new version tag.  No tag will be created.
-
-When the PR is merged in the main branch, the pipeline will run again to re-validate and create the tag.
+The commit messages are evaluated to determine what number (major or minor or patch) should be increased
+They need to use one of the following prefixes :
+fix: which represents bug fixes, and correlates to a SemVer patch.
+feat: which represents a new feature, and correlates to a SemVer minor.
+feat!:, or fix!: which represent a breaking change (indicated by the !) and will result in a SemVer major.
+doc: which represents an update to documentation won't modify the version but will move the tag to the new commit.
+commit message not following this convention correlates to a SemVer patch
+<https://www.conventionalcommits.org/en/v1.0.0/>
