@@ -16,13 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-        with:
-          ref: ${{ github.ref }}
-
-      - name: Git Fetch
-        run: |
-          echo "git fetch --unshallow ..."
-          git fetch --unshallow
 
       - name: Checkout git submodule
         run: |

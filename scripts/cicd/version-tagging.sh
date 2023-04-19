@@ -30,12 +30,20 @@ print_info "doc: which represents an update to documentation won't modify the ve
 print_info "commit message not following this convention correlates to a SemVer patch."
 print_info "-----------------------------------"
 
+# define CURRENT_BRANCH
+# AzDO default
+if [[ "${BUILD_SOURCEBRANCHNAME}" != "" ]] ; then
+  export CURRENT_BRANCH="${BUILD_SOURCEBRANCHNAME}"
+# GitHub default
+elif [[ "${GITHUB_REF_NAME}" != "" ]] ; then
+  export CURRENT_BRANCH="${GITHUB_REF_NAME}"
+fi
+
+# checkout CURRENT_BRANCH
+git fetch --unshallow
+git checkout $CURRENT_BRANCH
 print_info "git status"
 git status
-print_info "-----------------------------------"
-
-print_info "source version"
-echo "$BUILD_SOURCEVERSION"
 print_info "-----------------------------------"
 
 # load the config file
@@ -77,10 +85,10 @@ for package in $packages; do
       # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
       # --pretty=format:"%h %s" specifies the format of the log output. In this case, we're only interested in the commit hash and message, so we specify that the output should only include the hash (%h) and the subject line (%s) of each commit.
       # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
-      # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
+      # $latest_tag.. specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and now.
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".."$BUILD_SOURCEVERSION" --reverse -- "$package")
+      logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".. --reverse -- "$package")
     fi
 
     # validate that logs is not empty
@@ -99,6 +107,7 @@ for package in $packages; do
       print_info "Looping through commits that have affected this package since $latest_tag"
       print_info "-----------"
       echo "$logs" | while read -r log; do
+        orig_version=$version
         print_info "parsing commit: $log"
         hash=$(echo "$log" | cut -d' ' -f1)
         message=$(echo "$log" | cut -d' ' -f2-)
@@ -136,9 +145,6 @@ for package in $packages; do
               ;;
           *doc:*)
               print_success "prefix 'doc:' found"
-              print_info "removing previous tag"
-              git tag --delete "${name}${separator}${version}"
-              git push --delete origin "${name}${separator}${version}"
               ;;
           *)
           # if no valid prefix is found, increase patch version by 1
@@ -148,13 +154,18 @@ for package in $packages; do
           ;;
         esac
 
-        print_info "new version: $version"
+        if [ "$version" != "$orig_version" ]; then
+          print_info "new version: $version"
 
-         # create the tag and push it to origin
-        new_tag="${name}${separator}${version}"
-        git tag "${new_tag}" "${hash}"
-        git push origin tag "${new_tag}"
-        print_success "Created tag ${new_tag} on commit ${hash}"
+          # create the tag and push it to origin
+          new_tag="${name}${separator}${version}"
+          git tag "${new_tag}" "${hash}"
+          git push origin tag "${new_tag}"
+          print_success "Created tag ${new_tag} on commit ${hash}"
+        else
+          print_info "nothing to do"
+        fi
+
         print_info "-----------"
       done
     fi
