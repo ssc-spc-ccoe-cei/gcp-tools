@@ -36,10 +36,6 @@ print_info "git status"
 git status
 print_info "-----------------------------------"
 
-print_info "source version"
-echo "$BUILD_SOURCEVERSION"
-print_info "-----------------------------------"
-
 # load the config file
 CONFIG_FILE="version-tagging-config.json"
 # The keys_unsorted function will extract all the keys under packages.
@@ -79,10 +75,9 @@ for package in $packages; do
       # git log is a command that displays commit logs. With the flags and options provided, it will display a list of commit messages that match certain criteria.
       # --pretty=format:"%h %s" specifies the format of the log output. In this case, we're only interested in the commit hash and message, so we specify that the output should only include the hash (%h) and the subject line (%s) of each commit.
       # --follow tells git log to follow changes to the specified file ($package). This is useful if the file has been moved or renamed, as it will allow us to track its history across renames and moves.
-      # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
+      # $latest_tag.. specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and now.
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      #logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".."$BUILD_SOURCEVERSION" --reverse -- "$package")
       logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".. --reverse -- "$package")
     fi
 
@@ -140,9 +135,6 @@ for package in $packages; do
               ;;
           *doc:*)
               print_success "prefix 'doc:' found"
-              # print_info "removing previous tag"
-              # git tag --delete "${name}${separator}${version}"
-              # git push --delete origin "${name}${separator}${version}"
               ;;
           *)
           # if no valid prefix is found, increase patch version by 1
