@@ -6,9 +6,11 @@
 # https://github.com/GoogleCloudPlatform/blueprints/blob/main/catalog/gitops/hydration-trigger.yaml
 
 # some of the script's execution can be controlled with environment variables.
-#   VALIDATE_SETTERS_CUSTOMIZATION: set to 'false' to disable the check for setters customization
-#   VALIDATE_YAML_KUBEVAL: set to 'false' to disable the YAML file validation with kubeval
-#   VALIDATE_YAML_NOMOS: set to 'false' to disable the YAML file validation with nomos
+#   VALIDATE_SETTERS_CUSTOMIZATION: 'true' or 'false' to check for setters customization. (default: 'true')
+#   VALIDATE_YAML_KUBEVAL: 'true' or 'false' for YAML files validation with kubeval. (default: 'true')
+#   VALIDATE_YAML_NOMOS: 'true' or 'false' for YAML files validation with nomos vet. (default: 'true')
+#   ENABLE_PUSH_ON_DIFF: 'true' or 'false' to push valid changes detected. (default: 'false')
+#                         git configs and 'BRANCH_NAME_TO_UPDATE' must also be set.
 
 # Bash safeties: exit on error, pipelines can't hide errors
 set -o errexit
@@ -28,13 +30,14 @@ TEMP_DIR="temp-workspace"
 dir_id=""
 declare -a processed_dir_list
 
-# declare associative arrays (-A) to store return/status codes of each directory id
-# those key commands will run in 'if' statements to capture the result and prevent the script from failing immediately
+# declare associative arrays (-A) to store tracked return/status codes for each directory id
+# those tracked commands will run in 'if' statements to capture the result and prevent the script from failing immediately
+# 0=success, 1=error, 2=warning (only render diffs are currently considered warnings for these statuses)
+declare -A status_kpt
 declare -A status_render_diff
 declare -A status_validate_setters
 declare -A status_validate_kubeval
 declare -A status_validate_nomos
-declare -A status_kpt
 
 # get the directory of this script
 SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -47,7 +50,7 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "${REPO_ROOT}"
 
-# initialize counters and exit code variables, to keep track of failures while continuing the script executions
+# initialize counters and exit code variables, to keep track of overall failures while continuing the script executions
 error_counter=0
 warning_counter=0
 diff_counter=0
@@ -59,8 +62,8 @@ trap 'status=$?; echo "Script terminating unexpectedly with exit code: ${status}
 
 ################################  FUNCTIONS  ################################
 
-hydrate-env () {
-    print_divider "Running 'hydrate-env' function for '${dir_id}'"
+hydrate_env () {
+    print_divider "Running 'hydrate_env' function for '${dir_id}'"
     # test that an environment was passed
     if [ -z "${1}" ]; then
         print_warning "missing environment, exiting function."
@@ -184,7 +187,7 @@ hydrate-env () {
 
     validate_yaml_in_dir "${env_deploy_dir}"
 
-    echo "Function 'hydrate-env' completed for '${dir_id}'."
+    echo "Function 'hydrate_env' completed for '${dir_id}'."
 }
 
 # function to run validation in a given directory, if environment variable is defined
@@ -198,7 +201,7 @@ validate_yaml_in_dir() {
         return
     fi
 
-    print_info "Starting validation in directory '${dir_to_validate}'"
+    print_info "Running 'validate_yaml_in_dir' function for directory '${dir_to_validate}'"
 
     # defaults to always run, unless environment variable flags are set to false
 
@@ -246,15 +249,14 @@ validate_yaml_in_dir() {
     fi
 }
 
-# helper function to print a status icon in a summary table
-# 0=success, 1=error, 2=warning (only render diffs should be considered warnings in summary)
+# helper function to print a status icon in a summary table, hardcoded to 10 characters width
 print_status () {
     case "${1}" in
         "0") printf "    \u2705    " # green check mark button
         ;;
         "1") printf "    \u274c    " # red cross mark
         ;;
-        "2") printf "    \033[1;33m\u26A0\033[0m     " # yellow warning
+        "2") printf "    \033[1;33m\u26A0\033[0m     " # yellow warning sign
         ;;
         *) printf "    --    "
         ;;
@@ -284,7 +286,7 @@ do
             if [ -d "${SOURCE_CUSTOMIZATION_DIR}/${env_subdir}" ]; then
                 # create a unique text-based id for this hydration run
                 dir_id="${top_level_dir_to_process}/${DEPLOY_DIR}/${env_subdir}"
-                hydrate-env "${env_subdir}"
+                hydrate_env "${env_subdir}"
                 dir_id=""
             else
                 echo "'${SOURCE_CUSTOMIZATION_DIR}/${env_subdir}' does not exists, skipping."
@@ -298,7 +300,7 @@ do
     cd "${REPO_ROOT}"
 done
 
-# test if any directory was processed (i.e. array length is not 0) then print a summary table
+# continue if at least one directory was processed (i.e. array length is not 0)
 if [[ ${#processed_dir_list[@]} -ne 0 ]]
 then
     print_divider "Summary Table"
@@ -352,7 +354,7 @@ then
             else
                 echo "The script is not configured to commit and push the changes.  It will be set to fail (for pre-commit and pipeline purposes)."
                 echo "This may be normal if you've run it locally for the first time after making changes to '${SOURCE_BASE_DIR}' and/or '${SOURCE_CUSTOMIZATION_DIR}'"
-                echo "If you see this message in a pre-commit hook: re-run git add, git commit and push the changes."
+                echo "You may need to re-run 'git add...', 'git commit...' and 'git push...'"
                 exit_code=1
             fi
         else
