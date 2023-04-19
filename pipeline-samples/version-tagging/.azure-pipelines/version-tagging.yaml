@@ -28,6 +28,4 @@ jobs:
       - script: |
           echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
           bash tools/scripts/cicd/version-tagging.sh
-        env:
-          CURRENT_BRANCH: $(Build.SourceBranchName)
         displayName: 'Generate repository tags per packages'
