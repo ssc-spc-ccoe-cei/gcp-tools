@@ -30,6 +30,16 @@ print_info "doc: which represents an update to documentation won't modify the ve
 print_info "commit message not following this convention correlates to a SemVer patch."
 print_info "-----------------------------------"
 
+# define CURRENT_BRANCH
+# AzDO default
+if [[ "${BUILD_SOURCEBRANCHNAME}" != "" ]] ; then
+  export CURRENT_BRANCH="${BUILD_SOURCEBRANCHNAME}"
+# GitHub default
+elif [[ "${GITHUB_REF_NAME}" != "" ]] ; then
+  export CURRENT_BRANCH="${GITHUB_REF_NAME}"
+fi
+
+# checkout CURRENT_BRANCH
 git fetch --unshallow
 git checkout $CURRENT_BRANCH
 print_info "git status"

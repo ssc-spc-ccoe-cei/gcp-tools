@@ -21,13 +21,6 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo "Checking out branch: $BUILD_SOURCEBRANCHNAME ."
-          # using unshallow to avoid getting only the latest commit
-          git fetch --unshallow
-          git checkout $BUILD_SOURCEBRANCHNAME
-        displayName: 'Checkout branch'
-
-      - script: |
           echo "Checking out git submodule with 'bash modupdate.sh' ..."
           bash modupdate.sh
         displayName: 'Checkout git submodule'
@@ -35,4 +28,6 @@ jobs:
       - script: |
           echo "Running 'bash tools/scripts/cicd/version-tagging.sh' ..."
           bash tools/scripts/cicd/version-tagging.sh
+        env:
+          CURRENT_BRANCH: $(Build.SourceBranchName)
         displayName: 'Generate repository tags per packages'
