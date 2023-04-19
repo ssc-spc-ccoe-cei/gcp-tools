@@ -155,7 +155,7 @@ for package in $packages; do
         if [ "$version" != "$orig_version" ]; then
           print_info "new version: $version"
 
-          create the tag and push it to origin
+          # create the tag and push it to origin
           new_tag="${name}${separator}${version}"
           git tag "${new_tag}" "${hash}"
           git push origin tag "${new_tag}"
