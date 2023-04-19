@@ -30,6 +30,8 @@ print_info "doc: which represents an update to documentation won't modify the ve
 print_info "commit message not following this convention correlates to a SemVer patch."
 print_info "-----------------------------------"
 
+git fetch --unshallow
+git checkout $CURRENT_BRANCH
 print_info "git status"
 git status
 print_info "-----------------------------------"
@@ -80,7 +82,8 @@ for package in $packages; do
       # $latest_tag..$BUILD_SOURCEVERSION specifies the range of commits that we're interested in. Specifically, we want to see all the commits that were made between the tag ($latest_tag) and the current build ($BUILD_SOURCEVERSION).
       # --reverse tells git log to reverse the order of the output, so that the oldest commit is displayed first.
       # -- $package specifies the file or directory that we're interested in. This limits the output to only the commits that affected the specified file or directory ($package).
-      logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".."$BUILD_SOURCEVERSION" --reverse -- "$package")
+      #logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".."$BUILD_SOURCEVERSION" --reverse -- "$package")
+      logs=$(git log --pretty=format:"%h %s" --follow "$latest_tag".. --reverse -- "$package")
     fi
 
     # validate that logs is not empty
@@ -90,6 +93,7 @@ for package in $packages; do
       # extract just the version
       version=$(echo "$latest_tag" | cut -d"${separator}" -f2 | head -n 1)
       print_info "version : $version"
+      orig_version=$version
 
       # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
       shopt -s lastpipe
@@ -136,9 +140,9 @@ for package in $packages; do
               ;;
           *doc:*)
               print_success "prefix 'doc:' found"
-              print_info "removing previous tag"
-              git tag --delete "${name}${separator}${version}"
-              git push --delete origin "${name}${separator}${version}"
+              # print_info "removing previous tag"
+              # git tag --delete "${name}${separator}${version}"
+              # git push --delete origin "${name}${separator}${version}"
               ;;
           *)
           # if no valid prefix is found, increase patch version by 1
@@ -148,13 +152,18 @@ for package in $packages; do
           ;;
         esac
 
-        print_info "new version: $version"
+        if [ "$version" != "$orig_version" ]; then
+          print_info "new version: $version"
 
-         # create the tag and push it to origin
-        new_tag="${name}${separator}${version}"
-        git tag "${new_tag}" "${hash}"
-        git push origin tag "${new_tag}"
-        print_success "Created tag ${new_tag} on commit ${hash}"
+          # create the tag and push it to origin
+          new_tag="${name}${separator}${version}"
+          git tag "${new_tag}" "${hash}"
+          git push origin tag "${new_tag}"
+          print_success "Created tag ${new_tag} on commit ${hash}"
+        else
+          print_info "nothing to do"
+        fi
+
         print_info "-----------"
       done
     fi
