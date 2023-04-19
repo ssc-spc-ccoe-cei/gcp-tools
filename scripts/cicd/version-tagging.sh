@@ -93,7 +93,6 @@ for package in $packages; do
       # extract just the version
       version=$(echo "$latest_tag" | cut -d"${separator}" -f2 | head -n 1)
       print_info "version : $version"
-      orig_version=$version
 
       # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
       shopt -s lastpipe
@@ -103,6 +102,7 @@ for package in $packages; do
       print_info "Looping through commits that have affected this package since $latest_tag"
       print_info "-----------"
       echo "$logs" | while read -r log; do
+        orig_version=$version
         print_info "parsing commit: $log"
         hash=$(echo "$log" | cut -d' ' -f1)
         message=$(echo "$log" | cut -d' ' -f2-)
@@ -155,7 +155,7 @@ for package in $packages; do
         if [ "$version" != "$orig_version" ]; then
           print_info "new version: $version"
 
-          # create the tag and push it to origin
+          create the tag and push it to origin
           new_tag="${name}${separator}${version}"
           git tag "${new_tag}" "${hash}"
           git push origin tag "${new_tag}"
