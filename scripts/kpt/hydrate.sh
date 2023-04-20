@@ -181,8 +181,8 @@ hydrate_env () {
         rm -rf "${env_deploy_dir}"
         cp -r "${env_temp_subdir}/hydrated" "${env_deploy_dir}"
 
-        # print the git status, could be commented out if too verbose
-        git status
+        # print the changes (could be commented out if too verbose)
+        git status "${env_deploy_dir}"
     fi
 
     validate_yaml_in_dir "${env_deploy_dir}"
@@ -303,7 +303,7 @@ done
 # continue if at least one directory was processed (i.e. array length is not 0)
 if [[ ${#processed_dir_list[@]} -ne 0 ]]
 then
-    print_divider "Summary Table"
+    print_divider "Results Summary"
     echo "setters: The result of validating if all setters files in '${SOURCE_BASE_DIR}' exist in '${SOURCE_CUSTOMIZATION_DIR}/{env_subdir}'."
     echo "kpt: The result of executing kpt functions to render (hydrate) the YAML files."
     echo "no diff: The result of testing if hydrated files in '${DEPLOY_DIR}/{env_subdir} have changed.  These are counted as warnings and may fail the script in some conditions."
@@ -340,7 +340,7 @@ then
             # push change if 'ENABLE_PUSH_ON_DIFF' is true (usually when executed in a pipeline's PR trigger)
             # the 'BRANCH_NAME_TO_UPDATE' and git configs must be set outside of this script
             if [[ "${ENABLE_PUSH_ON_DIFF}" == "true" && "${BRANCH_NAME_TO_UPDATE}" != "" ]] ; then
-                print_info "The script will attempt to commit and push the changes to '${BRANCH_NAME_TO_UPDATE}' ..."
+                print_info "The script is configured to commit and push the changes to '${BRANCH_NAME_TO_UPDATE}' ..."
                 if git checkout "${BRANCH_NAME_TO_UPDATE}" \
                    && git add . \
                    && git commit -m "hydrate.sh detected a diff in rendered configs" \
