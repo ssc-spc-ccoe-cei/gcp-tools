@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.4.1...0.5.0) (2023-04-21)
+
+
+### Features
+
+* hydrate enhancement ([#27](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/27)) ([7a7a555](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/7a7a55593fe3cc86fbac3d5d106a5abf650b32dc))
+
 ## [0.4.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.4.0...0.4.1) (2023-04-05)
 
 
