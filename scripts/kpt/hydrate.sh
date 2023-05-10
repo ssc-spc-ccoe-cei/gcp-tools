@@ -109,7 +109,8 @@ hydrate_env () {
                     print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
                     error_counter=$((error_counter+1))
                     status_validate_setters["${dir_id}"]=1
-                                # check if there are any missing keys between the source base and source customizations setters files
+                
+                # check if there are any missing keys between the source base and source customizations setters files
                 else
                     # Create temp dir for comparing of keys
                     mkdir -p "${env_temp_subdir}/compare-keys"
