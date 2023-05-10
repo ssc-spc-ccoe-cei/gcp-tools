@@ -109,8 +109,36 @@ hydrate_env () {
                     print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
                     error_counter=$((error_counter+1))
                     status_validate_setters["${dir_id}"]=1
+                                # check if there are any missing keys between the source base and source customizations setters files
+                else
+                    # Create temp dir for comparing of keys
+                    mkdir -p "${env_temp_subdir}/compare-keys"
+                    echo "${SOURCE_BASE_DIR}/${setters_file}"
+                    echo "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
+                    # Fetch keys in first setters file
+                    yq eval '.data | sort_keys(.) | keys' "${SOURCE_BASE_DIR}/${setters_file}" | yq '... comments=""' > "${env_temp_subdir}/compare-keys/source_base_setters.yaml"
+                    # Fetch keys in second setters file
+                    yq eval '.data | sort_keys(.) | keys' "${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}" | yq '... comments=""' > "${env_temp_subdir}/compare-keys/source_customization_setters.yaml"
+                    # compare keys between source-base and source-customization setters files
+                    result=$(comm -3 --nocheck-order "${env_temp_subdir}/compare-keys/source_base_setters.yaml" "${env_temp_subdir}/compare-keys/source_customization_setters.yaml")
+                    # Check the exit code of the comm command
+                    if [ $? -ne 0 ]; then
+                        print_error "Compare command failed with error code $?"
+                        error_counter=$((error_counter+1))
+                        status_validate_setters["${dir_id}"]=1
+                    fi
+                    # Check if there were any differences
+                    if [ -n "$result" ]; then
+                        print_error "Missing key(s) detected. The following keys are missing."
+                        echo -e "$result\n"
+                        # Add a line break after error output for clarity
+                        echo
+                        error_counter=$((error_counter+1))
+                        status_validate_setters["${dir_id}"]=1
+                    else
+                        echo -e "No missing key(s) detected\n"
+                    fi
                 fi
-                # TODO: possible enhancement, maybe check if there is a diff?
             done
             # exit function if errors were found
             if [[ "${status_validate_setters[${dir_id}]}" -ne 0 ]] ; then
