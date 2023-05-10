@@ -123,7 +123,8 @@ hydrate_env () {
                     # compare keys between source-base and source-customization setters files
                     result=$(comm -3 --nocheck-order "${env_temp_subdir}/compare-keys/source_base_setters.yaml" "${env_temp_subdir}/compare-keys/source_customization_setters.yaml")
                     # Check the exit code of the comm command
-                    if [ $? -ne 0 ]; then
+                    comm_err_check=$?
+                    if [ $comm_err_check -ne 0 ]; then
                         print_error "Compare command failed with error code $?"
                         error_counter=$((error_counter+1))
                         status_validate_setters["${dir_id}"]=1
