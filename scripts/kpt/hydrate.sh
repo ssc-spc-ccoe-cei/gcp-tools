@@ -133,8 +133,6 @@ hydrate_env () {
                     if [ -n "$result" ]; then
                         print_error "Missing key(s) detected. The following keys are missing."
                         echo -e "$result\n"
-                        # Add a line break after error output for clarity
-                        echo
                         error_counter=$((error_counter+1))
                         status_validate_setters["${dir_id}"]=1
                     else
