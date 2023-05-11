@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.5.0...0.6.0) (2023-05-11)
+
+
+### Features
+
+* compare setters key function ([#34](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/34)) ([f23c1a1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/f23c1a1f1397939e024d095dc10914d762a00c1c))
+
 ## [0.5.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.4.1...0.5.0) (2023-04-21)
 
 
