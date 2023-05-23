@@ -27,6 +27,8 @@ gcloud resource-manager folders create --display-name="$LZ_FOLDER_NAME" --organi
 gcloud projects create "$PROJECT_ID" --set-as-default --organization="$ORG_ID"
 gcloud beta billing projects link "$PROJECT_ID" --billing-account "$BILLING_ID"
 gcloud config set project "$PROJECT_ID"
+echo "sleep 30s to allow for project creation before enabling services"
+sleep 30
 gcloud services enable krmapihosting.googleapis.com container.googleapis.com cloudresourcemanager.googleapis.com cloudbilling.googleapis.com serviceusage.googleapis.com servicedirectory.googleapis.com dns.googleapis.com
 
 # VPC
