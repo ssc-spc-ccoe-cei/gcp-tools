@@ -69,8 +69,8 @@ for root, dirs, files in os.walk('.'):
                     # Add an item to the inventory list with the security control(match), file type, file name, resource name and details
                     inventory.append((match[0], "markdown", os.path.join(root, file), "---", match[1]))
 
-# Sort the inventory list alphabetically on the match column
-inventory.sort(key=lambda x: x[0])
+# Sort the inventory list alphabetically on the match column, filename and resource name
+inventory.sort(key=lambda x: (x[0], x[2], x[3]))
 
 # write inventory.csv using "%" as delimiter
 with open('inventory.csv', 'w') as file:

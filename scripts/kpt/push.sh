@@ -63,7 +63,9 @@ if [ -f Kptfile ]; then
 
     #################
     # copy current directory on top of destination folder
+    print_divider "copy current directory on top of destination folder"
     #################
+
     # delete content of destination folder
     if rm -r "$dstDir"; then
       print_info "erasing destination folder"
@@ -74,6 +76,7 @@ if [ -f Kptfile ]; then
 
     #################
     # cleanup kpt junk
+    print_divider "cleanup kpt junk"
     #################
     # remove the upstream and upstreamLock keys from the Kptfile
     print_info "Remove the upstream and upstreamLock keys from the Kptfile"
@@ -83,6 +86,8 @@ if [ -f Kptfile ]; then
     print_info "Loop through all .yaml files in current directory and subdirectories"
     # loop through all .yaml files in current directory and subdirectories
     find . -type f -name "*.yaml" | while read -r file; do
+      # remove node "cnrm.cloud.google.com/blueprint"
+      yq eval 'del(.metadata.annotations."cnrm.cloud.google.com/blueprint")' -i "$file"
       # remove node "internal.kpt.dev/upstream-identifier"
       yq eval 'del(.metadata.annotations."internal.kpt.dev/upstream-identifier")' -i "$file"
       # remove empty annotation node
@@ -93,8 +98,10 @@ if [ -f Kptfile ]; then
 
     ################
     # commit changes to upstream repo
-    print_divider "Commit changes to upstream repo"
+    print_divider "commit changes to upstream repo"
     ################
+
+    print_info "temp repo is here: $tmpdir/repo"
 
     git add .
     if [ -z "$(git status --porcelain)" ]; then

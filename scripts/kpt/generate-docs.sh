@@ -8,6 +8,9 @@
 # followed by, it copies back to the original directory the README.md
 # then, it executes the inventory-controls.py
 # then, it generates a markdown table and insert it between anchors in the securitycontrols.md
+# anchors are :
+# <!-- BEGINNING OF SECURITY CONTROLS LIST -->
+# <!-- END OF SECURITY CONTROLS LIST -->
 # then it copies the securitycontrols.md back to the original directory
 #
 # TIP: You can add the following alias in your .bashrc
@@ -86,7 +89,8 @@ python "${SCRIPT_ROOT}/../common/inventory-controls.py"
 print_info "Create a table in markdown format with the inventory"
 table="|Security Control|File Name|Resource Name|\n|---|---|---|\n"
 # load the csv file using "%" as delimiter
-while IFS='%' read -r securitycontrol filetype filename resourcename
+# shellcheck disable=SC2034 # detail appears unused
+while IFS='%' read -r securitycontrol filetype filename resourcename detail
 do
   if [ "$filetype" == "kubernetes" ]; then
     table+="|${securitycontrol}|${filename}|${resourcename}|\n"
