@@ -35,6 +35,7 @@ trap 'status=$?; echo "Script terminating unexpectedly with exit code: ${status}
 
 #################
 # copy current directory on top of destination folder
+print_divider "copy current directory on top of destination folder"
 #################
 # delete content of destination folder
 if rm -Rf ${LINUX_WORKDIR}/*; then
