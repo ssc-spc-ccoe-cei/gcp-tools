@@ -9,7 +9,7 @@
 # lastly, it pushes the changes to the repo, branch, and folder that were define in the Kptfile/upstream
 #
 # TIP: You can add the following alias in your .bashrc
-# alias kpt-push="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/kpt-push.sh"
+# alias kpt-push="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/push.sh"
 
 srcDir=$(pwd)
 

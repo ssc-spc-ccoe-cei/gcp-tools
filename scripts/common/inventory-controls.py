@@ -1,6 +1,13 @@
+# This script generates a csv file in the current directory containing the list kubernetes resources that are tagged with security controls.
+# It also parses markdown file to extract their security controls information
+#
+# The following fields are populated in the csv.
+# | Security Control | File Type | File Name | Kubernetes Resource Name | Details |
+
 import os
 import re
 import yaml
+import csv
 
 # Create an empty list to store the inventory
 inventory = []
@@ -9,7 +16,9 @@ inventory = []
 for root, dirs, files in os.walk('.'):
     # Check each file in the current folder
     for file in files:
-        # If the file is a .yaml file
+        ##################
+        # YAML FILE
+        ##################
         if file.endswith('.yaml'):
             # Open the file for reading
             with open(os.path.join(root, file), 'r') as f:
@@ -28,8 +37,8 @@ for root, dirs, files in os.walk('.'):
                             data = yaml.safe_load(resource)
                             # Extract the value of the metadata.name node
                             resource_name = data['metadata']['name']
-                            # Add an item to the inventory list with the match, file name, resource name and resource
-                            inventory.append((match, os.path.join(root, file), resource_name, resource))
+                            # Add an item to the inventory list with the security control(match), file type, file name, resource name and details(resource)
+                            inventory.append((match, "kubernetes", os.path.join(root, file), resource_name, resource))
                         # Reset the resource string to empty
                         resource = ''
                     else:
@@ -44,11 +53,29 @@ for root, dirs, files in os.walk('.'):
                     data = yaml.safe_load(resource)
                     # Extract the value of the metadata.name node
                     resource_name = data['metadata']['name']
-                    # Add an item to the inventory list with the match, file name, resource name and resource
-                    inventory.append((match, os.path.join(root, file), resource_name, resource))
+                    # Add an item to the inventory list with the security control(match), file type, file name, resource name and details(resource)
+                    inventory.append((match, "kubernetes", os.path.join(root, file), resource_name, resource))
+
+        ##################
+        # MARKDOWN FILE
+        ##################
+        if file.endswith('.md'):
+            # Open the file for reading
+            with open(os.path.join(root, file), 'r') as f:
+                content = f.read()
+                pattern = r'^(AU-[^\ ]+|AC-[^\ ]+|IA-[^\ ]+|SC-[^\ ]+).*?(\w.*?)(?=\n#|\Z)'
+                matches = re.findall(pattern, content, re.DOTALL | re.MULTILINE)
+                for match in matches:
+                    # Add an item to the inventory list with the security control(match), file type, file name, resource name and details
+                    inventory.append((match[0], "markdown", os.path.join(root, file), "---", match[1]))
 
 # Sort the inventory list alphabetically on the match column
 inventory.sort(key=lambda x: x[0])
+
+# write inventory.csv using "%" as delimiter
+with open('inventory.csv', 'w') as file:
+    writer = csv.writer(file, delimiter='%')
+    writer.writerows(inventory)
 
 # Create a markdown table with the inventory
 table = '| Security Control | File Name | Resource Name |\n'
