@@ -38,21 +38,24 @@ if [ -f Kptfile ]; then
 
     # create a temporary directory to clone the repository into
     tmpdir=$(mktemp -d)
-    cd $tmpdir
+    cd "$tmpdir" || exit
     print_info "tmpdir: $tmpdir"
 
     #################
     # clone and checkout repo branch
+    print_divider "clone and checkout repo branch"
     #################
-    print_divider
+
     print_info "Cloning repo"
-    git clone $repo repo
-    cd repo
+    git clone "$repo" repo
+    cd repo || exit
     git fetch
-    if [ -z "$(git ls-remote --heads origin $ref)" ]; then
-      git checkout -b $ref
+
+    print_info "checking out branch $ref"
+    if [ -z "$(git ls-remote --heads origin "$ref")" ]; then
+      git checkout -b "$ref"
     else
-      git checkout $ref
+      git checkout "$ref"
     fi
 
 
@@ -62,12 +65,12 @@ if [ -f Kptfile ]; then
     # copy current directory on top of destination folder
     #################
     # delete content of destination folder
-    if rm -r $dstDir; then
+    if rm -r "$dstDir"; then
       print_info "erasing destination folder"
     fi
     # copy all files and folders to the specified directory within the repository
-    cp -r $srcDir $dstDir
-    cd $dstDir
+    cp -r "$srcDir" "$dstDir"
+    cd "$dstDir" || exit
 
     #################
     # cleanup kpt junk
@@ -81,18 +84,18 @@ if [ -f Kptfile ]; then
     # loop through all .yaml files in current directory and subdirectories
     find . -type f -name "*.yaml" | while read -r file; do
       # remove node "internal.kpt.dev/upstream-identifier"
-      yq eval 'del(.metadata.annotations."internal.kpt.dev/upstream-identifier")' -i $file
+      yq eval 'del(.metadata.annotations."internal.kpt.dev/upstream-identifier")' -i "$file"
       # remove empty annotation node
-      yq eval 'del(.metadata.annotations | select(length==0))' -i $file
+      yq eval 'del(.metadata.annotations | select(length==0))' -i "$file"
       # remove strings  " # kpt-merge: .*"
-      sed -i 's/ # kpt-merge: .*//' $file
+      sed -i 's/ # kpt-merge: .*//' "$file"
     done
 
     ################
     # commit changes to upstream repo
+    print_divider "Commit changes to upstream repo"
     ################
-    print_divider
-    print_info "Commit changes to upstream repo"
+
     git add .
     if [ -z "$(git status --porcelain)" ]; then
       print_warning "There are no uncommitted changes"
@@ -101,10 +104,10 @@ if [ -f Kptfile ]; then
       print_info "There are uncommitted changes"
 
       print_info "Enter a commit message (no double quotes required):"
-      read commit_msg
+      read -r commit_msg
       git commit -m "$commit_msg"
       # push changes to remote repository
-      git push -u origin $ref
+      git push -u origin "$ref"
     fi
   else
     print_error "There is no upstream section in Kptfile"
@@ -114,6 +117,6 @@ else
 fi
 
 # delete tmpdir
-rm -Rf $tmpdir
+rm -Rf "$tmpdir"
 # go back to original folder
-cd $srcDir
+cd "$srcDir" || exit

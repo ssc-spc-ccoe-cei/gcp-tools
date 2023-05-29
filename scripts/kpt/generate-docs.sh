@@ -34,16 +34,17 @@ trap 'status=$?; echo "Script terminating unexpectedly with exit code: ${status}
 # copy current directory on top of destination folder
 #################
 # delete content of destination folder
-if rm -Rf $LINUX_WORKDIR/*; then
+if rm -Rf ${LINUX_WORKDIR}/*; then
   print_info "erasing $LINUX_WORKDIR folder"
 fi
 # copy all files and folders to the specified directory within the repository
-cp -r $srcDir/* $LINUX_WORKDIR
-cd $LINUX_WORKDIR
+cp -r "$srcDir"/* $LINUX_WORKDIR
+cd ${LINUX_WORKDIR} || exit
 
 
 ################################
 # README.md
+print_divider "README.md"
 ###############################
 
 # check if a Kptfile exists in the current directory
@@ -60,10 +61,11 @@ if [ -f Kptfile ]; then
 
     REPO_URL="${repo}.git${directory}/"
     print_info "running generate-kpt-pkg-docs"
-    kpt fn eval -i generate-kpt-pkg-docs:unstable --mount type=bind,src="$WINDOWS_WORKDIR",dst="/tmp",rw=true -- readme-path=/tmp/README.md repo-path=$REPO_URL
+    # shellcheck disable=SC2140 # disable 'dst Word is of the form "A"B"C"'
+    kpt fn eval -i generate-kpt-pkg-docs:unstable --mount type=bind,src="$WINDOWS_WORKDIR",dst="/tmp",rw=true -- readme-path=/tmp/README.md repo-path="$REPO_URL"
 
     print_info "copying README.md back to original folder"
-    cp -f README.md $srcDir
+    cp -f README.md "$srcDir"
   else
     print_error "There is no upstream section in Kptfile"
   fi
@@ -71,12 +73,9 @@ else
   print_error "There is no Kptfile in current directory"
 fi
 
-#######################
-print_divider
-#######################
-
 ##################
 # securitycontrols.md
+print_divider "securitycontrols.md"
 ##################
 
 # Execute inventory-controls.py
@@ -87,7 +86,7 @@ python "${SCRIPT_ROOT}/../common/inventory-controls.py"
 print_info "Create a table in markdown format with the inventory"
 table="|Security Control|File Name|Resource Name|\n|---|---|---|\n"
 # load the csv file using "%" as delimiter
-while IFS='%' read -r securitycontrol filetype filename resourcename detail
+while IFS='%' read -r securitycontrol filetype filename resourcename
 do
   if [ "$filetype" == "kubernetes" ]; then
     table+="|${securitycontrol}|${filename}|${resourcename}|\n"
@@ -109,4 +108,4 @@ exec 3>&-
 
 # Copying securitycontrols.md back to original folder
 print_info "Copying securitycontrols.md back to original folder"
-cp -f securitycontrols.md $srcDir
+cp -f securitycontrols.md "$srcDir"
