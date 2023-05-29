@@ -76,28 +76,3 @@ inventory.sort(key=lambda x: x[0])
 with open('inventory.csv', 'w') as file:
     writer = csv.writer(file, delimiter='%')
     writer.writerows(inventory)
-
-# Create a markdown table with the inventory
-table = '| Security Control | File Name | Resource Name |\n'
-table += '|-------|-----------|---------------|\n'
-for item in inventory:
-    table += '| {} | {} | {} |\n'.format(*item)
-
-# Open the securitycontrols.md file for reading
-with open('securitycontrols.md', 'r') as f:
-    content = f.read()
-
-# Define the start and end anchors
-start_anchor = '<!-- BEGINNING OF SECURITY CONTROLS LIST -->'
-end_anchor = '<!-- END OF SECURITY CONTROLS LIST -->'
-
-# Find the index of the start and end anchors in the content string
-start_index = content.index(start_anchor) + len(start_anchor)
-end_index = content.index(end_anchor)
-
-# Create a new content string with the table inserted between the start and end anchors
-new_content = content[:start_index] + '\n' + table + '\n' + content[end_index:]
-
-# Open the securitycontrols.md file for writing and overwrite its contents with the new content string
-with open('securitycontrols.md', 'w') as f:
-    f.write(new_content)
