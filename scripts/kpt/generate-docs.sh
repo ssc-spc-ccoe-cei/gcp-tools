@@ -38,7 +38,7 @@ trap 'status=$?; echo "Script terminating unexpectedly with exit code: ${status}
 print_divider "copy current directory on top of destination folder"
 #################
 # delete content of destination folder
-if rm -Rf ${LINUX_WORKDIR}/*; then
+if rm -Rf "${LINUX_WORKDIR:?}/"*; then
   print_info "erasing $LINUX_WORKDIR folder"
 fi
 # copy all files and folders to the specified directory within the repository
