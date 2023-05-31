@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.6.0...0.6.1) (2023-05-31)
+
+
+### Bug Fixes
+
+* skip dnsrecordset from kubeval validation ([#43](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/43)) ([2729ae0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/2729ae015238f7523ce8fcd0e9f701ee16db644c))
+
 ## [0.6.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.5.0...0.6.0) (2023-05-11)
 
 
