@@ -109,7 +109,7 @@ hydrate_env () {
                     print_error "Missing customization: ${SOURCE_CUSTOMIZATION_DIR}/${environment}/${setters_file}"
                     error_counter=$((error_counter+1))
                     status_validate_setters["${dir_id}"]=1
-                
+
                 # check if there are any missing keys between the source base and source customizations setters files
                 else
                     # Create temp dir for comparing of keys
@@ -230,10 +230,12 @@ validate_yaml_in_dir() {
         print_info "Validating YAML files with 'kubeval' ..."
         # whether it's by design or not, kubeval can change quotes in annotations and remove duplicate resources (maybe 'kpt fn eval' does this?)
         # to workaround this, set an '--output' directory to avoid in-place modifications, the directory must not exist
-        # to set strict=true, CRD schemas would need to be updated (with schema_location and additional_schema_locations)
+        # TODO: to set strict=true, CRD schemas would need to be updated (with schema_location and additional_schema_locations)
+        # skip 'DNSRecordSet' kind, baked in schema flags 'spec.rrdatas' as required, but doc has it as deprecated
+        # https://cloud.google.com/config-connector/docs/reference/resource-docs/dns/dnsrecordset#spec
         rm -rf "${TEMP_DIR}/kubeval/${dir_to_validate}"
         if ${KPT} fn eval -i kubeval:v0.3.0 "${dir_to_validate}" --output="${TEMP_DIR}/kubeval/${dir_to_validate}" --truncate-output=false \
-            -- ignore_missing_schemas='true' strict='false'
+            -- ignore_missing_schemas='true' strict='false' skip_kinds='DNSRecordSet'
         then
             print_success "'kubeval' was successful."
             status_validate_kubeval["${dir_id}"]=0
