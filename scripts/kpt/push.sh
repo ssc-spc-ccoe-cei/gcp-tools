@@ -118,6 +118,22 @@ if [ -f Kptfile ]; then
     fi
   else
     print_error "There is no upstream section in Kptfile"
+    printf '
+      Kptfile example :
+
+      apiVersion: kpt.dev/v1
+      kind: Kptfile
+      metadata:
+        name: core-landing-zone
+      annotations:
+        config.kubernetes.io/local-config: true
+      upstream:
+        type: git
+        git:
+          repo: https://github.com/GoogleCloudPlatform/pubsec-declarative-toolkit
+          directory: /solutions/core-landing-zone
+          ref: gh370-feat-core-lz-dave2
+        updateStrategy: force-delete-replace'
   fi
 else
   print_error "There is no Kptfile in current directory"

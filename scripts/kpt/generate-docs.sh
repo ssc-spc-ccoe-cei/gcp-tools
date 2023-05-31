@@ -2,12 +2,22 @@
 
 # script to generate docs
 #
+#####################
+# file copy
+#####################
+# 1- copies the current dir to LINUX_WORKDIR
+#####################
+# generate README.md
+#####################
 # 1- reads the upstream section in the Kptfile of the current directory
-# 2- copies the current dir to LINUX_WORKDIR
-# 3- executes generate-kpt-pkg-docs
-# 4- copies back to the original directory the README.md
-# 5- executes the inventory-controls.py
-# 6- generates a markdown table and inserts it between anchors in the securitycontrols.md
+# 2- executes generate-kpt-pkg-docs
+# 3- copies back to the original directory the README.md
+#####################
+# generate securitycontrols.md
+#####################
+# 1- executes the inventory-controls.py
+# 2- generates a markdown table and inserts it between anchors in the securitycontrols.md
+# 3- copies back to the original directory the README.md
 # anchors are :
 # <!-- BEGINNING OF SECURITY CONTROLS LIST -->
 # <!-- END OF SECURITY CONTROLS LIST -->
@@ -17,7 +27,7 @@
 # alias generate-docs="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/generate-docs.sh"
 
 LINUX_WORKDIR=/workdir
-WINDOWS_WORKDIR=/c/workdir
+BIND_WORKDIR=/c/workdir # from the host filesystem
 
 # Remember source directory
 srcDir=$(pwd)
@@ -66,12 +76,28 @@ if [ -f Kptfile ]; then
     REPO_URL="${repo}.git${directory}/"
     print_info "running generate-kpt-pkg-docs"
     # shellcheck disable=SC2140 # disable 'dst Word is of the form "A"B"C"'
-    kpt fn eval -i generate-kpt-pkg-docs:unstable --mount type=bind,src="$WINDOWS_WORKDIR",dst="/tmp",rw=true -- readme-path=/tmp/README.md repo-path="$REPO_URL"
+    kpt fn eval -i generate-kpt-pkg-docs:unstable --mount type=bind,src="$BIND_WORKDIR",dst="/tmp",rw=true -- readme-path=/tmp/README.md repo-path="$REPO_URL"
 
     print_info "copying README.md back to original folder"
     cp -f README.md "$srcDir"
   else
     print_error "There is no upstream section in Kptfile"
+    printf '
+      Kptfile example :
+
+      apiVersion: kpt.dev/v1
+      kind: Kptfile
+      metadata:
+        name: core-landing-zone
+      annotations:
+        config.kubernetes.io/local-config: true
+      upstream:
+        type: git
+        git:
+          repo: https://github.com/GoogleCloudPlatform/pubsec-declarative-toolkit
+          directory: /solutions/core-landing-zone
+          ref: gh370-feat-core-lz-dave2
+        updateStrategy: force-delete-replace'
   fi
 else
   print_error "There is no Kptfile in current directory"
