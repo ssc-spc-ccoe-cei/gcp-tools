@@ -23,6 +23,9 @@ fi
 # shellcheck disable=SC1090 # don't look for sourced file, it won't exist in this repo
 source "$1"
 
+# Update the logging for region
+gcloud alpha logging settings update --organization="$ORG_ID" --storage-location="$REGION"
+
 gcloud resource-manager folders create --display-name="$LZ_FOLDER_NAME" --organization="$ORG_ID" --format="value(name)"
 gcloud projects create "$PROJECT_ID" --set-as-default --organization="$ORG_ID"
 gcloud beta billing projects link "$PROJECT_ID" --billing-account "$BILLING_ID"
@@ -120,14 +123,6 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
   --role "roles/serviceusage.serviceUsageConsumer" \
   --project "${PROJECT_ID}"
 
-EMAIL=$(gcloud config list --format json|jq .core.account | sed 's/"//g')
-
-# Adding logging admin role binding
-gcloud organizations add-iam-policy-binding "${ORG_ID}" --member "user:${EMAIL}" --role roles/logging.admin
-
-# Update the logging for region
-gcloud alpha logging settings update --organization="$ORG_ID" --storage-location="$REGION"
-
 # Create git-creds for Repo access
 kubectl create secret generic git-creds --namespace="config-management-system" --from-literal=username="${GIT_USERNAME}" --from-literal=token="${TOKEN}"
 
@@ -143,7 +138,7 @@ spec:
   git:
     repo: "${CONFIG_SYNC_REPO}"
     branch: main # eg. : main
-    dir: "${CONFIG_SYNC_DIR}" # eg.: deploy/<env>
+    dir: "${CONFIG_SYNC_DIR}" # eg.: csync/deploy/<env>
     revision: "${CONFIG_SYNC_VERSION}"
     auth: token
     secretRef:
