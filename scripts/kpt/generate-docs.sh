@@ -17,11 +17,10 @@
 #####################
 # 1- executes the inventory-controls.py
 # 2- generates a markdown table and inserts it between anchors in the securitycontrols.md
-# 3- copies back to the original directory the README.md
+# 3- copies back to the original directory the securitycontrols.md
 # anchors are :
 # <!-- BEGINNING OF SECURITY CONTROLS LIST -->
 # <!-- END OF SECURITY CONTROLS LIST -->
-# then it copies the securitycontrols.md back to the original directory
 #
 # TIP: You can add the following alias in your .bashrc
 # alias generate-docs="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/generate-docs.sh"
