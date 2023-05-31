@@ -2,11 +2,11 @@
 
 # script to push a kpt package to upstream
 #
-# it reads the upstream section in the Kptfile of the current directory
-# it first copies the current dir to a temp folder
-# then, it cleans up the files to remove the extra kpt junk
-# after that, it ask for a commit message
-# lastly, it pushes the changes to the repo, branch, and folder that were define in the Kptfile/upstream
+# 1- reads the upstream section in the Kptfile of the current directory
+# 2- copies the current dir to a temp folder
+# 3- cleans up the files to remove the extra kpt junk
+# 4- ask for a commit message
+# 5- pushes the changes to the repo, branch, and folder that were define in the Kptfile/upstream
 #
 # TIP: You can add the following alias in your .bashrc
 # alias kpt-push="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/push.sh"

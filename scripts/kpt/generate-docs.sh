@@ -2,12 +2,12 @@
 
 # script to generate docs
 #
-# it reads the upstream section in the Kptfile of the current directory
-# it first copies the current dir to LINUX_WORKDIR
-# then, it executes generate-kpt-pkg-docs
-# followed by, it copies back to the original directory the README.md
-# then, it executes the inventory-controls.py
-# then, it generates a markdown table and insert it between anchors in the securitycontrols.md
+# 1- reads the upstream section in the Kptfile of the current directory
+# 2- copies the current dir to LINUX_WORKDIR
+# 3- executes generate-kpt-pkg-docs
+# 4- copies back to the original directory the README.md
+# 5- executes the inventory-controls.py
+# 6- generates a markdown table and inserts it between anchors in the securitycontrols.md
 # anchors are :
 # <!-- BEGINNING OF SECURITY CONTROLS LIST -->
 # <!-- END OF SECURITY CONTROLS LIST -->
