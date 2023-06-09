@@ -13,19 +13,23 @@ SCRIPT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck source-path=scripts/bootstrap # tell shellcheck where to look
 source "${SCRIPT_ROOT}/../common/print-colors.sh"
 
-# Set a default value for the dev_mode variable
-dev_mode=false
+# Set a default value for the options
+autopilot_opt=false
+folder_opt=false
 
 # Use getopts to parse the options
-while getopts ":d" opt; do
+while getopts ":af" opt; do
   case ${opt} in
-    d ) # If the -d option is provided, set dev_mode to true
-      dev_mode=true
+    a ) # If the -a option is provided, set autopilot_opt to true
+      autopilot_opt=true
+      ;;
+    f ) # If the -f option is provided, set folder_opt to true
+      folder_opt=true
       ;;
     \? ) # If an invalid option is provided, print usage information and exit
-      print_error "Usage: bash setup-kcc.sh [-d] PATH_TO_ENV_FILE
-        -d: dev_mode. It will bootstrap the landing zone in a folder instead than at the org level.
-        It will also deploy an autopilot cluster instead of a standard cluster"
+      print_error "Usage: bash setup-kcc.sh [-af] PATH_TO_ENV_FILE
+        -a: autopilot. It will deploy an autopilot cluster instead of a standard cluster
+        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level"
       exit 1
       ;;
   esac
@@ -35,9 +39,9 @@ done
 shift $((OPTIND -1))
 
 if [ $# -eq 0 ]; then
-    print_error "Usage: bash setup-kcc.sh [-d] PATH_TO_ENV_FILE
-      -d: dev_mode. It will bootstrap the landing zone in a folder instead than at the org level.
-      It will also deploy an autopilot cluster instead of a standard cluster"
+    print_error "Usage: bash setup-kcc.sh [-af] PATH_TO_ENV_FILE
+        -a: autopilot. It will deploy an autopilot cluster instead of a standard cluster
+        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level"
     exit 1
 fi
 
@@ -49,8 +53,8 @@ print_info "Update the logging for region"
 gcloud alpha logging settings update --organization="$ORG_ID" --storage-location="$REGION"
 
 print_info "create folder and project"
-# DEV_MODE: deploy in a folder instead than at the org level
-if [ "$dev_mode" = true ]; then
+# folder_opt: deploy in a folder instead than at the org level
+if [ "$folder_opt" = true ]; then
   gcloud resource-manager folders create --display-name="$LZ_FOLDER_NAME" --folder="$ROOT_FOLDER_ID" --format="value(name)"
   gcloud projects create "$PROJECT_ID" --set-as-default --folder="$ROOT_FOLDER_ID"
 else
@@ -144,8 +148,8 @@ print_info "Deny egress to internet"
 gcloud compute firewall-rules create deny-egress-internet --action DENY --rules=all --destination-ranges 0.0.0.0/0 --direction EGRESS --priority 65535 --network "$NETWORK" --enable-logging
 
 print_info "Create Config controller"
-# DEV_MODE: Deploy an autopilot cluster instead of a standard cluster
-if [ "$dev_mode" = true ]; then
+# autopilot_opt: Deploy an autopilot cluster instead of a standard cluster
+if [ "$autopilot_opt" = true ]; then
   gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management
 else
   gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET"
