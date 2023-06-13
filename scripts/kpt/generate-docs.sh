@@ -72,7 +72,8 @@ if [ -f Kptfile ]; then
 
     chmod 777 README.md
 
-    REPO_URL="${repo}.git${directory}/"
+    #REPO_URL="${repo}.git${directory}/"
+    REPO_URL="${repo}.git${directory%/*}/"
     print_info "running generate-kpt-pkg-docs"
     # shellcheck disable=SC2140 # disable 'dst Word is of the form "A"B"C"'
     kpt fn eval -i generate-kpt-pkg-docs:unstable --mount type=bind,src="$BIND_WORKDIR",dst="/tmp",rw=true -- readme-path=/tmp/README.md repo-path="$REPO_URL"
