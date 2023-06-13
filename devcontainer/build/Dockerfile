@@ -87,8 +87,9 @@ RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                                 
      echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"                                >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"                                 >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx"                               >> /home/${CPE_USERNAME}/.bashrc && \
-     echo 'alias kpt-push="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/push.sh"'               >> /home/${CPE_USERNAME}/.bashrc && \
-     echo 'alias generate-docs="bash $(git rev-parse --show-toplevel)/tools/scripts/kpt/generate-docs.sh"' >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "alias kpt-hydrate='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/hydrate.sh'"          >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "alias kpt-push='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/push.sh'"                >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "alias generate-docs='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/generate-docs.sh'"  >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo chown root:docker /var/run/docker.sock"                                                    >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo update-ca-certificates > /dev/null 2>&1"                                                   >> /home/${CPE_USERNAME}/.bashrc && \
      echo "# END OF DOCKERFILE BASHRC MODS #"                                                              >> /home/${CPE_USERNAME}/.bashrc
