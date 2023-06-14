@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.6.1...0.7.0) (2023-06-14)
+
+
+### Features
+
+* Update setup-kcc.sh to support autopilot and folder deployment ([bad4fd3](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/bad4fd3cf387bdff9ce612dd488ca9b0e9bd4c67))
+
 ## [0.6.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.6.0...0.6.1) (2023-05-31)
 
 
