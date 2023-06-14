@@ -41,7 +41,7 @@ fi
 
 # checkout CURRENT_BRANCH
 git fetch --unshallow
-git checkout $CURRENT_BRANCH
+git checkout "$CURRENT_BRANCH"
 print_info "git status"
 git status
 print_info "-----------------------------------"
