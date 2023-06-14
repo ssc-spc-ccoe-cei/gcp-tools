@@ -81,9 +81,9 @@ ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
 
 # Please note this has no effect on WSL as the volume mount is overtop of the container home, if on WSL/Ubuntu add to your .bashrc
 RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                                                            >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"                                          >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "source /usr/local/bin/google-cloud-sdk/path.bash.inc"                                           >> /home/${CPE_USERNAME}/.bashrc && \
      echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                     >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                    >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                     >> /home/${CPE_USERNAME}/.bashrc && \
      echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"                                >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"                                 >> /home/${CPE_USERNAME}/.bashrc && \
      echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx"                               >> /home/${CPE_USERNAME}/.bashrc && \

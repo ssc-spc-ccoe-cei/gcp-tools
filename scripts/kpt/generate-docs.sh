@@ -12,6 +12,11 @@
 # 1- reads the upstream section in the Kptfile of the current directory
 # 2- executes generate-kpt-pkg-docs
 # 3- copies back to the original directory the README.md
+# anchors are :
+# <!-- BEGINNING OF PRE-COMMIT-BLUEPRINT DOCS HOOK:TITLE -->
+# <!-- END OF PRE-COMMIT-BLUEPRINT DOCS HOOK:TITLE -->
+# <!-- BEGINNING OF PRE-COMMIT-BLUEPRINT DOCS HOOK:BODY -->
+# <!-- END OF PRE-COMMIT-BLUEPRINT DOCS HOOK:BODY -->
 #####################
 # generate securitycontrols.md
 #####################

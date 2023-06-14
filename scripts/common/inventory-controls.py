@@ -1,4 +1,4 @@
-# This script generates a csv file in the current directory containing the list kubernetes resources that are tagged with security controls.
+# This script generates a csv file in the current directory containing the list of kubernetes resources that are tagged with security controls.
 # It also parses markdown file to extract their security controls information
 #
 # The following fields are populated in the csv.
