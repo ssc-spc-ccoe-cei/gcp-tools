@@ -100,13 +100,14 @@ RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o 
      apt-get install -y docker-ce \
      docker-ce-cli \
      containerd.io \
-     docker-compose-plugin
+     docker-compose-plugin && \
+     usermod -a -G docker ${CPE_USERNAME}
 
+# CPE Version controlled
 
-# RUN  usermod -a -G docker ${CPE_USERNAME}
-
-     # wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
-     # /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector && \
+RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
+     /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector
+    
      # curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.21/kpt_linux_amd64 && \
      # chmod +x kpt_linux_amd64 && \
      # mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt && \
