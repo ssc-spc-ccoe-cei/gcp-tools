@@ -67,11 +67,12 @@ if [ -f Kptfile ]; then
     #################
 
     # delete content of destination folder
-    if rm -r "$dstDir"; then
+    if rm -rf "$dstDir"; then
       print_info "erasing destination folder"
     fi
     # copy all files and folders to the specified directory within the repository
-    cp -r "$srcDir" "$dstDir"
+    mkdir -p "$dstDir"
+    cp -r "$srcDir"/* "$dstDir"
     cd "$dstDir" || exit
 
     #################
