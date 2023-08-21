@@ -17,7 +17,7 @@ set -o errexit
 set -o pipefail
 
 # pin kpt and nomos versions
-KPT_VERSION='v1.0.0-beta.35'
+KPT_VERSION='v1.0.0-beta.21'
 NOMOS_VERSION='v1.14.2'
 
 # the standard directory structure for processing customization and hydration
