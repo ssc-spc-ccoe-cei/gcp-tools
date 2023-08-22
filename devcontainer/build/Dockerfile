@@ -25,8 +25,9 @@ ARG BASH_COMPLETION
 ARG GCLD_SDK
 ARG GATOR
 
-
+# User
 RUN  adduser --quiet --shell /bin/bash --home /home/${CPE_USERNAME} --gecos "User" ${CPE_USERNAME} --disabled-password
+
 
 # RUN  apt-get update && \
 #      apt-get install -y apt-transport-https=${APT_TRANSPORT_HTTPS} && \
@@ -103,43 +104,44 @@ RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o 
      docker-compose-plugin && \
      usermod -a -G docker ${CPE_USERNAME}
 
-# CPE Version controlled
-
+# Google Cli
 RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
      /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector
     
-     # curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.21/kpt_linux_amd64 && \
-     # chmod +x kpt_linux_amd64 && \
-     # mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt && \
-     # git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
-     # ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx && \
-     # ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
-     # wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
+# kpt 
+RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.21/kpt_linux_amd64 && \
+     chmod +x kpt_linux_amd64 && \
+     mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt
 
-# RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
+# RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
+#      ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx && \
+#      ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
+#      wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
+
+
 
 #TODO:
 #https://www.openpolicyagent.org/docs/latest/cli/
 #https://open-policy-agent.github.io/gatekeeper/website/docs/install
 #https://github.com/open-policy-agent/gatekeeper/releases
 
+#RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
+
 # USER ${CPE_USERNAME}
-
 # WORKDIR /home/${CPE_USERNAME}
-
 # ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
 
 # # Please note this has no effect on WSL as the volume mount is overtop of the container home, if on WSL/Ubuntu add to your .bashrc
-# RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                              >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"            >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"       >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"      >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"  >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"   >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx" >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "sudo chown root:docker /var/run/docker.sock"                      >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /home/${CPE_USERNAME}/.bashrc && \
-#      echo "# END OF DOCKERFILE BASHRC MODS #"                                >> /home/${CPE_USERNAME}/.bashrc
+RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                              >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"            >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"       >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"      >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"  >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"   >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx" >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "sudo chown root:docker /var/run/docker.sock"                      >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /home/${CPE_USERNAME}/.bashrc && \
+     echo "# END OF DOCKERFILE BASHRC MODS #"                                >> /home/${CPE_USERNAME}/.bashrc
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
 
