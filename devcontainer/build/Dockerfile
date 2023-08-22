@@ -129,7 +129,7 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
 #https://open-policy-agent.github.io/gatekeeper/website/docs/install
 #https://github.com/open-policy-agent/gatekeeper/releases
 
-#RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
+RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 
 # USER ${CPE_USERNAME}
 # WORKDIR /home/${CPE_USERNAME}
