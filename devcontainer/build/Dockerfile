@@ -88,14 +88,6 @@ RUN  apt-get update && \
      software-properties-common
 
 # Docker
-
-# RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/docker.gpg && \
-#      add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
-#      apt-get install -y docker-ce=${DOCKER_CE}  \
-#      docker-ce-cli=${DOCKER_CE_CLI} \
-#      containerd.io=${CONTAINERD_IO} \
-#      docker-compose-plugin=${DOCKER_COMPOSE_PLUGIN}
-
 RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/docker.gpg && \
      add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
      apt-get install -y docker-ce \
@@ -108,10 +100,12 @@ RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o 
 RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
      /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector
 
+# kpt
 RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.43/kpt_linux_amd64 && \
      chmod +x kpt_linux_amd64 && \
      mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt
 
+# kubectl helpers
 RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx && \
      ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
@@ -126,7 +120,7 @@ RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERN
 
 ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
 
-# Please note this has no effect on WSL as the volume mount is overtop of the container home, if on WSL/Ubuntu add to your .bashrc
+# Modify .bashrc to source this file "/etc/profile.d/my_environment_script.sh"
 RUN  echo "# START OF ENVIRONMENT MODS #"                                    >> /etc/profile.d/my_environment_script.sh && \
      echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"            >> /etc/profile.d/my_environment_script.sh && \
      echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"       >> /etc/profile.d/my_environment_script.sh && \
@@ -135,8 +129,10 @@ RUN  echo "# START OF ENVIRONMENT MODS #"                                    >> 
      echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"   >> /etc/profile.d/my_environment_script.sh && \
      echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx" >> /etc/profile.d/my_environment_script.sh && \
      echo "sudo chown root:docker /var/run/docker.sock"                      >> /etc/profile.d/my_environment_script.sh && \
+     echo "sudo chmod 777 /var/run/docker.sock"                              >> /etc/profile.d/my_environment_script.sh && \
      echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /etc/profile.d/my_environment_script.sh && \
-     echo "# END OF ENVIRONMENT MODS #"                                      >> /etc/profile.d/my_environment_script.sh
+     echo "# END OF ENVIRONMENT MODS #"                                      >> /etc/profile.d/my_environment_script.sh 
+
 
 USER ${CPE_USERNAME}
 
