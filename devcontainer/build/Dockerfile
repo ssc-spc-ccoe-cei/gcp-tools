@@ -107,11 +107,6 @@ RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o 
 # Google Cli
 RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
      /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector
-    
-# kpt 
-# RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.21/kpt_linux_amd64 && \
-#      chmod +x kpt_linux_amd64 && \
-#      mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt
 
 RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/v1.0.0-beta.43/kpt_linux_amd64 && \
      chmod +x kpt_linux_amd64 && \
@@ -122,8 +117,6 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
      wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
 
-
-
 #TODO:
 #https://www.openpolicyagent.org/docs/latest/cli/
 #https://open-policy-agent.github.io/gatekeeper/website/docs/install
@@ -131,9 +124,11 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 
-# USER ${CPE_USERNAME}
-# WORKDIR /home/${CPE_USERNAME}
-# ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
+USER ${CPE_USERNAME}
+
+WORKDIR /home/${CPE_USERNAME}
+
+ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
 
 # # Please note this has no effect on WSL as the volume mount is overtop of the container home, if on WSL/Ubuntu add to your .bashrc
 RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                              >> /home/${CPE_USERNAME}/.bashrc && \
