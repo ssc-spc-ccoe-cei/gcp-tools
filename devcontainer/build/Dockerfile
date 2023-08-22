@@ -124,24 +124,22 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 
+ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
+
+# Please note this has no effect on WSL as the volume mount is overtop of the container home, if on WSL/Ubuntu add to your .bashrc
+RUN  echo "# START OF ENVIRONMENT MODS #"                                    >> /etc/profile.d/my_environment_script.sh && \
+     echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"            >> /etc/profile.d/my_environment_script.sh && \
+     echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"       >> /etc/profile.d/my_environment_script.sh && \
+     echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"      >> /etc/profile.d/my_environment_script.sh && \
+     echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"  >> /etc/profile.d/my_environment_script.sh && \
+     echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"   >> /etc/profile.d/my_environment_script.sh && \
+     echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx" >> /etc/profile.d/my_environment_script.sh && \
+     echo "sudo chown root:docker /var/run/docker.sock"                      >> /etc/profile.d/my_environment_script.sh && \
+     echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /etc/profile.d/my_environment_script.sh && \
+     echo "# END OF ENVIRONMENT MODS #"                                      >> /etc/profile.d/my_environment_script.sh
+
 USER ${CPE_USERNAME}
 
 WORKDIR /home/${CPE_USERNAME}
 
-ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
-
-# # Please note this has no effect on WSL as the volume mount is overtop of the container home, if on WSL/Ubuntu add to your .bashrc
-RUN  echo "# START OF DOCKERFILE BASHRC MODS #"                              >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"            >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"       >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"      >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"  >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"   >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx" >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "sudo chown root:docker /var/run/docker.sock"                      >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /home/${CPE_USERNAME}/.bashrc && \
-     echo "# END OF DOCKERFILE BASHRC MODS #"                                >> /home/${CPE_USERNAME}/.bashrc
-
 ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-
