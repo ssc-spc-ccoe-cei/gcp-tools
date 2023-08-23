@@ -60,7 +60,7 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
 
 # yq
-RUN wget -qO https://github.com/mikefarah/yq/releases/download/${YQ}/yq_linux_amd64 -O /usr/bin/yq && \
+RUN  wget https://github.com/mikefarah/yq/releases/download/${YQ}/yq_linux_amd64 -O /usr/bin/yq && \
     chmod +x /usr/bin/yq
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
