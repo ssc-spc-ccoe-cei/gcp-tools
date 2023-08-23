@@ -67,21 +67,22 @@ RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERN
 
 ENV PATH "$PATH:/usr/local/bin/google-cloud-sdk/bin"
 
-# Modify .bashrc to source this file "/etc/profile.d/my_environment_script.sh"
-RUN  echo "# START OF ENVIRONMENT MODS #"                                                                  >> /etc/profile.d/my_environment_script.sh && \
-     echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"                                          >> /etc/profile.d/my_environment_script.sh && \
-     echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                     >> /etc/profile.d/my_environment_script.sh && \
-     echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                    >> /etc/profile.d/my_environment_script.sh && \
-     echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"                                >> /etc/profile.d/my_environment_script.sh && \
-     echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"                                 >> /etc/profile.d/my_environment_script.sh && \
-     echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx"                               >> /etc/profile.d/my_environment_script.sh && \
-     echo "sudo chown root:docker /var/run/docker.sock"                                                    >> /etc/profile.d/my_environment_script.sh && \
-     echo "sudo chmod 774 /var/run/docker.sock"                                                            >> /etc/profile.d/my_environment_script.sh && \
-     echo "sudo update-ca-certificates > /dev/null 2>&1"                                                   >> /etc/profile.d/my_environment_script.sh && \
-     echo "alias kpt-hydrate='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/hydrate.sh'"          >> /etc/profile.d/my_environment_script.sh && \
-     echo "alias kpt-push='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/push.sh'"                >> /etc/profile.d/my_environment_script.sh && \
-     echo "alias generate-docs='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/generate-docs.sh'"  >> /etc/profile.d/my_environment_script.sh && \
-     echo "# END OF ENVIRONMENT MODS #"                                                                    >> /etc/profile.d/my_environment_script.sh
+# Modify .bashrc to source this file "/etc/profile.d/my_env_script.sh"
+RUN  echo "# START OF ENVIRONMENT MODS #"                                                                  >> /etc/profile.d/my_env_script.sh && \
+     echo "source  /usr/local/bin/google-cloud-sdk/path.bash.inc"                                          >> /etc/profile.d/my_env_script.sh && \
+     echo "source /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                     >> /etc/profile.d/my_env_script.sh && \
+     echo "source  /usr/local/bin/google-cloud-sdk/completion.bash.inc"                                    >> /etc/profile.d/my_env_script.sh && \
+     echo "COMPDIR=$(pkg-config --variable=completionsdir bash-completion)"                                >> /etc/profile.d/my_env_script.sh && \
+     echo "sudo ln -sf ~/.kubectx/completion/kubens.bash \$COMPDIR/kubens"                                 >> /etc/profile.d/my_env_script.sh && \
+     echo "sudo ln -sf ~/.kubectx/completion/kubectx.bash \$COMPDIR/kubectx"                               >> /etc/profile.d/my_env_script.sh && \
+     echo "sudo chown root:docker /var/run/docker.sock"                                                    >> /etc/profile.d/my_env_script.sh && \
+     echo "sudo chmod 774 /var/run/docker.sock"                                                            >> /etc/profile.d/my_env_script.sh && \
+     echo "sudo update-ca-certificates > /dev/null 2>&1"                                                   >> /etc/profile.d/my_env_script.sh && \
+     echo "alias kpt-hydrate='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/hydrate.sh'"          >> /etc/profile.d/my_env_script.sh && \
+     echo "alias kpt-push='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/push.sh'"                >> /etc/profile.d/my_env_script.sh && \
+     echo "alias generate-docs='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/generate-docs.sh'"  >> /etc/profile.d/my_env_script.sh && \
+     echo "# END OF ENVIRONMENT MODS #"                                                                    >> /etc/profile.d/my_env_script.sh && \
+     echo "source /etc/profile.d/my_env_script.sh"                                                 >> /home/${CPE_USERNAME}/.bashrc
 
 USER ${CPE_USERNAME}
 
