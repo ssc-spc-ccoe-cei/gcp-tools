@@ -13,13 +13,12 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-      # - type: volume
-      #   source: vol
-      #   target: /home/${CPE_USERNAME}/
+      - type: volume
+        source: vol
+        target: /home/${CPE_USERNAME}/
       - type: bind
         source: c:\workdir
         target: /workdir/
-
 secrets:
   pub_cert1:
     file: ${PUB_CERT1_PATH}
