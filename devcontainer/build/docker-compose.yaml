@@ -18,6 +18,7 @@ services:
         GCLD_SDK: ${GCLD_SDK}
         GATOR: ${GATOR}
         KPT: ${KPT}
+        YQ: ${YQ}
       labels:
         ca.gc.ssc-spc.ctob.author: "Cloud Platform Engineering"
         ca.gc.ssc-spc.ctob.purpose: "Container used with versioned developer tools"

@@ -59,8 +59,12 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
 
 # yq
-RUN sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
-    sudo chmod a+x /usr/local/bin/yq
+# RUN wget -vO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.34.2/yq_linux_amd64
+# #    sudo chmod a+x /usr/local/bin/yq
+
+RUN wget -vO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ}/yq_linux_amd64
+# #    sudo chmod a+x /usr/local/bin/yq
+
 
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
@@ -80,6 +84,9 @@ RUN  echo "# START OF ENVIRONMENT MODS #"                                    >> 
      echo "sudo update-ca-certificates > /dev/null 2>&1"                     >> /etc/profile.d/my_environment_script.sh && \
      echo "# END OF ENVIRONMENT MODS #"                                      >> /etc/profile.d/my_environment_script.sh 
 
+     # echo "alias kpt-hydrate='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/hydrate.sh'"          >> /home/${CPE_USERNAME}/.bashrc && \
+     # echo "alias kpt-push='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/push.sh'"                >> /home/${CPE_USERNAME}/.bashrc && \
+     # echo "alias generate-docs='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/generate-docs.sh'"  >> /home/${CPE_USERNAME}/.bashrc && \
 
 USER ${CPE_USERNAME}
 
