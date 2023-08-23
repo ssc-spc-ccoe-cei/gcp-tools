@@ -58,10 +58,10 @@ RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
      wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
 
-#TODO:
-#https://www.openpolicyagent.org/docs/latest/cli/
-#https://open-policy-agent.github.io/gatekeeper/website/docs/install
-#https://github.com/open-policy-agent/gatekeeper/releases
+# yq
+RUN sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
+    sudo chmod a+x /usr/local/bin/yq
+
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 
