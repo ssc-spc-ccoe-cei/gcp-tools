@@ -49,19 +49,22 @@ RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli
      /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector
 
 # kpt
-RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/${KPT}/kpt_linux_amd64 && \
-     chmod +x kpt_linux_amd64 && \
-     mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt
+# RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/${KPT}/kpt_linux_amd64 && \
+#      chmod +x kpt_linux_amd64 && \
+#      mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt
+
+# kpt
+RUN  wget https://github.com/GoogleContainerTools/kpt/releases/download/${KPT}/kpt_linux_amd64 -O /usr/local/bin/google-cloud-sdk/bin/kpt && \
+     chmod +x /usr/local/bin/google-cloud-sdk/bin/kpt
+
+RUN  wget https://github.com/mikefarah/yq/releases/download/${YQ}/yq_linux_amd64 -O /usr/bin/yq && \
+    chmod +x /usr/bin/yq
 
 # kubernetes and cluster helpers
 RUN  git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
      ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx && \
      ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
      wget -qO- https://github.com/open-policy-agent/gatekeeper/releases/download/${GATOR}/gator-${GATOR}-linux-amd64.tar.gz | tar zxv -C /usr/local/bin
-
-# yq
-RUN  wget https://github.com/mikefarah/yq/releases/download/${YQ}/yq_linux_amd64 -O /usr/bin/yq && \
-    chmod +x /usr/bin/yq
 
 RUN  echo ${CPE_USERNAME} ' ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/${CPE_USERNAME}
 

@@ -30,6 +30,9 @@ services:
       - type: volume
         source: vol
         target: /home/${CPE_USERNAME}/
+      - type: bind
+        source: c:\workdir
+        target: /workdir/
 secrets:
   pub_cert1:
     file: ${PUB_CERT1_PATH}
