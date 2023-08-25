@@ -32,6 +32,7 @@ RUN  apt-get update && \
      pkg-config \
      python3.10 \
      python-is-python3 \
+     python3-yaml \
      bash-completion \
      software-properties-common
 
