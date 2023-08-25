@@ -150,7 +150,7 @@ Now that your Container is up, you can use the docker extension to right click, 
 
 ## Maintenance Activities
 
-From time to time the image will need to be updated, changed or added to. An example of updating and distributing a new image is provided.
+From time to time the image will need to be updated, changed or added to
 
 ### Updating Image
 
@@ -167,20 +167,20 @@ Modify ``...gcp-tools\devcontainer\Dockerfile | docker-compose.env`` as required
 
 Add or update the variables to the ```.env``` file(s).
 
-Increment the TAG variable in ```build\.env```
-
-Increment the TAG variable in ```run\.env```
+Increment the TAG variable in ```build\.env``` using semantic versioning
 
 Build a new image:
 
-```shell
+```Powershell
 docker compose build
 ```
 
-Test your changes locally
+To run your new image:
 
-```shell
-docker compose up
+Increment the TAG variable in ```run\.env```
+
+```Powershell
+docker compose up -d
 ```
 
 Once satisfied with your changes, ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` has your new TAG number.
@@ -190,19 +190,20 @@ Push your code to Google Artifact Registry
 ```shell
 docker push
 ```
-
 Commit your change and push to github.com
 
 Create a PR on the [GCP Tools Repo](https://github.com/ssc-spc-ccoe-cei/gcp-tools.git) "mybranch"
 
-Once the PR is approved, commit & squash merge.
+Once the PR is approved, merge to the main branch.
 
-Users of the container can now pull the new branch to their workstations. This task can be done by:
+Users of the container can now pull the updated main branch to their workstations. This task can be done by:
 
-```shell
+```Powershell
+cd .\gcp-tools\
 git pull  # Allow a fast forward, there should be no conflicts
-cd devcontainer\run
-docker compose up
+cd .\devcontainer\run\
+docker compose up -d
+docker update --restart unless-stopped cpedevcontainer
 ```
 
 Enjoy!
