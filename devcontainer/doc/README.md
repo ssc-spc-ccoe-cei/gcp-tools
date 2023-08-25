@@ -1,22 +1,6 @@
 # GCP Development Environment
 
-- [GCP Development Environment](#gcp-development-environment)
-  - [Purpose](#purpose)
-  - [Features](#features)
-  - [Required Desktop Components](#required-desktop-components)
-  - [Getting Started](#getting-started)
-    - [Install WSL](#install-wsl2)
-    - [Install Docker Desktop](#install-docker-desktop)
-    - [GIT](#git)
-    - [VsCode](#vscode)
-    - [Gcloud Installation On Windows](#gcloud-installation-on-windows)
-    - [Container Installation](#container-installation)
-      - [Inside VsCode](#inside-vscode)
-      - [Extras](#extras)
-  - [Storage Volumes \& Windows Mapping](#storage-volumes--windows-mapping)
-    - [Access Volume in Host OS](#access-volume-in-host-os)
-  - [Maintenance Activities](#maintenance-activities)
-    - [New Image Example](#new-image-example)
+[[_TOC_]]
 
 ## Purpose
 
