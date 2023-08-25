@@ -1,8 +1,25 @@
-# GCP Development Environment
+<!-- vscode-markdown-toc -->
+* 1. [Purpose](#Purpose)
+* 2. [Features](#Features)
+* 3. [Required Desktop Components](#RequiredDesktopComponents)
+	* 3.1. [Required Access](#RequiredAccess)
+* 4. [Configuration](#Configuration)
+	* 4.1. [VsCode](#VsCode)
+		* 4.1.1. [Memory Limits](#MemoryLimits)
+	* 4.2. [Google Configuration On Windows](#GoogleConfigurationOnWindows)
+		* 4.2.1. [Initialize GCloud](#InitializeGCloud)
+		* 4.2.2. [Authenticate to Artifact Registry](#AuthenticatetoArtifactRegistry)
+	* 4.3. [Container Installation](#ContainerInstallation)
 
-[[_TOC_]]
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc --># GCP Development Environment
 
-## Purpose
+
+
+##  1. <a name='Purpose'></a>Purpose
 
 The gcptools/devcontainer repository includes version controlled software in a container, providing a homogenous software and runtime environment. The container facilitates GCP activities such as:
 
@@ -10,7 +27,7 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Operational activities
 - Application workload deployment & maintenance
 
-## Features
+##  2. <a name='Features'></a>Features
 
 - Ubuntu 22.04 based image
 - Light version management of container software through .env files
@@ -18,7 +35,7 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Docker volume creation and mounting for a persistent storage layer
 - Method of sharing files between the host OS and the container
 
-## Required Desktop Components
+##  3. <a name='RequiredDesktopComponents'></a>Required Desktop Components
 
 - Windows 10, managed by your organization. 16GB ram or higher recommended
 - WSL2 enabled, no virtual machine needed
@@ -27,20 +44,20 @@ The gcptools/devcontainer repository includes version controlled software in a c
 - Git for Windows
 - Gcloud
 
-### Required Access
+###  3.1. <a name='RequiredAccess'></a>Required Access
 
 - Access to a Google Cloud Artifact Registry to store, push and pull the built image
 
-## Configuration
+##  4. <a name='Configuration'></a>Configuration
 
-### VsCode
+###  4.1. <a name='VsCode'></a>VsCode
 
 Use the Extensions pallet *(Ctrl+Shift+X)* to add in the following extensions (Minimal extensions required as this is only on Windows/PowerShell):
 
 - Docker
 - Remote Development
 
-#### Memory Limits
+####  4.1.1. <a name='MemoryLimits'></a>Memory Limits
 
 To control WSL memory usage, you may add a file `%userprofile%/.wslconfig` with the following contents:
 
@@ -55,9 +72,9 @@ processors=2
 swap=8GB
 ```
 
-### Google Configuration On Windows
+###  4.2. <a name='GoogleConfigurationOnWindows'></a>Google Configuration On Windows
 
-#### Initialize GCloud
+####  4.2.1. <a name='InitializeGCloud'></a>Initialize GCloud
 
 Open VsCode, Open a PowerShell terminal. Initialize your Google SDK.
 
@@ -84,7 +101,7 @@ Google Cloud will want to confirm access for the SDK. Choose [Allow]
 
 Back in the PowerShell Window, you will be prompted for a default project. Choose any project.
 
-#### Authenticate to Artifact Registry
+####  4.2.2. <a name='AuthenticatetoArtifactRegistry'></a>Authenticate to Artifact Registry
 
 
 ```PowerShell
@@ -104,7 +121,7 @@ Docker configuration file updated.
 
 ```
 
-### Container Installation
+###  4.3. <a name='ContainerInstallation'></a>Container Installation
 
 Using Windows, launch VSCode. Open a PowerShell terminal.  
 Clone the repository  
