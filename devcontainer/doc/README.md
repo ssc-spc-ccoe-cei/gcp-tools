@@ -49,7 +49,6 @@ The gcptools/devcontainer repository includes version controlled software in a c
 ### VsCode
 
 Use the Extensions pallet *(Ctrl+Shift+X)* to add in the following extensions (Minimal extensions required as this is only on Windows/PowerShell):
-
 - Docker
 - Remote Development
 
@@ -131,7 +130,7 @@ Git credential manager will open. Authenticate yourself. You may add your git to
 Open Terminal --> New Terminal.
 ```cd``` to the folder you choose to clone the repo into. Then ```cd .\devcontainer\run\```
 
-Use the provided docker-compose.yaml values to pull the image locally
+To pull and start the container with the provided docker-compose.yaml & .env file values:
 
 ```shell
 # from ...gcp-tools\devcontainer\run>
@@ -144,11 +143,11 @@ Set your container to start on boot (optional, but recommended). Docker Desktop 
 ```shell
 docker update --restart unless-stopped cpedevcontainer
 ```
-Now that your Container is up, you can use the docker extension to right click, (Attach Visual Studio Code)
+Now that your Container is up, you can use the Remote Explorer extension, right click on cpedevcontainer &#8594; Attach in new window.
 
 ## Maintenance Activities
 
-From time to time the image will need to be updated, changed or added to
+From time to time the image will need to be updated, changed or added to. An example of how to do this is below.
 
 ### Updating Image
 
