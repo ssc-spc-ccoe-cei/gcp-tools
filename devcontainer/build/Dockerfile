@@ -49,11 +49,6 @@ RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli
      /usr/local/bin/google-cloud-sdk/install.sh --usage-reporting false --screen-reader true --command-completion true --additional-components kubectl gke-gcloud-auth-plugin beta alpha nomos gsutil app-engine-python-extras config-connector
 
 # kpt
-# RUN  curl -LSso kpt_linux_amd64 https://github.com/GoogleContainerTools/kpt/releases/download/${KPT}/kpt_linux_amd64 && \
-#      chmod +x kpt_linux_amd64 && \
-#      mv kpt_linux_amd64 /usr/local/bin/google-cloud-sdk/bin/kpt
-
-# kpt
 RUN  wget https://github.com/GoogleContainerTools/kpt/releases/download/${KPT}/kpt_linux_amd64 -O /usr/local/bin/google-cloud-sdk/bin/kpt && \
      chmod +x /usr/local/bin/google-cloud-sdk/bin/kpt
 
@@ -81,9 +76,9 @@ RUN  echo "# START OF ENVIRONMENT MODS #"                                       
      echo "sudo chown root:docker /var/run/docker.sock"                                                    >> /etc/profile.d/my_env_script.sh && \
      echo "sudo chmod 774 /var/run/docker.sock"                                                            >> /etc/profile.d/my_env_script.sh && \
      echo "sudo update-ca-certificates > /dev/null 2>&1"                                                   >> /etc/profile.d/my_env_script.sh && \
-     echo "alias kpt-hydrate='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/hydrate.sh'"          >> /etc/profile.d/my_env_script.sh && \
-     echo "alias kpt-push='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/push.sh'"                >> /etc/profile.d/my_env_script.sh && \
-     echo "alias generate-docs='bash `git rev-parse --show-toplevel`/tools/scripts/kpt/generate-docs.sh'"  >> /etc/profile.d/my_env_script.sh && \
+     echo "alias kpt-hydrate='bash \`git rev-parse --show-toplevel\`/tools/scripts/kpt/hydrate.sh'"          >> /etc/profile.d/my_env_script.sh && \
+     echo "alias kpt-push='bash \`git rev-parse --show-toplevel\`/tools/scripts/kpt/push.sh'"                >> /etc/profile.d/my_env_script.sh && \
+     echo "alias generate-docs='bash \`git rev-parse --show-toplevel\`/tools/scripts/kpt/generate-docs.sh'"  >> /etc/profile.d/my_env_script.sh && \
      echo "# END OF ENVIRONMENT MODS #"                                                                    >> /etc/profile.d/my_env_script.sh && \
      echo "source /etc/profile.d/my_env_script.sh"                                                 >> /home/${CPE_USERNAME}/.bashrc
 
