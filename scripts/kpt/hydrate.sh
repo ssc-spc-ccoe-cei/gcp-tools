@@ -334,11 +334,11 @@ then
     echo "nomos vet: The result of validating hydrated files in '${DEPLOY_DIR}/{env_subdir} with 'nomos vet'."
 
     # printf can be used to format column width, however, it does not work with unicode emojis (used in print_status)
-    printf '\n\n%-40s%-10s%-10s%-10s%-10s%-10s\n' 'processed directory' '  setters' '    kpt' ' no diff' ' kubeval' 'nomos vet'
+    printf '\n\n%-67s%-10s%-10s%-10s%-10s%-10s\n' 'processed directory' '  setters' '    kpt' ' no diff' ' kubeval' 'nomos vet'
     # loop through all processed directories and lookup its status in each dictionary array
     for processed_dir in "${processed_dir_list[@]}"
     do
-        printf "%-40s" "${processed_dir}"
+        printf "%-67s" "${processed_dir}"
         print_status "${status_validate_setters[${processed_dir}]}"
         print_status "${status_kpt[${processed_dir}]}"
         print_status "${status_render_diff[${processed_dir}]}"
