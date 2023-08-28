@@ -16,7 +16,7 @@
     - [Updating Image](#updating-image)
     - [Build a new image](#build-a-new-image)
     - [Run a new image](#run-a-new-image)
-    - [Push Image Google Artifact Registry](#push-image-google-artifact-registry)
+    - [Push Image to Google Artifact Registry](#push-image-to-google-artifact-registry)
 
 ## Purpose
 
@@ -185,7 +185,7 @@ docker compose up -d
 
 Once satisfied with your changes, ensure the TAG variable in the  ```build\.env``` & the ```run\.env``` has your new TAG number.
 
-### Push Image Google Artifact Registry
+### Push Image to Google Artifact Registry
 
 ```shell
 docker push northamerica-northeast1-docker.pkg.dev/project-name/folder/container-name:VersionTag
