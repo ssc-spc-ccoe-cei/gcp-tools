@@ -188,7 +188,7 @@ Once satisfied with your changes, ensure the TAG variable in the  ```build\.env`
 ### Push Image Google Artifact Registry
 
 ```shell
-docker push registry-name/project-name/folder/container-name:Version-Tag
+docker push northamerica-northeast1-docker.pkg.dev/project-name/folder/container-name:VersionTag
 ```
 Commit your change and push to github.com
 
