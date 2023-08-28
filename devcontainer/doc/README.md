@@ -14,7 +14,7 @@
     - [Container Installation](#container-installation)
   - [Maintenance Activities](#maintenance-activities)
     - [Updating Image](#updating-image)
-    - [Build a new image:](#build-a-new-image)
+    - [Build a new image](#build-a-new-image)
     - [Run a new image](#run-a-new-image)
     - [Push Image Google Artifact Registry](#push-image-google-artifact-registry)
 
@@ -167,7 +167,7 @@ Add or update the variables to the ```.env``` file(s).
 
 Increment the TAG variable in ```build\.env``` using semantic versioning
 
-### Build a new image:
+### Build a new image
 
 ```Powershell
 # from directory ...gcp-tools\devcontainer\build>
