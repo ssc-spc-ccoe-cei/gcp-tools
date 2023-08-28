@@ -53,6 +53,7 @@ RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli
 RUN  wget https://github.com/GoogleContainerTools/kpt/releases/download/${KPT}/kpt_linux_amd64 -O /usr/local/bin/google-cloud-sdk/bin/kpt && \
      chmod +x /usr/local/bin/google-cloud-sdk/bin/kpt
 
+# yq
 RUN  wget https://github.com/mikefarah/yq/releases/download/${YQ}/yq_linux_amd64 -O /usr/bin/yq && \
     chmod +x /usr/bin/yq
 
