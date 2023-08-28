@@ -13,7 +13,7 @@ ARG YQ
 # User
 RUN  adduser --quiet --shell /bin/bash --home /home/${CPE_USERNAME} --gecos "User" ${CPE_USERNAME} --disabled-password
 
-# BASE OS TOOLS
+# Base OS Tools
 RUN  apt-get update && \
      apt-get install -y apt-transport-https && \
      apt-get install ca-certificates -y && \
