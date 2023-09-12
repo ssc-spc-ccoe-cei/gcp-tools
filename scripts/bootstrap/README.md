@@ -25,3 +25,56 @@ bash tools/scripts/bootstrap/setup-kcc.sh [-af] <PATH TO .ENV FILE>
 - `-f`: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level.
 
 The config cluster is a private cluster and can only be accessed privately from within the VPC. This requires provisioning of a virtual machine to serve as a bastion host / proxy to access the private cluster.
+
+## `git-creds` configuration
+
+Once a bastion host / proxy vm is configured, to complete the configuration of the Anthos config controller cluster, `git-creds` secret must be configured in the cluster.  This secret contains credentials used to access the Git repository with the cloud resources code that the config controller will provision.
+
+To create the secret:
+
+```bash
+# For Azure Devops, this is the name of the Organization
+export GIT_USERNAME=<Git-Username>
+
+# Export a TOKEN variable. Set its value to the PAT which has read access to the tier1 monorepo.
+export TOKEN='xxxxxxxxxxxxxxx'
+
+# Create git-creds secret
+kubectl create secret generic git-creds --namespace="config-management-system" --from-literal=username="${GIT_USERNAME}" --from-literal=token="${TOKEN}"
+```
+
+## `root-sync` Configuration
+
+Once the `git-creds` secret is created, the final step to configure the config controller cluster is to create a `RootSync` resource:
+
+```bash
+# Tier1 repo URL
+export CONFIG_SYNC_REPO=<Repo for Config Sync> # tierX repo URL
+export CONFIG_SYNC_VERSION='HEAD'
+# Should default to csync/deploy/<env>
+export CONFIG_SYNC_DIR=<Directory for config sync repo which syncs>
+
+# Create the Root Sync yaml file
+cat << EOF > ./root-sync.yaml
+apiVersion: configsync.gke.io/v1beta1
+kind: RootSync
+metadata:
+  name: root-sync
+  namespace: config-management-system
+spec:
+  sourceFormat: unstructured
+  git:
+    repo: "${CONFIG_SYNC_REPO}"
+    branch: main # eg. : main
+    dir: "${CONFIG_SYNC_DIR}" # eg.: csync/deploy/<env>
+    revision: "${CONFIG_SYNC_VERSION}"
+    auth: token
+    secretRef:
+      name: git-creds
+EOF
+
+# Apply root sync
+kubectl apply -f root-sync.yaml
+```
+
+The root-sync.yaml file should be checked into the tier1 repo
