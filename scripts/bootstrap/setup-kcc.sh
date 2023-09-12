@@ -152,7 +152,7 @@ print_info "Deny egress to internet"
 gcloud compute firewall-rules create deny-egress-internet --action DENY --rules=all --destination-ranges 0.0.0.0/0 --direction EGRESS --priority 65535 --network "$NETWORK" --enable-logging
 
 print_info "Allow peering to Google Cloud"
-gcloud resource-manager org-policies allow compute.restrictVpcPeering "under:organizations/433637338589" --project $PROJECT_ID
+gcloud resource-manager org-policies allow compute.restrictVpcPeering "under:organizations/433637338589" --project "$PROJECT_ID"
 
 # During testing, I found that I had to wait a bit before policy took effect
 print_info "sleep 30s to allow for policy to update"
