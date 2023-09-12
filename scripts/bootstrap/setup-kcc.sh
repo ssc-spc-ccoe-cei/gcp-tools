@@ -141,18 +141,29 @@ print_info "Allow egress to Github (optional)"
 # Should be revised periodically - https://api.github.com/meta
 gcloud compute firewall-rules create allow-egress-github --action ALLOW --rules tcp:22,tcp:443 --destination-ranges 192.30.252.0/22,185.199.108.0/22,140.82.112.0/20,143.55.64.0/20,20.201.28.151/32,20.205.243.166/32,102.133.202.242/32,20.248.137.48/32,20.207.73.82/32,20.27.177.113/32,20.200.245.247/32,20.233.54.53/32,20.201.28.152/32,20.205.243.160/32,102.133.202.246/32,20.248.137.50/32,20.207.73.83/32,20.27.177.118/32,20.200.245.248/32,20.233.54.52/32 --direction EGRESS --priority 5001 --network "$NETWORK" --enable-logging
 
+print_info "Allow egress to northamerica-northeast1-a.gce.clouds.archive.ubuntu.com, us-east1.gce.archive.ubuntu.com, security.ubuntu.com for OS updates"
+# Should be revised periodically
+gcloud compute firewall-rules create allow-egress-ubuntu-os-updates --action ALLOW --rules tcp:80,tcp:443 --destination-ranges 35.196.65.164/32,35.196.128.168/32,35.196.235.252/32,91.189.91.81/32,91.189.91.82/32,91.189.91.83/32,91.189.91.121/32,91.189.91.122/32,185.125.190.36/32,185.125.190.38/32,185.125.190.39/32,185.125.190.41/32 --direction EGRESS --priority 5002 --network "$NETWORK" --enable-logging
+
 print_info "Allow egress to internal, peered vpc and secondary ranges"
 gcloud compute firewall-rules create allow-egress-internal --action ALLOW --rules=all --destination-ranges 192.168.0.0/16,172.16.0.128/28,10.0.0.0/8 --direction EGRESS --priority 1000 --network "$NETWORK" --enable-logging
 
 print_info "Deny egress to internet"
 gcloud compute firewall-rules create deny-egress-internet --action DENY --rules=all --destination-ranges 0.0.0.0/0 --direction EGRESS --priority 65535 --network "$NETWORK" --enable-logging
 
+print_info "Allow peering to Google Cloud"
+gcloud resource-manager org-policies allow compute.restrictVpcPeering "under:organizations/433637338589" --project $PROJECT_ID
+
+# During testing, I found that I had to wait a bit before policy took effect
+print_info "sleep 30s to allow for policy to update"
+sleep 30
+
 print_info "Create Config controller"
 # autopilot_opt: Deploy an autopilot cluster instead of a standard cluster
 if [ "$autopilot_opt" = true ]; then
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management --man-blocks="192.168.0.0/16" --use-private-endpoint
 else
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET"
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --man-blocks="192.168.0.0/16" --use-private-endpoint
 fi
 
 print_info "Config controller get credentials"
@@ -161,39 +172,14 @@ gcloud anthos config controller get-credentials "$CLUSTER" --location "$REGION"
 SA_EMAIL="$(kubectl get ConfigConnectorContext -n config-control \
     -o jsonpath='{.items[0].spec.googleServiceAccount}' 2> /dev/null)"
 
+print_info "Create organization Admin IAM policy binding"
 gcloud organizations add-iam-policy-binding "${ORG_ID}" \
   --member="serviceAccount:${SA_EMAIL}" \
   --role=roles/resourcemanager.organizationAdmin \
   --condition=None
 
+print_info "Create project IAM policy binding"
 gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
   --member "serviceAccount:${SA_EMAIL}" \
   --role "roles/serviceusage.serviceUsageConsumer" \
   --project "${PROJECT_ID}"
-
-print_info "Create git-creds for Repo access"
-kubectl create secret generic git-creds --namespace="config-management-system" --from-literal=username="${GIT_USERNAME}" --from-literal=token="${TOKEN}"
-
-cat << EOF > ./root-sync.yaml
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: "${CONFIG_SYNC_REPO}"
-    branch: main # eg. : main
-    dir: "${CONFIG_SYNC_DIR}" # eg.: csync/deploy/<env>
-    revision: "${CONFIG_SYNC_VERSION}"
-    auth: token
-    secretRef:
-      name: git-creds
-EOF
-
-print_info "Apply root sync"
-kubectl apply -f root-sync.yaml
-
-# Further steps
-print_warning "The root-sync.yaml file should be checked into the <tier1-REPO>"
