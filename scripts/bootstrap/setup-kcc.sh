@@ -16,9 +16,10 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 # Set a default value for the options
 autopilot_opt=false
 folder_opt=false
+public_endpoint_opt=false
 
 # Use getopts to parse the options
-while getopts ":af" opt; do
+while getopts ":afp" opt; do
   case ${opt} in
     a ) # If the -a option is provided, set autopilot_opt to true
       autopilot_opt=true
@@ -26,10 +27,14 @@ while getopts ":af" opt; do
     f ) # If the -f option is provided, set folder_opt to true
       folder_opt=true
       ;;
+    p ) # If the -p option is provided, set public_endpoint_opt to true
+      public_endpoint_opt=true
+      ;;
     \? ) # If an invalid option is provided, print usage information and exit
-      print_error "Usage: bash setup-kcc.sh [-af] PATH_TO_ENV_FILE
+      print_error "Usage: bash setup-kcc.sh [-afp] PATH_TO_ENV_FILE
         -a: autopilot. It will deploy an autopilot cluster instead of a standard cluster
-        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level"
+        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level
+        -p: public_endpoint_opt. It will deploy a cluster with a publicly accessible endpoint"
       exit 1
       ;;
   esac
@@ -39,9 +44,10 @@ done
 shift $((OPTIND -1))
 
 if [ $# -eq 0 ]; then
-    print_error "Usage: bash setup-kcc.sh [-af] PATH_TO_ENV_FILE
+    print_error "Usage: bash setup-kcc.sh [-afp] PATH_TO_ENV_FILE
         -a: autopilot. It will deploy an autopilot cluster instead of a standard cluster
-        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level"
+        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level
+        -p: public_endpoint_opt. It will deploy a cluster with a publicly accessible endpoint"
     exit 1
 fi
 
@@ -153,10 +159,14 @@ sleep 30
 
 print_info "Create Config controller"
 # autopilot_opt: Deploy an autopilot cluster instead of a standard cluster
+ENDPOINT='--man-blocks 192.168.0.0/16 --use-private-endpoint'
+if [ "$public_endpoint_opt" = true ]; then
+  ENDPOINT=''
+fi
 if [ "$autopilot_opt" = true ]; then
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management --man-blocks="192.168.0.0/16" --use-private-endpoint
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management $(echo "$ENDPOINT")
 else
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --man-blocks="192.168.0.0/16" --use-private-endpoint
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" $(echo "$ENDPOINT")
 fi
 
 print_info "Config controller get credentials"

@@ -19,12 +19,13 @@ cp tools/scripts/bootstrap/.env.sample bootstrap/<ENV>/.env
 5. Run the `setup-kcc` automated script:
 
 ```bash
-bash tools/scripts/bootstrap/setup-kcc.sh [-af] <PATH TO .ENV FILE>
+bash tools/scripts/bootstrap/setup-kcc.sh [-afp] <PATH TO .ENV FILE>
 ```
 - `-a`: autopilot. It will deploy an autopilot cluster instead of a standard cluster.
 - `-f`: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level.
+- `-p`: public_endpoint_opt. It will deploy a cluster with a publicly accessible endpoint. Useful for development/testing purposes.
 
-The config cluster is a private cluster and can only be accessed privately from within the VPC. This requires provisioning of a virtual machine to serve as a bastion host / proxy to access the private cluster.
+By default, the config cluster is a private cluster and can only be accessed privately from within the VPC. This requires provisioning of a virtual machine to serve as a bastion host / proxy to access the private cluster.
 
 > Note that if your organization has an organization policy restricting VPC peering, it causes an issue when deploying the Anthos Config Controller cluster.  During cluster creation, a VPC peering is required with a Google owned project that contains the cluster control plane. To prevent this issue, a policy exemption for VPC peering should be created at the folder or project level.
 
@@ -36,6 +37,8 @@ Once a bastion host / proxy vm is configured, to complete the configuration, few
 - `root-sync` must be configured
 
 The `configure-kcc-access.sh` script implements these required tasks. The script requires a `.env` file to configure the required variables.  This is the same `.env` file used by the `setup-kcc.sh` script. The script also requires a `TOKEN` variable that contains git access credentials.
+
+> **NOTE**: The script requires connectivity to the cluster (in case of private cluster).
 
 To run the script:
 
