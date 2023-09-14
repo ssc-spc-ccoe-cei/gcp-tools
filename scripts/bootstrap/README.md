@@ -41,7 +41,7 @@ To run the script:
 # Export a TOKEN variable. Set its value to the PAT which has read access to the tier1 monorepo.
 export TOKEN='xxxxxxxxxxxxxxx'
 
-bash tools/scripts/bootstrap/configure-kcc-access.sh.sh <PATH TO .ENV FILE>
+bash tools/scripts/bootstrap/configure-kcc-access.sh <PATH TO .ENV FILE>
 ```
 
 The script generates a `root-sync.yaml` file.  This file should be checked into the tier1 repo
