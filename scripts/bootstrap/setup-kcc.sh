@@ -163,10 +163,11 @@ ENDPOINT='--man-blocks 192.168.0.0/16 --use-private-endpoint'
 if [ "$public_endpoint_opt" = true ]; then
   ENDPOINT=''
 fi
+read -ra args < <(echo "$ENDPOINT")
 if [ "$autopilot_opt" = true ]; then
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management $(echo "$ENDPOINT")
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management "${args[@]}"
 else
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" $(echo "$ENDPOINT")
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" "${args[@]}"
 fi
 
 print_info "Config controller get credentials"
