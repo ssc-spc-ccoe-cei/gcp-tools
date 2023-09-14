@@ -26,6 +26,8 @@ bash tools/scripts/bootstrap/setup-kcc.sh [-af] <PATH TO .ENV FILE>
 
 The config cluster is a private cluster and can only be accessed privately from within the VPC. This requires provisioning of a virtual machine to serve as a bastion host / proxy to access the private cluster.
 
+> Note that if your organization has an organization policy restricting VPC peering, it causes an issue when deploying the Anthos Config Controller cluster.  During cluster creation, a VPC peering is required with a Google owned project that contains the cluster control plane. To prevent this issue, a policy exemption for VPC peering should be created at the folder or project level.
+
 ## IAM and Access Configuration
 
 Once a bastion host / proxy vm is configured, to complete the configuration, few additional tasks need to be performed:
