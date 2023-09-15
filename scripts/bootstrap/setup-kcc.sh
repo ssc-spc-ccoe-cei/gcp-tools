@@ -16,9 +16,10 @@ source "${SCRIPT_ROOT}/../common/print-colors.sh"
 # Set a default value for the options
 autopilot_opt=false
 folder_opt=false
+public_endpoint_opt=false
 
 # Use getopts to parse the options
-while getopts ":af" opt; do
+while getopts ":afp" opt; do
   case ${opt} in
     a ) # If the -a option is provided, set autopilot_opt to true
       autopilot_opt=true
@@ -26,10 +27,14 @@ while getopts ":af" opt; do
     f ) # If the -f option is provided, set folder_opt to true
       folder_opt=true
       ;;
+    p ) # If the -p option is provided, set public_endpoint_opt to true
+      public_endpoint_opt=true
+      ;;
     \? ) # If an invalid option is provided, print usage information and exit
-      print_error "Usage: bash setup-kcc.sh [-af] PATH_TO_ENV_FILE
+      print_error "Usage: bash setup-kcc.sh [-afp] PATH_TO_ENV_FILE
         -a: autopilot. It will deploy an autopilot cluster instead of a standard cluster
-        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level"
+        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level
+        -p: public_endpoint_opt. It will deploy a cluster with a publicly accessible endpoint"
       exit 1
       ;;
   esac
@@ -39,9 +44,10 @@ done
 shift $((OPTIND -1))
 
 if [ $# -eq 0 ]; then
-    print_error "Usage: bash setup-kcc.sh [-af] PATH_TO_ENV_FILE
+    print_error "Usage: bash setup-kcc.sh [-afp] PATH_TO_ENV_FILE
         -a: autopilot. It will deploy an autopilot cluster instead of a standard cluster
-        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level"
+        -f: folder_opt. It will bootstrap the landing zone in a folder instead than at the org level
+        -p: public_endpoint_opt. It will deploy a cluster with a publicly accessible endpoint"
     exit 1
 fi
 
@@ -147,53 +153,27 @@ gcloud compute firewall-rules create allow-egress-internal --action ALLOW --rule
 print_info "Deny egress to internet"
 gcloud compute firewall-rules create deny-egress-internet --action DENY --rules=all --destination-ranges 0.0.0.0/0 --direction EGRESS --priority 65535 --network "$NETWORK" --enable-logging
 
+# During testing, I found that I had to wait a bit before policy took effect
+print_info "sleep 30s to allow for policy to update"
+sleep 30
+
 print_info "Create Config controller"
 # autopilot_opt: Deploy an autopilot cluster instead of a standard cluster
+ENDPOINT='--man-blocks 192.168.0.0/16 --use-private-endpoint'
+if [ "$public_endpoint_opt" = true ]; then
+  ENDPOINT=''
+fi
+read -ra args < <(echo "$ENDPOINT")
 if [ "$autopilot_opt" = true ]; then
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" --master-ipv4-cidr-block="172.16.0.128/28" --full-management "${args[@]}"
 else
-  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET"
+  gcloud anthos config controller create "$CLUSTER" --location "$REGION" --network "$NETWORK" --subnet "$SUBNET" "${args[@]}"
 fi
 
 print_info "Config controller get credentials"
 gcloud anthos config controller get-credentials "$CLUSTER" --location "$REGION"
 
-SA_EMAIL="$(kubectl get ConfigConnectorContext -n config-control \
-    -o jsonpath='{.items[0].spec.googleServiceAccount}' 2> /dev/null)"
-
-gcloud organizations add-iam-policy-binding "${ORG_ID}" \
-  --member="serviceAccount:${SA_EMAIL}" \
-  --role=roles/resourcemanager.organizationAdmin \
-  --condition=None
-
-gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
-  --member "serviceAccount:${SA_EMAIL}" \
-  --role "roles/serviceusage.serviceUsageConsumer" \
-  --project "${PROJECT_ID}"
-
-print_info "Create git-creds for Repo access"
-kubectl create secret generic git-creds --namespace="config-management-system" --from-literal=username="${GIT_USERNAME}" --from-literal=token="${TOKEN}"
-
-cat << EOF > ./root-sync.yaml
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: "${CONFIG_SYNC_REPO}"
-    branch: main # eg. : main
-    dir: "${CONFIG_SYNC_DIR}" # eg.: csync/deploy/<env>
-    revision: "${CONFIG_SYNC_VERSION}"
-    auth: token
-    secretRef:
-      name: git-creds
-EOF
-
-print_info "Apply root sync"
-kubectl apply -f root-sync.yaml
-
 # Further steps
-print_warning "The root-sync.yaml file should be checked into the <tier1-REPO>"
+print_warning "configure-kcc-access.sh script should be run once connectivity to the cluster is established using bastion host / proxy."
+
+
