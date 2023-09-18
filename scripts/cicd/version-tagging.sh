@@ -95,8 +95,8 @@ for package in $packages; do
     if [ -z "${logs}" ]; then
       print_warning "no new commit affecting package $package since tag $latest_tag"
     else
-      # extract just the version
-      version=$(echo "$latest_tag" | cut -d"${separator}" -f2 | head -n 1)
+      # extract just the version, which is the last field ($NF) when the string is split with the separator
+      version=$(echo "$latest_tag" | awk -F"${separator}" '{print $NF}' | head -n 1)
       print_info "version : $version"
 
       # while loop executes in a subshell because it is executed as part of the pipeline. Global variable cannot be updated from a subshell. You can avoid it by using lastpipe
