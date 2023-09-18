@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.7.0...0.7.1) (2023-09-18)
+
+
+### Features
+
+* Update KCC setup for private cluster ([#53](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/53)) ([941d542](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/941d542e5024144b541136e19700b50cd8eaf895))
+
+
+### Bug Fixes
+
+* version tagging parsing, add missing fixes from monorepo ([#55](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/55)) ([a2b725b](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/a2b725b2f74459a800d267637e634e97640c8e02))
+
 ## [0.7.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.6.1...0.7.0) (2023-06-14)
 
 
