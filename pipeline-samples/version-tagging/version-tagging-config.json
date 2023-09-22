@@ -1,0 +1,17 @@
+{
+  "packages": {
+    "//comment":  "this level represents the folders for which you want to have tags created",
+    "tier3": {
+      "//comment1":  "package-name represents the first part of the tag",
+      "package-name": "tier3",
+      "//comment2":  "tag-separator represents the middle part of the tag. The semVer will be added right after it.",
+      "tag-separator": "-"
+    },
+    "tier4": {
+      "//comment1":  "package-name represents the first part of the tag",
+      "package-name": "tier4",
+      "//comment2":  "tag-separator represents the middle part of the tag. The semVer will be added right after it.",
+      "tag-separator": "-"
+    }
+  }
+}
