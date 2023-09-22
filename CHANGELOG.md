@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.7.1...0.7.2) (2023-09-22)
+
+
+### Bug Fixes
+
+* merge remaining monorepo into main ([#57](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/57)) ([ac0956f](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/ac0956f2c23de969638a6e0770e12254d8604b6a))
+
 ## [0.7.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.7.0...0.7.1) (2023-09-18)
 
 
