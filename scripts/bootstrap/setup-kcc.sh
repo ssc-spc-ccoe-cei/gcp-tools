@@ -91,7 +91,7 @@ gcloud compute networks subnets create "$SUBNET"  \
 
 print_info "Cloud router and Cloud NAT"
 gcloud compute routers create kcc-router --project="$PROJECT_ID"  --network="$NETWORK"  --asn=64513 --region="$REGION"
-gcloud compute routers nats create kcc-router --router=kcc-router --region="$REGION" --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges --enable-logging
+gcloud compute routers nats create kcc-nat --router=kcc-router --region="$REGION" --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges --enable-logging
 
 print_info "enable logging for dns"
 gcloud dns policies create dnspolicy1 \
