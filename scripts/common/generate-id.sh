@@ -5,4 +5,4 @@ declare -a animals=("Aardvark" "Albatross" "Alligator" "Alpaca" "Ant" "Anteater"
 RANDOM=$$$(date +%s)
 part1=${adj[ $RANDOM % ${#adj[@]} ]}
 part2=${animals[ $RANDOM % ${#animals[@]} ]}
-echo $part1'-'$part2
+echo "$part1-$part2"
