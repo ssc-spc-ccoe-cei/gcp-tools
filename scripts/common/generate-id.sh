@@ -8,7 +8,7 @@ declare -a animals=("Aardvark" "Albatross" "Alligator" "Alpaca" "Ant" "Anteater"
 #
 # Run the script as is to produce one randomly generated name.
 # Optional: pass a number as an argument at the end of the command line to generate that number of names
-# Example: To create 10 random names, run 'bash generate.sh 10'
+# Example: To create 10 random names, run 'bash generate-id.sh 10'
 #
 ##############
 
