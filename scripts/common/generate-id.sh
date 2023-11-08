@@ -13,7 +13,7 @@ declare -a animals=("Aardvark" "Albatross" "Alligator" "Alpaca" "Ant" "Anteater"
 ##############
 
 # produce the number of names requested
-for i in $(seq 1 $1);
+for i in $(seq 1 "$1");
 do
     # randomly pick a word from the each list
     part1=${adj[ $RANDOM % ${#adj[@]} ]}
@@ -21,5 +21,5 @@ do
     # combine the parts
     all_parts=$part1'-'$part2
     # echo and set to lowercase
-    echo $i - ${all_parts,,}
+    echo "$i" - "${all_parts,,}"
 done
