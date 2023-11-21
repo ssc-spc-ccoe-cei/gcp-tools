@@ -75,7 +75,7 @@ sleep 30
 gcloud config set project "$PROJECT_ID"
 
 print_info "Enable services"
-gcloud services enable krmapihosting.googleapis.com container.googleapis.com cloudresourcemanager.googleapis.com cloudbilling.googleapis.com serviceusage.googleapis.com servicedirectory.googleapis.com dns.googleapis.com
+gcloud services enable anthos.googleapis.com krmapihosting.googleapis.com container.googleapis.com cloudresourcemanager.googleapis.com cloudbilling.googleapis.com serviceusage.googleapis.com servicedirectory.googleapis.com dns.googleapis.com
 
 print_info "VPC"
 gcloud compute networks create "$NETWORK" --subnet-mode=custom
@@ -175,5 +175,3 @@ gcloud anthos config controller get-credentials "$CLUSTER" --location "$REGION"
 
 # Further steps
 print_warning "configure-kcc-access.sh script should be run once connectivity to the cluster is established using bastion host / proxy."
-
-
