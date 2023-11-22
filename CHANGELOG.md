@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.7.2...0.8.0) (2023-11-22)
+
+
+### Features
+
+* generate-id ([#63](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/63)) ([77a884e](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/77a884e2bcf444bd26e7618b6226a1f1dbbc2dc4))
+
+
+### Bug Fixes
+
+* config dashboard by enabling anthos api ([#65](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/65)) ([611d0db](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/611d0db76c2f958dff7d2dc7a09b2145bb315497))
+
 ## [0.7.2](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.7.1...0.7.2) (2023-09-22)
 
 
