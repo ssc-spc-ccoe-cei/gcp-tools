@@ -80,6 +80,7 @@ gcloud services enable anthos.googleapis.com krmapihosting.googleapis.com contai
 print_info "VPC"
 gcloud compute networks create "$NETWORK" --subnet-mode=custom
 
+# AU-12 - Enable logs for Subnet
 print_info "Subnet"
 gcloud compute networks subnets create "$SUBNET"  \
 --network "$NETWORK" \
@@ -89,10 +90,12 @@ gcloud compute networks subnets create "$SUBNET"  \
 --enable-private-ip-google-access \
 --enable-flow-logs --logging-aggregation-interval=interval-5-sec --logging-flow-sampling=1.0 --logging-metadata=include-all
 
+# AU-12 - Enable logs for Cloud NAT
 print_info "Cloud router and Cloud NAT"
 gcloud compute routers create kcc-router --project="$PROJECT_ID"  --network="$NETWORK"  --asn=64513 --region="$REGION"
 gcloud compute routers nats create kcc-nat --router=kcc-router --region="$REGION" --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges --enable-logging
 
+# AU-12 - Enable logs for DNS
 print_info "enable logging for dns"
 gcloud dns policies create dnspolicy1 \
 --networks="$NETWORK" \
@@ -139,17 +142,21 @@ gcloud dns record-sets create gcr.io. --zone="gcrio" --type="A" --ttl="300" --rr
 
 gcloud dns record-sets create "*.gcr.io." --zone="gcrio" --type="CNAME" --ttl="300" --rrdatas="gcr.io."
 
+# AU-12 - Enable logs for Firewall
 print_info "Allow egress to AZDO (optional)"
 # Should be revised periodically - https://learn.microsoft.com/en-us/azure/devops/organizations/security/allow-list-ip-url?view=azure-devops&tabs=IP-V4#ip-addresses-and-range-restrictions
 gcloud compute firewall-rules create allow-egress-azure --action ALLOW --rules tcp:22,tcp:443 --destination-ranges 13.107.6.0/24,13.107.9.0/24,13.107.42.0/24,13.107.43.0/24 --direction EGRESS --priority 5000 --network "$NETWORK" --enable-logging
 
+# AU-12 - Enable logs for Firewall
 print_info "Allow egress to Github (optional)"
 # Should be revised periodically - https://api.github.com/meta
 gcloud compute firewall-rules create allow-egress-github --action ALLOW --rules tcp:22,tcp:443 --destination-ranges 192.30.252.0/22,185.199.108.0/22,140.82.112.0/20,143.55.64.0/20,20.201.28.151/32,20.205.243.166/32,102.133.202.242/32,20.248.137.48/32,20.207.73.82/32,20.27.177.113/32,20.200.245.247/32,20.233.54.53/32,20.201.28.152/32,20.205.243.160/32,102.133.202.246/32,20.248.137.50/32,20.207.73.83/32,20.27.177.118/32,20.200.245.248/32,20.233.54.52/32 --direction EGRESS --priority 5001 --network "$NETWORK" --enable-logging
 
+# AU-12 - Enable logs for Firewall
 print_info "Allow egress to internal, peered vpc and secondary ranges"
 gcloud compute firewall-rules create allow-egress-internal --action ALLOW --rules=all --destination-ranges 192.168.0.0/16,172.16.0.128/28,10.0.0.0/8 --direction EGRESS --priority 1000 --network "$NETWORK" --enable-logging
 
+# AU-12 - Enable logs for Firewall
 print_info "Deny egress to internet"
 gcloud compute firewall-rules create deny-egress-internet --action DENY --rules=all --destination-ranges 0.0.0.0/0 --direction EGRESS --priority 65535 --network "$NETWORK" --enable-logging
 
