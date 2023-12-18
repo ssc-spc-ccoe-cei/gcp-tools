@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.0...0.8.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* tagging au-12 controls ([#67](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/67)) ([de64066](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/de6406657c92ed813a520131d8ed8c34e87e2233))
+
 ## [0.8.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.7.2...0.8.0) (2023-11-22)
 
 
