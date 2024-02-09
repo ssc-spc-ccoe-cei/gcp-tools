@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # script to bootstrap a Config Controller project
+# AC-1: Implementation of access control
 
 # Bash safeties: exit on error, pipelines can't hide errors
 set -o errexit
@@ -25,12 +26,14 @@ source "$1"
 SA_EMAIL="$(kubectl get ConfigConnectorContext -n config-control \
     -o jsonpath='{.items[0].spec.googleServiceAccount}' 2> /dev/null)"
 
+# AC-1
 print_info "Create organization Admin IAM policy binding"
 gcloud organizations add-iam-policy-binding "${ORG_ID}" \
   --member="serviceAccount:${SA_EMAIL}" \
   --role=roles/resourcemanager.organizationAdmin \
   --condition=None
 
+# AC-1
 print_info "Create project IAM policy binding"
 gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
   --member "serviceAccount:${SA_EMAIL}" \
