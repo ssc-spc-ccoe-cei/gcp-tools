@@ -30,7 +30,7 @@ for root, dirs, files in os.walk('.'):
                     # If the line is "---"
                     if line.strip() == '---':
                         # Check for matches of the pattern
-                        matches = re.findall(r'(AU-[^,\ \n]+|AC-[^,\ \n]+|IA-[^,\ \n]+|SC-[^,\ \n]+)', resource)
+                        matches = re.findall(r'(AC-[^,\ \n]+|AU-[^,\ \n]+|IA-[^,\ \n]+|SC-[^,\ \n]+|AT-[^,\ \n]+|CM-[^,\ \n]+|CP-[^,\ \n]+|IR-[^,\ \n]+|MA-[^,\ \n]+|MP-[^,\ \n]+|PS-[^,\ \n]+|SI-[^,\ \n]+|CA-[^,\ \n]+|PL-[^,\ \n]+|RA-[^,\ \n]+|SA-[^,\ \n]+)', resource)
                         # For each match found
                         for match in matches:
                             # Load the YAML data from the resource string
@@ -46,7 +46,7 @@ for root, dirs, files in os.walk('.'):
                         resource += line
 
                 # Check for matches of the pattern
-                matches = re.findall(r'(AU-[^,\ \n]+|AC-[^,\ \n]+|IA-[^,\ \n]+|SC-[^,\ \n]+)', resource)
+                matches = re.findall(r'(AC-[^,\ \n]+|AU-[^,\ \n]+|IA-[^,\ \n]+|SC-[^,\ \n]+|AT-[^,\ \n]+|CM-[^,\ \n]+|CP-[^,\ \n]+|IR-[^,\ \n]+|MA-[^,\ \n]+|MP-[^,\ \n]+|PS-[^,\ \n]+|SI-[^,\ \n]+|CA-[^,\ \n]+|PL-[^,\ \n]+|RA-[^,\ \n]+|SA-[^,\ \n]+)', resource)
                 # For each match found
                 for match in matches:
                     # Load the YAML data from the resource string
