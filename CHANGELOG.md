@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.1...0.8.2) (2024-02-20)
+
+
+### Bug Fixes
+
+* adding security controls tags ([#69](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/69)) ([c45f8eb](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/c45f8ebc70b2da841eb8b8cc96c4f790093078dc))
+
 ## [0.8.1](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.0...0.8.1) (2023-12-18)
 
 
