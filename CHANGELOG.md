@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.2...0.8.3) (2024-02-23)
+
+
+### Bug Fixes
+
+* fixing cluster name to include krmapihost ([#72](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/72)) ([eeae0a2](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/eeae0a26999e910468c433238fe6558a6181b187))
+
 ## [0.8.2](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.1...0.8.2) (2024-02-20)
 
 
