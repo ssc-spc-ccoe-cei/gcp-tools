@@ -182,7 +182,7 @@ else
 fi
 
 print_info "Enable Google Groups RBAC on config controller cluster"
-gcloud container clusters update "$CLUSTER" --region "$REGION" --security-group "$SECURITY_GROUPS_RBAC"
+gcloud container clusters update "krmapihost-$CLUSTER" --region "$REGION" --security-group "$SECURITY_GROUPS_RBAC"
 
 print_info "Config controller get credentials"
 gcloud anthos config controller get-credentials "$CLUSTER" --location "$REGION"
