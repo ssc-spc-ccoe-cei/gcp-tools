@@ -48,14 +48,14 @@ RUN  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o 
      usermod -a -G docker ${CPE_USERNAME}
 
 # Azure Cli
-RUN sudo mkdir -p /etc/apt/keyrings && \
-    curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
-    sudo chmod go+r /etc/apt/keyrings/microsoft.gpg && \
-    AZ_DIST=$(lsb_release -cs) && \
-    echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | sudo tee /etc/apt/sources.list.d/azure-cli.list && \
-    sudo apt-get update && \
-    sudo apt-get install azure-cli=${AZ_CLI}-1~$AZ_DIST && \
-    az extension add --name azure-devops
+RUN  mkdir -p /etc/apt/keyrings && \
+     curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
+     chmod go+r /etc/apt/keyrings/microsoft.gpg && \
+     AZ_DIST=$(lsb_release -cs) && \
+     echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ $AZ_DIST main" | tee /etc/apt/sources.list.d/azure-cli.list && \
+     apt-get update && \
+     apt-get install azure-cli=${AZ_CLI}-1~$AZ_DIST && \
+     az extension add --name azure-devops
 
 # Google Cli
 RUN  wget -qO- https://storage.googleapis.com/cloud-sdk-release/google-cloud-cli-${GCLD_SDK}-linux-x86_64.tar.gz | tar zxv -C /usr/local/bin && \
