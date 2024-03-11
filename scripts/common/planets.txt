@@ -1,6 +1,4 @@
 venus
-mars
-earth
 pluto
 titan
 ceres
@@ -10,14 +8,12 @@ neptune
 uranus
 saturn
 mercur
-eris
 haumea
 sedna
 makemo
 molona
 phobos
 deimos
-io
 charon
 tethys
 callis
@@ -30,7 +26,6 @@ despina
 umbriel
 ariel
 oberon
-rhea
 mimas
 triton
 miranda
@@ -48,7 +43,6 @@ ymolay
 donsor
 pandia
 phantos
-lysk
 wargo
 taron
 olney
@@ -59,7 +53,6 @@ eranor
 zephyr
 boreal
 diemos
-erez
 aldera
 tazman
 kiada
@@ -71,13 +64,11 @@ duris
 gilder
 farris
 odessa
-puck
 layla
 silur
 lysir
 trog
 eurus
-nix
 dione
 lorian
 tessia

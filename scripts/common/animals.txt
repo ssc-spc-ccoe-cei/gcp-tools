@@ -24,7 +24,6 @@ ratite
 rhesus
 saluki
 skunk
-squirrel
 stoat
 tapir
 thylac
