@@ -47,7 +47,7 @@ cat << EOF > ./root-sync.yaml
 apiVersion: configsync.gke.io/v1beta1
 kind: RootSync
 metadata:
-  name: root-sync
+  name: gcxm999-csync
   namespace: config-management-system
 spec:
   sourceFormat: unstructured
@@ -61,8 +61,8 @@ spec:
       name: git-creds
 EOF
 
-print_info "Apply root sync"
-kubectl apply -f root-sync.yaml
+print_info "Apply gcxm999 csync"
+kubectl apply -f gcxm999-csync.yaml
 
 # Further steps
-print_warning "The root-sync.yaml file should be checked into the <tier1-REPO>"
+print_warning "The gcxm999-csync.yaml file should be checked into the <tier1-REPO>"
