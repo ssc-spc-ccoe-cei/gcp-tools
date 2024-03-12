@@ -49,4 +49,4 @@ export TOKEN='xxxxxxxxxxxxxxx'
 bash tools/scripts/bootstrap/configure-kcc-access.sh <PATH TO .ENV FILE>
 ```
 
-The script generates a `root-sync.yaml` file.  This file should be checked into the tier1 repo
+The script generates a `gcxm999-csync.yaml` file. This file should be checked into the tier1 repo.

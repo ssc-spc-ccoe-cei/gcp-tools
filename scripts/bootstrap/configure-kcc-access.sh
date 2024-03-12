@@ -43,7 +43,7 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
 print_info "Create git-creds for Repo access"
 kubectl create secret generic git-creds --namespace="config-management-system" --from-literal=username="${GIT_USERNAME}" --from-literal=token="${TOKEN}"
 
-cat << EOF > ./root-sync.yaml
+cat << EOF > ./gcxm999-csync.yaml
 apiVersion: configsync.gke.io/v1beta1
 kind: RootSync
 metadata:
