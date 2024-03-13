@@ -77,6 +77,11 @@ if [ -f Kptfile ]; then
 
     chmod 777 README.md
 
+    # Work-around when Kptfile pipeline mutators have 'selectors', delete it (in the temp LINUX_WORKDIR).
+    # Error example,
+    # [error]: failed to generate doc: failed to decode Kptfile: invalid 'v1' Kptfile: yaml: unmarshal errors:   line 41: field selectors not found in type v1.Function
+    yq eval 'del(.pipeline.mutators[].selectors)' -i Kptfile
+
     #REPO_URL="${repo}.git${directory}/"
     REPO_URL="${repo}.git${directory%/*}/"
     print_info "running generate-kpt-pkg-docs"
