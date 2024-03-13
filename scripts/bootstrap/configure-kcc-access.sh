@@ -43,11 +43,11 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
 print_info "Create git-creds for Repo access"
 kubectl create secret generic git-creds --namespace="config-management-system" --from-literal=username="${GIT_USERNAME}" --from-literal=token="${TOKEN}"
 
-cat << EOF > ./gcxm999-csync.yaml
+cat << EOF > ./root-sync.yaml
 apiVersion: configsync.gke.io/v1beta1
 kind: RootSync
 metadata:
-  name: gcxm999-csync
+  name: "${CONFIG_SYNC_NAME}"
   namespace: config-management-system
 spec:
   sourceFormat: unstructured
@@ -61,8 +61,8 @@ spec:
       name: git-creds
 EOF
 
-print_info "Apply gcxm999 csync"
-kubectl apply -f gcxm999-csync.yaml
+print_info "Apply root sync"
+kubectl apply -f root-sync.yaml
 
 # Further steps
-print_warning "The gcxm999-csync.yaml file should be checked into the <tier1-REPO>"
+print_warning "The root-sync.yaml file should be checked into the <tier1-REPO>"
