@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.4](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.3...0.8.4) (2024-03-13)
+
+
+### Bug Fixes
+
+* generate docs bugs ([#77](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/77)) ([b162488](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/b162488ba16c9402ecd6e48bd9d12a35f9867df0))
+
 ## [0.8.3](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.2...0.8.3) (2024-02-23)
 
 
