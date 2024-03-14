@@ -51,10 +51,12 @@ for root, dirs, files in os.walk('.'):
                 for match in matches:
                     # Load the YAML data from the resource string
                     data = yaml.safe_load(resource)
-                    # Extract the value of the metadata.name node
-                    resource_name = data['metadata']['name']
-                    # Add an item to the inventory list with the security control(match), file type, file name, resource name and details(resource)
-                    inventory.append((match, "kubernetes", os.path.join(root, file), resource_name, resource))
+                    # only continue if the file loaded properly (don't process resources that are commented out)
+                    if data != None:
+                        # Extract the value of the metadata.name node
+                        resource_name = data['metadata']['name']
+                        # Add an item to the inventory list with the security control(match), file type, file name, resource name and details(resource)
+                        inventory.append((match, "kubernetes", os.path.join(root, file), resource_name, resource))
 
         ##################
         # MARKDOWN FILE
