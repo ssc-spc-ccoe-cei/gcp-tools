@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.5...0.9.0) (2024-03-15)
+
+
+### Features
+
+* create new name generators ([#76](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/76)) ([d598cd4](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/d598cd409b13269941194dc1b651dc327528b0b4))
+
 ## [0.8.5](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.4...0.8.5) (2024-03-15)
 
 
