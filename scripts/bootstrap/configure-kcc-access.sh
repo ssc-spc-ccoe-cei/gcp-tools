@@ -47,7 +47,7 @@ cat << EOF > ./root-sync.yaml
 apiVersion: configsync.gke.io/v1beta1
 kind: RootSync
 metadata:
-  name: root-sync
+  name: "${CONFIG_SYNC_NAME}"
   namespace: config-management-system
 spec:
   sourceFormat: unstructured

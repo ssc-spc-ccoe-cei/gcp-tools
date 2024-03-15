@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.4...0.8.5) (2024-03-15)
+
+
+### Bug Fixes
+
+* renaming root sync in configure-kcc-access.sh ([#75](https://github.com/ssc-spc-ccoe-cei/gcp-tools/issues/75)) ([bab98ac](https://github.com/ssc-spc-ccoe-cei/gcp-tools/commit/bab98ac4ed33d9138fcf533ae369f8df72cd01e9))
+
 ## [0.8.4](https://github.com/ssc-spc-ccoe-cei/gcp-tools/compare/0.8.3...0.8.4) (2024-03-13)
 
 
